@@ -5,9 +5,6 @@ import Input from "@/components/input/input";
 import LogoSvg from "@/assets/logo.svg";
 
 export default function Login() {
-  console.log(Dimensions.get("window").width);
-  console.log(Dimensions.get("window").height);
-
   return (
     <Input label="Логин">
       <Text />

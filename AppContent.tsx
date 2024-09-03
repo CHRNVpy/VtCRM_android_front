@@ -1,13 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import LogoSvg from "@/assets/logo.svg";
 import Login from "@/pages/login/login";
-import { dp } from "@/helpers/pixelRatio";
+import { s } from "react-native-size-matters";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <LogoSvg width={dp(197)} height={dp(24)} />
+      <LogoSvg width={s(253)} height={s(31)} />
       <Login />
       <StatusBar style="dark" backgroundColor="#ffffff" />
     </View>
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    paddingLeft: dp(15),
-    paddingRight: dp(15),
+    paddingLeft: s(20),
+    paddingRight: s(20),
   },
 });
