@@ -14,7 +14,7 @@ defaultConfig.transformer.babelTransformerPath = require.resolve(
 );
 
 defaultConfig.resolver.alias = {
-  "@assets": path.resolve(__dirname, "assets"),
+  "@": path.resolve(__dirname),
 };
 
 module.exports = defaultConfig;

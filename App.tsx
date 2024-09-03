@@ -1,21 +1,16 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import LogoSvg from "@/assets/logo.svg";
+import React from "react";
+import { Text } from "react-native";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store/store";
+import AppContent from "./AppContent";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <LogoSvg width={100} height={100} />
-      <StatusBar style="dark" backgroundColor="#ffffff" />
-    </View>
-  );
-}
+const App = () => (
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <AppContent />
+    </PersistGate>
+  </Provider>
+);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;
