@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Input from "@/components/input/input";
 import { RootState, AppDispatch } from "@/store/store";
 import { setLogin, setPassword } from "@/store/auth";
+import colors from "@/helpers/colors";
 
 export default function Login() {
   const passwordInputRef = useRef<TextInput>(null);
@@ -51,7 +52,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },

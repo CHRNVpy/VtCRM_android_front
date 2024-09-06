@@ -1,13 +1,21 @@
-import { Text, StyleSheet, View, ViewProps } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  ViewProps,
+  ActivityIndicator,
+} from "react-native";
 import { ReactNode } from "react";
 import { s } from "react-native-size-matters";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
+import colors from "@/helpers/colors";
 
 interface ButtonProps extends ViewProps {
   children?: ReactNode;
+  isInProcess?: boolean;
 }
 
-export default function Button({ children }: ButtonProps) {
+export default function Button({ isInProcess = false, children }: ButtonProps) {
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
   });
@@ -16,7 +24,13 @@ export default function Button({ children }: ButtonProps) {
 
   return (
     <View style={styles.button}>
-      <Text style={styles.text}>{children}</Text>
+      <Text style={styles.text}>
+        {isInProcess ? (
+          <ActivityIndicator size={26} color={colors.dark} />
+        ) : (
+          children
+        )}
+      </Text>
     </View>
   );
 }
@@ -27,7 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: s(48),
     width: "100%",
-    backgroundColor: "#EAEDEF",
+    backgroundColor: colors.button,
     borderRadius: 4,
   },
   text: {

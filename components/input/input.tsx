@@ -13,6 +13,7 @@ import Animated, {
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 import { ReactNode, useCallback, useRef } from "react";
 import { s } from "react-native-size-matters";
+import colors from "@/helpers/colors";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -140,13 +141,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: s(44),
     borderBottomWidth: s(2),
-    borderBottomColor: "#333333",
+    borderBottomColor: colors.dark,
     borderBottomStyle: "solid",
     paddingTop: s(16),
   },
   textInput: {
     width: "100%",
-    color: "#333333",
+    color: colors.dark,
     fontSize: s(18),
     fontFamily: "Inter_400Regular",
     lineHeight: s(24),
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     lineHeight: s(24),
     fontSize: s(18),
     fontFamily: "Inter_400Regular",
-    color: "#333333",
+    color: colors.dark,
     top: s(16),
   },
   labelFinalPosition: {

@@ -5,12 +5,13 @@ import Header from "@/components/container/header/header";
 import Button from "@/components/button/button";
 import Login from "@/pages/login/login";
 import { s } from "react-native-size-matters";
+import colors from "@/helpers/colors";
 
 export default function App() {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
-        <StatusBar style="dark" backgroundColor="#FFFFFF" />
+        <StatusBar style="dark" backgroundColor={colors.white} />
         <Header />
         <View style={styles.content}>
           <Login />
@@ -28,7 +29,7 @@ export default function App() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
