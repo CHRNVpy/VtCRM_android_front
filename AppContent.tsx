@@ -1,27 +1,28 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "@/components/container/header/header";
-import Button from "@/components/button/button";
 import Login from "@/pages/login/login";
-import { s } from "react-native-size-matters";
 import colors from "@/helpers/colors";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <SafeAreaView style={styles.wrapper}>
-      <View style={styles.container}>
-        <StatusBar style="dark" backgroundColor={colors.white} />
-        <Header />
-        <View style={styles.content}>
-          <Login />
+      <NavigationContainer>
+        <View style={styles.container}>
+          <StatusBar style="dark" backgroundColor={colors.white} />
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
         </View>
-        <View style={styles.button}>
-          <Button>
-            <Text>Войти</Text>
-          </Button>
-        </View>
-      </View>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
@@ -29,19 +30,8 @@ export default function App() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  button: {
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    paddingBottom: s(15),
   },
 });

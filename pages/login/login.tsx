@@ -1,10 +1,13 @@
 import { useRef } from "react";
-import { TextInput, StyleSheet, View } from "react-native";
+import { TextInput, StyleSheet, View, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Input from "@/components/input/input";
+import Header from "@/components/container/header/header";
+import Button from "@/components/button/button";
 import { RootState, AppDispatch } from "@/store/store";
 import { setLogin, setPassword } from "@/store/auth";
 import colors from "@/helpers/colors";
+import { s } from "react-native-size-matters";
 
 export default function Login() {
   const passwordInputRef = useRef<TextInput>(null);
@@ -27,30 +30,50 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.input}>
-        <Input
-          label="Логин"
-          onChangeText={handleLoginOnChangeText}
-          onSubmitEditing={handleSubmitLoginEditing}
-          value={login}
-        ></Input>
-      </View>
-      <View style={[styles.input, styles.lastChild]}>
-        <Input
-          label="Пароль"
-          onChangeText={handlePasswordOnChangeText}
-          value={password}
-          type={"password"}
-          inputRef={passwordInputRef}
-        ></Input>
+    <View style={styles.wrapper}>
+      <Header />
+      <View style={styles.content}>
+        <View style={styles.inputs}>
+          <View style={styles.input}>
+            <Input
+              label="Логин"
+              onChangeText={handleLoginOnChangeText}
+              onSubmitEditing={handleSubmitLoginEditing}
+              value={login}
+            ></Input>
+          </View>
+          <View style={[styles.input, styles.lastChild]}>
+            <Input
+              label="Пароль"
+              onChangeText={handlePasswordOnChangeText}
+              value={password}
+              type={"password"}
+              inputRef={passwordInputRef}
+            ></Input>
+          </View>
+        </View>
+        <View style={styles.button}>
+          <Button>
+            <Text>Войти</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  content: {
+    flex: 1,
+    paddingLeft: s(15),
+    paddingRight: s(15),
+    paddingBottom: s(15),
+  },
+  inputs: {
     flex: 1,
     backgroundColor: colors.white,
     alignItems: "center",
@@ -62,4 +85,5 @@ const styles = StyleSheet.create({
   lastChild: {
     marginBottom: 0,
   },
+  button: {},
 });
