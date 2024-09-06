@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Login from "@/pages/login/login";
+import AdminMainPage from "@/pages/admin/mainPage/mainPage";
 import colors from "@/helpers/colors";
 
 const Stack = createNativeStackNavigator();
@@ -14,10 +15,15 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           <StatusBar style="dark" backgroundColor={colors.white} />
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName={"Login"}>
             <Stack.Screen
               name="Login"
               component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AdminMainPage"
+              component={AdminMainPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

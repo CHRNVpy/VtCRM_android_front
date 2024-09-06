@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo, useCallback } from "react";
 import { TextInput, StyleSheet, View, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Input from "@/components/input/input";
@@ -17,17 +17,33 @@ export default function Login() {
   const login = useSelector((state: RootState) => state.auth.login);
   const password = useSelector((state: RootState) => state.auth.password);
 
-  const handleLoginOnChangeText = (value?: string) => {
-    dispatch(setLogin({ value }));
-  };
-  const handlePasswordOnChangeText = (value?: string) => {
-    dispatch(setPassword({ value }));
-  };
-  const handleSubmitLoginEditing = () => {
+  const handleLoginOnChangeText = useCallback(
+    (value?: string) => {
+      dispatch(setLogin({ value }));
+    },
+    [dispatch]
+  );
+
+  const handlePasswordOnChangeText = useCallback(
+    (value?: string) => {
+      dispatch(setPassword({ value }));
+    },
+    [dispatch]
+  );
+
+  const handleSubmitLoginEditing = useCallback(() => {
     if (!passwordInputRef.current) return;
 
     passwordInputRef.current.focus();
-  };
+  }, [passwordInputRef]);
+
+  const isButtonDisabled = useMemo(() => {
+    if (!login) return true;
+
+    if (!password) return true;
+
+    return false;
+  }, [login, password]);
 
   return (
     <View style={styles.wrapper}>
@@ -53,7 +69,7 @@ export default function Login() {
           </View>
         </View>
         <View style={styles.button}>
-          <Button>
+          <Button isDisabled={isButtonDisabled}>
             <Text>Войти</Text>
           </Button>
         </View>
