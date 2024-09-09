@@ -14,12 +14,15 @@ interface ButtonProps extends ViewProps {
   children?: ReactNode;
   isInProcess?: boolean;
   isDisabled?: boolean;
+  size?: "small";
 }
 
 export default function Button({
   children,
   isInProcess = false,
   isDisabled = false,
+  size,
+  style,
 }: ButtonProps) {
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -28,10 +31,20 @@ export default function Button({
   if (!fontsLoaded) return null;
 
   return (
-    <View style={[styles.button, !!isDisabled && styles.isDisabled]}>
-      <Text style={styles.text}>
+    <View
+      style={[
+        styles.button,
+        !!isDisabled && styles.isDisabled,
+        size == "small" && styles.buttonSmall,
+        style,
+      ]}
+    >
+      <Text style={[styles.text, size == "small" && styles.smallText]}>
         {isInProcess ? (
-          <ActivityIndicator size={26} color={colors.dark} />
+          <ActivityIndicator
+            size={size == "small" ? 12 : 26}
+            color={colors.dark}
+          />
         ) : (
           children
         )}
@@ -49,6 +62,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.button,
     borderRadius: 4,
   },
+  buttonSmall: {
+    height: s(26),
+  },
   isDisabled: {
     opacity: 0.6,
   },
@@ -56,5 +72,8 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: s(18),
     color: colors.dark,
+  },
+  smallText: {
+    fontSize: s(14),
   },
 });

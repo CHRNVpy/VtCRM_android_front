@@ -80,8 +80,5 @@ const styles = StyleSheet.create({
     fontSize: s(20),
     marginLeft: s(12),
   },
-  lastChild: {
-    marginBottom: 0,
-  },
   button: {},
 });
