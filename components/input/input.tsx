@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -11,9 +12,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
-import { ReactNode, useCallback, useRef } from "react";
+import { ReactNode, useCallback, useRef, useState } from "react";
 import { s } from "react-native-size-matters";
 import colors from "@/helpers/colors";
+import PasswordVisibleSvg from "@/assets/passwordVisible.svg";
+import PasswordHiddenSvg from "@/assets/passwordHidden.svg";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -34,6 +37,7 @@ export default function Input({
   onChangeText,
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const animationDuration = 100;
   const labelInitialHeight = styles.label.height;
@@ -60,11 +64,15 @@ export default function Input({
     };
   });
 
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     if (!inputForwardOrLocalRef.current) return;
 
     inputForwardOrLocalRef.current.focus();
-  };
+  }, [inputForwardOrLocalRef]);
+
+  const handlePasswordIconPress = useCallback(() => {
+    setIsPasswordVisible(!isPasswordVisible);
+  }, [isPasswordVisible]);
 
   const handleTextInputFocus = useCallback(() => {
     if (!!value) return;
@@ -116,7 +124,7 @@ export default function Input({
             onChangeText={onChangeText}
             onFocus={handleTextInputFocus}
             onBlur={handleTextInputBlur}
-            secureTextEntry={type == "password"}
+            secureTextEntry={type == "password" && !isPasswordVisible}
             value={value}
             ref={inputRef}
           />
@@ -125,6 +133,18 @@ export default function Input({
               {label}
             </Animated.Text>
           </View>
+          {type == "password" && (
+            <TouchableOpacity
+              style={styles.passwordIconWrapper}
+              onPress={handlePasswordIconPress}
+            >
+              {isPasswordVisible ? (
+                <PasswordHiddenSvg width={s(24)} height={s(24)} />
+              ) : (
+                <PasswordVisibleSvg width={s(24)} height={s(24)} />
+              )}
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -169,5 +189,14 @@ const styles = StyleSheet.create({
     lineHeight: s(16),
     fontSize: s(12),
     top: s(0),
+  },
+  passwordIconWrapper: {
+    position: "absolute",
+    right: s(0),
+    width: s(24),
+    height: s(24),
+    top: s(18),
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
