@@ -15,7 +15,7 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           <StatusBar style="dark" backgroundColor={colors.white} />
-          <Stack.Navigator initialRouteName={"Login"}>
+          <Stack.Navigator initialRouteName={"AdminMainPage"}>
             <Stack.Screen
               name="Login"
               component={Login}
