@@ -3,6 +3,11 @@ import { useMemo } from "react";
 import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
 import Button from "@/components/button/button";
+import ChangePasswordIcon from "@/assets/changePasswordIcon.svg";
+import EditIcon from "@/assets/editIcon.svg";
+import TurnOnIcon from "@/assets/turnOnIcon.svg";
+import TurnOffIcon from "@/assets/turnOffIcon.svg";
+import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
 
 export default function MainPage() {
@@ -79,7 +84,7 @@ export default function MainPage() {
 
   return (
     <View style={styles.wrapper}>
-      <Header />
+      <Header linkText={"На главную"} />
       <View style={styles.content}>
         <View style={styles.installers}>
           <Text style={styles.title}>Монтажники</Text>
@@ -117,10 +122,20 @@ export default function MainPage() {
                       </View>
                       <View style={styles.itemButtons}>
                         <View style={styles.itemButtonsLeftColumn}>
-                          <Button style={styles.itemButton} size={"small"}>
+                          <Button
+                            icon={
+                              <ChangePasswordIcon
+                                width={s(13)}
+                                height={s(12)}
+                              />
+                            }
+                            style={styles.itemButton}
+                            size={"small"}
+                          >
                             <Text>Сменить пароль</Text>
                           </Button>
                           <Button
+                            icon={<EditIcon width={s(5)} height={s(16)} />}
                             style={[styles.itemButton, styles.itemButtonLast]}
                             size={"small"}
                           >
@@ -128,10 +143,23 @@ export default function MainPage() {
                           </Button>
                         </View>
                         <View style={styles.itemButtonsRightColumn}>
-                          <Button style={styles.itemButton} size={"small"}>
-                            <Text>Включить</Text>
+                          <Button
+                            icon={
+                              item.isActive ? (
+                                <TurnOffIcon width={s(9)} height={s(17)} />
+                              ) : (
+                                <TurnOnIcon width={s(9)} height={s(17)} />
+                              )
+                            }
+                            style={styles.itemButton}
+                            size={"small"}
+                          >
+                            <Text>
+                              {item.isActive ? "Выключить" : "Включить"}
+                            </Text>
                           </Button>
                           <Button
+                            icon={<ShareIcon width={s(13)} height={s(14)} />}
                             style={[styles.itemButton, styles.itemButtonLast]}
                             size={"small"}
                           >
@@ -163,7 +191,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: s(15),
+    paddingTop: s(5),
     paddingBottom: s(15),
   },
   installers: {
@@ -185,7 +213,7 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingLeft: s(15),
     paddingRight: s(15),
-    marginBottom: s(15),
+    marginBottom: s(10),
   },
   installerItem: {
     marginBottom: s(24),
