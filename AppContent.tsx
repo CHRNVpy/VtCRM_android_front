@@ -12,6 +12,7 @@ import AdminEditInstallerPasswordPage from "@/pages/admin/installers/editInstall
 import AdminCreateInstallerPage from "@/pages/admin/installers/createInstallerPage/createInstallerPage";
 import AdminEquipmentsPage from "@/pages/admin/equipments/equipmentsPage/equipmentsPage";
 import AdminEquipmentPage from "@/pages/admin/equipments/equipmentPage/equipmentPage";
+import AdminEditEquipmentPage from "@/pages/admin/equipments/editEquipmentPage/editEquipmentPage";
 import colors from "@/helpers/colors";
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +23,7 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           <StatusBar style="dark" backgroundColor={colors.white} />
-          <Stack.Navigator initialRouteName={"AdminEquipmentPage"}>
+          <Stack.Navigator initialRouteName={"AdminEditEquipmentPage"}>
             <Stack.Screen
               name="Login"
               component={Login}
@@ -66,6 +67,11 @@ export default function App() {
             <Stack.Screen
               name="AdminEquipmentPage"
               component={AdminEquipmentPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AdminEditEquipmentPage"
+              component={AdminEditEquipmentPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

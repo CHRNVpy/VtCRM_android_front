@@ -2,10 +2,10 @@ import { StyleSheet, View, Text } from "react-native";
 import { useMemo } from "react";
 import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
+import Input from "@/components/input/input";
 import Button from "@/components/button/button";
 import { s } from "react-native-size-matters";
-import EditIcon from "@/assets/editIcon.svg";
-import ShareIcon from "@/assets/shareIcon.svg";
+import SaveIcon from "@/assets/saveIcon.svg";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
 export default function Page() {
@@ -37,30 +37,10 @@ export default function Page() {
 
   return (
     <View style={styles.wrapper}>
-      <Header linkText={"Оборудование"} />
+      <Header linkText={`#${equipmentData.id} ${equipmentData.name}`} />
       <View style={styles.content}>
-        <View style={styles.information}>
-          <View style={styles.equipmentData}>
-            <View style={styles.leftColumn}>
-              <Text style={styles.name}>{equipmentData.name}</Text>
-              <Text style={styles.serialNumber}>
-                {equipmentData.serialNumber}
-              </Text>
-            </View>
-            <View style={styles.rightColumn}>
-              <Text style={styles.id}>#{equipmentData.id}</Text>
-              <View style={styles.status}>
-                <View
-                  style={
-                    equipmentData.isActive ? styles.active : styles.notActive
-                  }
-                ></View>
-              </View>
-            </View>
-          </View>
-          <View style={styles.note}>
-            <Text style={styles.noteText}>{equipmentData.note}</Text>
-          </View>
+        <View style={styles.dataWrapper}>
+          <Text style={styles.title}>Редактирование оборудования</Text>
           <View style={styles.application}>
             {!!equipmentData?.application?.id ? (
               <>
@@ -87,18 +67,25 @@ export default function Page() {
               <Text style={styles.applicationStatus}>На складе</Text>
             )}
           </View>
+          <View style={styles.inputs}>
+            <View style={styles.input}>
+              <Input label="Название" value={equipmentData.name}></Input>
+            </View>
+            <View style={styles.input}>
+              <Input
+                label="Серийный номер"
+                value={equipmentData.serialNumber}
+              ></Input>
+            </View>
+            <View style={styles.input}>
+              <Input label="Примечание" value={equipmentData.note}></Input>
+            </View>
+          </View>
         </View>
-        <View style={styles.buttons}>
-          <View style={styles.button}>
-            <Button icon={<ShareIcon width={s(18)} height={s(20)} />}>
-              Поделиться
-            </Button>
-          </View>
-          <View style={[styles.button, styles.lastButton]}>
-            <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
-              Редактировать
-            </Button>
-          </View>
+        <View style={[styles.button]}>
+          <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
+            Сохранить
+          </Button>
         </View>
       </View>
     </View>
@@ -117,82 +104,20 @@ const styles = StyleSheet.create({
     paddingLeft: s(15),
     paddingRight: s(15),
   },
-  information: {
+  dataWrapper: {
     flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  equipmentData: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
+    height: "100%",
     width: "100%",
   },
-  leftColumn: {
-    width: "85%",
-  },
-  name: {
+  title: {
     fontSize: s(30),
     lineHeight: s(36),
     width: "100%",
-    fontFamily: "Inter_400Regular",
-  },
-  serialNumber: {
-    fontSize: s(24),
-    height: s(30),
-    lineHeight: s(30),
-    maxWidth: "100%",
-    marginTop: s(10),
-    fontFamily: "Inter_400Regular",
-  },
-  rightColumn: {
-    width: "15%",
-    alignItems: "flex-end",
-  },
-  id: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    maxWidth: "100%",
-    fontFamily: "Inter_400Regular",
-  },
-  status: {
-    height: s(36),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  active: {
-    height: s(14),
-    width: s(14),
-    backgroundColor: colors.green,
-    borderRadius: s(7),
-  },
-  notActive: {
-    height: s(14),
-    width: s(14),
-    backgroundColor: colors.red,
-    borderRadius: s(7),
-  },
-  icon: {
-    width: s(30),
-    height: s(32),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: s(20),
-    marginLeft: s(12),
-  },
-  note: {
-    marginTop: s(20),
-  },
-  noteText: {
-    fontSize: s(16),
-    lineHeight: s(20),
+    marginBottom: s(10),
     fontFamily: "Inter_400Regular",
   },
   application: {
-    marginTop: s(20),
+    marginTop: s(16),
     flexDirection: "row",
   },
   applicationLeftColumn: {
@@ -225,11 +150,17 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     fontFamily: "Inter_400Regular",
   },
-  buttons: {},
+  inputs: {
+    flex: 1,
+    backgroundColor: colors.white,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    marginTop: s(16),
+  },
+  input: {
+    width: "100%",
+  },
   button: {
     marginBottom: s(14),
-  },
-  lastButton: {
-    marginBottom: s(0),
   },
 });
