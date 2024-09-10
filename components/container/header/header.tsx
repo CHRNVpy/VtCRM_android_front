@@ -16,7 +16,13 @@ export default function Header({ linkText }: { linkText?: string }) {
       {linkText ? (
         <View style={styles.backLink}>
           <BackLinkIconSvg width={s(31)} height={s(26)} />
-          <Text style={styles.backLinkText}>{linkText}</Text>
+          <Text
+            style={styles.backLinkText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {linkText}
+          </Text>
         </View>
       ) : (
         <LogoSvg style={styles.logo} width={s(253)} height={s(31)} />
@@ -39,6 +45,7 @@ const styles = StyleSheet.create({
   },
   backLink: {
     flexDirection: "row",
+    width: "100%",
   },
   backLinkText: {
     fontSize: s(18),
@@ -46,5 +53,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: s(18),
     fontFamily: "Inter_500Medium",
+    overflow: "hidden",
+    textAlign: "left",
+    flexGrow: 1,
   },
 });

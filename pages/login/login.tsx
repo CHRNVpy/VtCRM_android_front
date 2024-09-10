@@ -9,7 +9,7 @@ import { setLogin, setPassword } from "@/store/auth";
 import colors from "@/helpers/colors";
 import { s } from "react-native-size-matters";
 
-export default function Login() {
+export default function Page() {
   const passwordInputRef = useRef<TextInput>(null);
 
   const dispatch: AppDispatch = useDispatch();
@@ -69,9 +69,7 @@ export default function Login() {
           </View>
         </View>
         <View style={styles.button}>
-          <Button isDisabled={isButtonDisabled}>
-            <Text>Войти</Text>
-          </Button>
+          <Button isDisabled={isButtonDisabled}>Войти</Button>
         </View>
       </View>
     </View>

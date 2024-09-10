@@ -6,8 +6,15 @@ import ApplicationsLinkIcon from "@/assets/applicationsLinkIcon.svg";
 import EquipmentsLinkIcon from "@/assets/equipmentsLinkIcon.svg";
 import InstallersLinkIcon from "@/assets/installersLinkIcon.svg";
 import { s } from "react-native-size-matters";
+import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
-export default function MainPage() {
+export default function Page() {
+  let [fontsLoaded] = useFonts({
+    Inter_400Regular,
+  });
+
+  if (!fontsLoaded) return null;
+
   return (
     <View style={styles.wrapper}>
       <Header />
@@ -33,9 +40,7 @@ export default function MainPage() {
           </View>
         </View>
         <View style={styles.button}>
-          <Button>
-            <Text>Выйти</Text>
-          </Button>
+          <Button>Выйти</Button>
         </View>
       </View>
     </View>
@@ -79,6 +84,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: s(20),
     marginLeft: s(12),
+    fontFamily: "Inter_400Regular",
   },
   button: {},
 });

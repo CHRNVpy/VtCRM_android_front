@@ -9,8 +9,13 @@ import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
+import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
-export default function MainPage() {
+export default function Page() {
+  let [fontsLoaded] = useFonts({
+    Inter_400Regular,
+  });
+
   const installersList = useMemo(() => {
     return [
       {
@@ -82,6 +87,8 @@ export default function MainPage() {
     ];
   }, []);
 
+  if (!fontsLoaded) return null;
+
   return (
     <View style={styles.wrapper}>
       <Header linkText={"На главную"} />
@@ -132,14 +139,14 @@ export default function MainPage() {
                             style={styles.itemButton}
                             size={"small"}
                           >
-                            <Text>Сменить пароль</Text>
+                            Сменить пароль
                           </Button>
                           <Button
                             icon={<EditIcon width={s(5)} height={s(16)} />}
                             style={[styles.itemButton, styles.itemButtonLast]}
                             size={"small"}
                           >
-                            <Text>Редактировать</Text>
+                            Редактировать
                           </Button>
                         </View>
                         <View style={styles.itemButtonsRightColumn}>
@@ -154,16 +161,14 @@ export default function MainPage() {
                             style={styles.itemButton}
                             size={"small"}
                           >
-                            <Text>
-                              {item.isActive ? "Выключить" : "Включить"}
-                            </Text>
+                            {item.isActive ? "Выключить" : "Включить"}
                           </Button>
                           <Button
                             icon={<ShareIcon width={s(13)} height={s(14)} />}
                             style={[styles.itemButton, styles.itemButtonLast]}
                             size={"small"}
                           >
-                            <Text>Поделиться</Text>
+                            Поделиться
                           </Button>
                         </View>
                       </View>
@@ -175,9 +180,7 @@ export default function MainPage() {
           )}
         </View>
         <View style={styles.button}>
-          <Button>
-            <Text>Добавить монтажника</Text>
-          </Button>
+          <Button>Добавить монтажника</Button>
         </View>
       </View>
     </View>
@@ -210,10 +213,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: s(30),
+    lineHeight: s(36),
     width: "100%",
     paddingLeft: s(15),
     paddingRight: s(15),
     marginBottom: s(10),
+    fontFamily: "Inter_400Regular",
   },
   installerItem: {
     marginBottom: s(24),
@@ -235,6 +240,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: s(20),
     maxWidth: "100%",
+    fontFamily: "Inter_400Regular",
   },
   phone: {
     fontSize: s(18),
@@ -242,6 +248,7 @@ const styles = StyleSheet.create({
     lineHeight: s(22),
     maxWidth: "100%",
     marginTop: s(2),
+    fontFamily: "Inter_400Regular",
   },
   rightColumn: {
     width: "15%",
@@ -250,6 +257,7 @@ const styles = StyleSheet.create({
   id: {
     fontSize: s(20),
     maxWidth: "100%",
+    fontFamily: "Inter_400Regular",
   },
   status: {
     height: s(22),

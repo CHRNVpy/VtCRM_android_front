@@ -48,7 +48,11 @@ export default function Button({
         />
       ) : (
         <>
-          {!!icon && <View style={styles.icon}>{icon}</View>}
+          {!!icon && (
+            <View style={[styles.icon, size == "small" && styles.smallIcon]}>
+              {icon}
+            </View>
+          )}
           <Text style={[styles.text, size == "small" && styles.smallText]}>
             {children}
           </Text>
@@ -83,9 +87,13 @@ const styles = StyleSheet.create({
     fontSize: s(14),
   },
   icon: {
-    marginRight: s(5),
-    width: s(13),
+    marginRight: s(8),
+    width: s(18),
     alignItems: "center",
     justifyContent: "center",
+  },
+  smallIcon: {
+    marginRight: s(5),
+    width: s(13),
   },
 });

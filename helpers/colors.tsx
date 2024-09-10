@@ -4,4 +4,5 @@ export default {
   button: "#EAEDEF",
   green: "#1F9E52",
   red: "#9E1F1F",
+  gray: "#666666",
 };

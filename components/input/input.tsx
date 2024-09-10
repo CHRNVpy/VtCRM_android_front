@@ -14,18 +14,22 @@ import Animated, {
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 import { ReactNode, useCallback, useRef, useState } from "react";
 import { s } from "react-native-size-matters";
+import { generateRandomPassword } from "@/helpers/strings";
 import colors from "@/helpers/colors";
 import PasswordVisibleSvg from "@/assets/passwordVisible.svg";
 import PasswordHiddenSvg from "@/assets/passwordHidden.svg";
+import RandomPasswordSvg from "@/assets/randomPassword.svg";
 
 interface InputProps extends TextInputProps {
   label: string;
   children?: ReactNode;
   onSubmitEditing?: (event: any) => void;
   onChangeText?: (value?: string) => void;
-  type?: "password";
+  type?: "password" | "newPassword";
   value?: string;
   inputRef?: React.RefObject<TextInput>;
+  isDisabled?: boolean;
+  isHasClearButton?: boolean;
 }
 
 export default function Input({
@@ -35,6 +39,8 @@ export default function Input({
   inputRef,
   onSubmitEditing,
   onChangeText,
+  isDisabled = false,
+  isHasClearButton = false,
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -65,16 +71,30 @@ export default function Input({
   });
 
   const handlePress = useCallback(() => {
+    if (!isDisabled) return;
+
     if (!inputForwardOrLocalRef.current) return;
 
     inputForwardOrLocalRef.current.focus();
-  }, [inputForwardOrLocalRef]);
+  }, [inputForwardOrLocalRef, isDisabled]);
 
   const handlePasswordIconPress = useCallback(() => {
+    if (isDisabled) return;
+
     setIsPasswordVisible(!isPasswordVisible);
-  }, [isPasswordVisible]);
+  }, [isPasswordVisible, isDisabled]);
+
+  const handleRandomPasswordIconPress = useCallback(() => {
+    if (isDisabled) return;
+
+    if (!onChangeText) return;
+
+    onChangeText(generateRandomPassword(12));
+  }, [onChangeText, isDisabled]);
 
   const handleTextInputFocus = useCallback(() => {
+    if (isDisabled) return;
+
     if (!!value) return;
 
     labelHeight.value = withTiming(labelFinalHeight, {
@@ -89,9 +109,11 @@ export default function Input({
     labelTop.value = withTiming(labelFinalTop, {
       duration: animationDuration,
     });
-  }, [value]);
+  }, [value, isDisabled]);
 
   const handleTextInputBlur = useCallback(() => {
+    if (isDisabled) return;
+
     if (!!value) return;
 
     labelHeight.value = withTiming(labelInitialHeight, {
@@ -106,7 +128,7 @@ export default function Input({
     labelTop.value = withTiming(labelInitialTop, {
       duration: animationDuration,
     });
-  }, [value]);
+  }, [value, isDisabled]);
 
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -117,7 +139,7 @@ export default function Input({
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View style={[styles.touchable]}>
-        <View style={[styles.inputWrapper]}>
+        <View style={[styles.inputWrapper, isDisabled && styles.isDisabled]}>
           <TextInput
             style={[styles.textInput]}
             onSubmitEditing={onSubmitEditing}
@@ -127,6 +149,7 @@ export default function Input({
             secureTextEntry={type == "password" && !isPasswordVisible}
             value={value}
             ref={inputRef}
+            editable={!isDisabled}
           />
           <View pointerEvents={"none"} style={[styles.labelWrapper]}>
             <Animated.Text style={[styles.label, labelAnimatedStyle]}>
@@ -143,6 +166,14 @@ export default function Input({
               ) : (
                 <PasswordVisibleSvg width={s(24)} height={s(24)} />
               )}
+            </TouchableOpacity>
+          )}
+          {type == "newPassword" && (
+            <TouchableOpacity
+              style={styles.passwordIconWrapper}
+              onPress={handleRandomPasswordIconPress}
+            >
+              <RandomPasswordSvg width={s(20)} height={s(20)} />
             </TouchableOpacity>
           )}
         </View>
@@ -164,6 +195,9 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.dark,
     borderBottomStyle: "solid",
     paddingTop: s(16),
+  },
+  isDisabled: {
+    opacity: 0.6,
   },
   textInput: {
     width: "100%",
