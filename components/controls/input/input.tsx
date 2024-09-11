@@ -184,9 +184,9 @@ export default function Input({
 
 const styles = StyleSheet.create({
   touchable: {
-    height: s(64),
-    paddingTop: s(10),
-    paddingBottom: s(10),
+    height: s(60),
+    paddingTop: s(8),
+    paddingBottom: s(8),
   },
   inputWrapper: {
     width: "100%",

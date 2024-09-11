@@ -1,9 +1,13 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { useMemo } from "react";
-import colors from "@/helpers/colors";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Header from "@/components/container/header/header";
-import Input from "@/components/input/input";
-import Button from "@/components/button/button";
+import Content from "@/components/wrappers/content/content";
+import Inputs from "@/components/wrappers/inputs/inputs";
+import Input from "@/components/controls/input/input";
+import Title from "@/components/wrappers/title/title";
+import Buttons from "@/components/wrappers/buttons/buttons";
+import Button from "@/components/controls/button/button";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -30,63 +34,23 @@ export default function Page() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header
         linkText={`#${installerData.id} ${installerData.lastName} ${installerData.firstName} ${installerData.patronym}`}
       />
-      <View style={styles.content}>
-        <View style={styles.dataWrapper}>
-          <Text style={styles.title}>Изменение пароля</Text>
-          <View style={styles.inputs}>
-            <View style={styles.input}>
-              <Input label="Новый пароль" value={""} type="newPassword"></Input>
-            </View>
-          </View>
-        </View>
-        <View style={[styles.button]}>
-          <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
-            Изменить пароль
-          </Button>
-        </View>
-      </View>
-    </View>
+      <Title>Изменение пароля</Title>
+      <Content>
+        <Inputs>
+          <Input label="Новый пароль" value={""} type="newPassword"></Input>
+        </Inputs>
+      </Content>
+      <Buttons>
+        <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
+          Изменить пароль
+        </Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingTop: s(5),
-    paddingBottom: s(15),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  dataWrapper: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-  title: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    width: "100%",
-    marginBottom: s(10),
-    fontFamily: "Inter_400Regular",
-  },
-  inputs: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  input: {
-    width: "100%",
-  },
-  button: {
-    marginBottom: s(14),
-  },
-});
+const styles = StyleSheet.create({});

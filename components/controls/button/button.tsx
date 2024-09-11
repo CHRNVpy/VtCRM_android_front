@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "Inter_400Regular",
     fontSize: s(18),
+    lineHeight: s(22),
     color: colors.dark,
   },
   smallText: {

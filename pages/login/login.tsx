@@ -1,13 +1,15 @@
 import { useRef, useMemo, useCallback } from "react";
-import { TextInput, StyleSheet, View, Text } from "react-native";
+import { TextInput, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import Input from "@/components/input/input";
+import Content from "@/components/wrappers/content/content";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
+import Input from "@/components/controls/input/input";
 import Header from "@/components/container/header/header";
-import Button from "@/components/button/button";
+import Button from "@/components/controls/button/button";
+import Buttons from "@/components/wrappers/buttons/buttons";
+import Inputs from "@/components/wrappers/inputs/inputs";
 import { RootState, AppDispatch } from "@/store/store";
 import { setLogin, setPassword } from "@/store/auth";
-import colors from "@/helpers/colors";
-import { s } from "react-native-size-matters";
 
 export default function Page() {
   const passwordInputRef = useRef<TextInput>(null);
@@ -46,58 +48,28 @@ export default function Page() {
   }, [login, password]);
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header />
-      <View style={styles.content}>
-        <View style={styles.inputs}>
-          <View style={styles.input}>
-            <Input
-              label="Логин"
-              onChangeText={handleLoginOnChangeText}
-              onSubmitEditing={handleSubmitLoginEditing}
-              value={login}
-            ></Input>
-          </View>
-          <View style={[styles.input, styles.lastChild]}>
-            <Input
-              label="Пароль"
-              onChangeText={handlePasswordOnChangeText}
-              value={password}
-              type={"password"}
-              inputRef={passwordInputRef}
-            ></Input>
-          </View>
-        </View>
-        <View style={styles.button}>
-          <Button isDisabled={isButtonDisabled}>Войти</Button>
-        </View>
-      </View>
-    </View>
+      <Inputs verticalAlign={"center"}>
+        <Input
+          label="Логин"
+          onChangeText={handleLoginOnChangeText}
+          onSubmitEditing={handleSubmitLoginEditing}
+          value={login}
+        ></Input>
+        <Input
+          label="Пароль"
+          onChangeText={handlePasswordOnChangeText}
+          value={password}
+          type={"password"}
+          inputRef={passwordInputRef}
+        ></Input>
+      </Inputs>
+      <Buttons>
+        <Button isDisabled={isButtonDisabled}>Войти</Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    paddingBottom: s(15),
-  },
-  inputs: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    width: "100%",
-  },
-  lastChild: {
-    marginBottom: 0,
-  },
-  button: {},
-});
+const styles = StyleSheet.create({});

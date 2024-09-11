@@ -49,8 +49,10 @@ const styles = StyleSheet.create({
   },
   backLinkText: {
     fontSize: s(18),
+    lineHeight: s(26),
     height: s(26),
     alignItems: "center",
+    justifyContent: "center",
     marginLeft: s(18),
     fontFamily: "Inter_500Medium",
     overflow: "hidden",

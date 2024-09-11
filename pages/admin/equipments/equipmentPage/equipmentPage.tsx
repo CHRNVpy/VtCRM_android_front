@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     lineHeight: s(36),
     width: "100%",
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   serialNumber: {
     fontSize: s(24),
@@ -145,6 +146,7 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
     marginTop: s(10),
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   rightColumn: {
     width: "15%",
@@ -155,6 +157,7 @@ const styles = StyleSheet.create({
     lineHeight: s(36),
     maxWidth: "100%",
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   status: {
     height: s(36),
@@ -181,6 +184,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: s(20),
+    lineHeight: s(24),
     marginLeft: s(12),
   },
   note: {
@@ -190,6 +194,7 @@ const styles = StyleSheet.create({
     fontSize: s(16),
     lineHeight: s(20),
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   application: {
     marginTop: s(20),
@@ -206,6 +211,7 @@ const styles = StyleSheet.create({
     fontSize: s(20),
     lineHeight: s(24),
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   applicationInstaller: {
     fontSize: s(20),
@@ -215,6 +221,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: s(1),
     borderStyle: "dashed",
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   applicationData: {
     fontSize: s(20),
@@ -224,6 +231,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: s(1),
     borderStyle: "dashed",
     fontFamily: "Inter_400Regular",
+    color: colors.dark,
   },
   buttons: {},
   button: {

@@ -7,11 +7,18 @@
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AppContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/AppContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/button/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/button/button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/button/button.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/components/container/header/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/container/header/header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/input/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/input/input.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helpers/colors.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/colors.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installersPage/installersPage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/input/input.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/strings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/strings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installerPage/installerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installerPage/installerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/login/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/login/login.tsx" afterDir="false" />
     </list>

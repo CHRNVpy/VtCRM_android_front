@@ -1,21 +1,24 @@
-import { FlatList, StyleSheet, View, Text } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { useMemo } from "react";
-import colors from "@/helpers/colors";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Header from "@/components/container/header/header";
-import Button from "@/components/button/button";
+import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
+import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import TextType from "@/components/wrappers/textType/textType";
+import Status from "@/components/wrappers/status/status";
+import Content from "@/components/wrappers/content/content";
+import ListItem from "@/components/wrappers/listItem/listItem";
+import Title from "@/components/wrappers/title/title";
+import Buttons from "@/components/wrappers/buttons/buttons";
+import Button from "@/components/controls/button/button";
 import ChangePasswordIcon from "@/assets/changePasswordIcon.svg";
 import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
-import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
 export default function Page() {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-  });
-
   const installersList = useMemo(() => {
     return [
       {
@@ -87,220 +90,97 @@ export default function Page() {
     ];
   }, []);
 
-  if (!fontsLoaded) return null;
-
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header linkText={"На главную"} />
-      <View style={styles.content}>
-        <View style={styles.installers}>
-          <Text style={styles.title}>Монтажники</Text>
-          {!!installersList.length && (
-            <View style={styles.installersListWrapper}>
-              <FlatList
-                data={installersList}
-                contentContainerStyle={styles.installersList}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item, index }) => {
-                  const isLastItem = index === installersList.length - 1;
-
-                  return (
-                    <View
-                      style={[
-                        styles.installerItem,
-                        isLastItem && styles.isLastItem,
-                      ]}
-                    >
-                      <View style={styles.itemContent}>
-                        <View style={styles.leftColumn}>
-                          <Text style={styles.name}>{item.name}</Text>
-                          <Text style={styles.phone}>{item.phone}</Text>
-                        </View>
-                        <View style={styles.rightColumn}>
-                          <Text style={styles.id}>#{item.id}</Text>
-                          <View style={styles.status}>
-                            <View
-                              style={
-                                item.isActive ? styles.active : styles.notActive
-                              }
-                            ></View>
-                          </View>
-                        </View>
-                      </View>
-                      <View style={styles.itemButtons}>
-                        <View style={styles.itemButtonsLeftColumn}>
-                          <Button
-                            icon={
-                              <ChangePasswordIcon
-                                width={s(13)}
-                                height={s(12)}
-                              />
-                            }
-                            style={styles.itemButton}
-                            size={"small"}
+      <Title>Монтажники</Title>
+      {!!installersList.length && (
+        <Content>
+          <FlatList
+            data={installersList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => {
+              return (
+                <ListItem isLastItem={index === installersList.length - 1}>
+                  <MarginBottom size="medium">
+                    <TwoColumns
+                      ratio="85/15"
+                      leftColumn={
+                        <>
+                          <TextType size="big" marginBottom="small">
+                            {item.name}
+                          </TextType>
+                          <TextType size="medium">{item.phone}</TextType>
+                        </>
+                      }
+                      rightColumn={
+                        <>
+                          <TextType
+                            size="big"
+                            align="right"
+                            marginBottom="small"
                           >
-                            Сменить пароль
-                          </Button>
-                          <Button
-                            icon={<EditIcon width={s(5)} height={s(16)} />}
-                            style={[styles.itemButton, styles.itemButtonLast]}
-                            size={"small"}
-                          >
-                            Редактировать
-                          </Button>
-                        </View>
-                        <View style={styles.itemButtonsRightColumn}>
-                          <Button
-                            icon={
-                              item.isActive ? (
-                                <TurnOffIcon width={s(9)} height={s(17)} />
-                              ) : (
-                                <TurnOnIcon width={s(9)} height={s(17)} />
-                              )
-                            }
-                            style={styles.itemButton}
-                            size={"small"}
-                          >
-                            {item.isActive ? "Выключить" : "Включить"}
-                          </Button>
-                          <Button
-                            icon={<ShareIcon width={s(13)} height={s(14)} />}
-                            style={[styles.itemButton, styles.itemButtonLast]}
-                            size={"small"}
-                          >
-                            Поделиться
-                          </Button>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-        <View style={styles.button}>
-          <Button>Добавить монтажника</Button>
-        </View>
-      </View>
-    </View>
+                            #{item.id}
+                          </TextType>
+                          <Status isActive={item.isActive} />
+                        </>
+                      }
+                    />
+                  </MarginBottom>
+                  <TwoColumns
+                    gap={"medium"}
+                    leftColumn={
+                      <Buttons isItemButtons={true}>
+                        <Button
+                          icon={
+                            <ChangePasswordIcon width={s(13)} height={s(12)} />
+                          }
+                          size={"small"}
+                        >
+                          Сменить пароль
+                        </Button>
+                        <Button
+                          icon={<EditIcon width={s(5)} height={s(16)} />}
+                          size={"small"}
+                        >
+                          Редактировать
+                        </Button>
+                      </Buttons>
+                    }
+                    rightColumn={
+                      <Buttons isItemButtons={true}>
+                        <Button
+                          icon={
+                            item.isActive ? (
+                              <TurnOffIcon width={s(9)} height={s(17)} />
+                            ) : (
+                              <TurnOnIcon width={s(9)} height={s(17)} />
+                            )
+                          }
+                          size={"small"}
+                        >
+                          {item.isActive ? "Выключить" : "Включить"}
+                        </Button>
+                        <Button
+                          icon={<ShareIcon width={s(13)} height={s(14)} />}
+                          size={"small"}
+                        >
+                          Поделиться
+                        </Button>
+                      </Buttons>
+                    }
+                  />
+                </ListItem>
+              );
+            }}
+          />
+        </Content>
+      )}
+      <Buttons>
+        <Button>Добавить монтажника</Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingTop: s(5),
-    paddingBottom: s(15),
-  },
-  installers: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  installersListWrapper: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-  installersList: {
-    width: "100%",
-  },
-  title: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    width: "100%",
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    marginBottom: s(10),
-    fontFamily: "Inter_400Regular",
-  },
-  installerItem: {
-    marginBottom: s(24),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  isLastItem: {
-    marginBottom: s(0),
-  },
-  itemContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  leftColumn: {
-    width: "85%",
-  },
-  name: {
-    fontSize: s(20),
-    maxWidth: "100%",
-    fontFamily: "Inter_400Regular",
-  },
-  phone: {
-    fontSize: s(18),
-    height: s(22),
-    lineHeight: s(22),
-    maxWidth: "100%",
-    marginTop: s(2),
-    fontFamily: "Inter_400Regular",
-  },
-  rightColumn: {
-    width: "15%",
-    alignItems: "flex-end",
-  },
-  id: {
-    fontSize: s(20),
-    maxWidth: "100%",
-    fontFamily: "Inter_400Regular",
-  },
-  status: {
-    height: s(22),
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: s(2),
-  },
-  active: {
-    height: s(8),
-    width: s(8),
-    backgroundColor: colors.green,
-    borderRadius: s(4),
-  },
-  notActive: {
-    height: s(8),
-    width: s(8),
-    backgroundColor: colors.red,
-    borderRadius: s(4),
-  },
-  itemButtons: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginTop: s(16),
-  },
-  itemButtonsLeftColumn: {
-    flex: 1,
-    marginRight: s(5),
-  },
-  itemButtonsRightColumn: {
-    flex: 1,
-    marginLeft: s(5),
-  },
-  itemButton: {
-    marginBottom: s(8),
-  },
-  itemButtonLast: {
-    marginBottom: s(0),
-  },
-  button: {
-    paddingTop: s(15),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    height: s(78),
-  },
-});
+const styles = StyleSheet.create({});
