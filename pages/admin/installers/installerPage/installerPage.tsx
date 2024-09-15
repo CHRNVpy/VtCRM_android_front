@@ -1,6 +1,5 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { useMemo } from "react";
-import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Content from "@/components/wrappers/content/content";

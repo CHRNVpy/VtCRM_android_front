@@ -1,9 +1,15 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { useMemo } from "react";
-import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
+import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
+import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
+import Content from "@/components/wrappers/content/content";
+import Title from "@/components/wrappers/title/title";
+import TextType from "@/components/wrappers/textType/textType";
+import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -36,135 +42,57 @@ export default function Page() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header linkText={`#${equipmentData.id} ${equipmentData.name}`} />
-      <View style={styles.content}>
-        <View style={styles.dataWrapper}>
-          <Text style={styles.title}>Редактирование оборудования</Text>
-          <View style={styles.application}>
-            {!!equipmentData?.application?.id ? (
-              <>
-                <View style={styles.applicationLeftColumn}>
-                  <Text style={styles.applicationStatus}>У монтажника</Text>
-                </View>
-                <View style={styles.applicationRightColumn}>
-                  <Text
-                    style={styles.applicationInstaller}
+      <Title>Редактирование оборудования</Title>
+      <Content isWithPaddings={true}>
+        {!!equipmentData?.application?.id ? (
+          <>
+            <TwoColumns
+              leftColumn={
+                <>
+                  <TextType>У монтажника</TextType>
+                </>
+              }
+              rightColumn={
+                <>
+                  <TextType
                     numberOfLines={1}
                     ellipsizeMode="tail"
+                    align="right"
+                    isDashed={true}
                   >
                     #{equipmentData.application.installer.id}{" "}
                     {equipmentData.application.installer.lastName}{" "}
                     {equipmentData.application.installer.firstName.charAt(0)}.{" "}
                     {equipmentData.application.installer.patronym.charAt(0)}.
-                  </Text>
-                  <Text style={styles.applicationData}>
+                  </TextType>
+                  <TextType align="right" isDashed={true}>
                     Заявка #{equipmentData.application.id}
-                  </Text>
-                </View>
-              </>
-            ) : (
-              <Text style={styles.applicationStatus}>На складе</Text>
-            )}
-          </View>
-          <View style={styles.inputs}>
-            <View style={styles.input}>
-              <Input label="Название" value={equipmentData.name}></Input>
-            </View>
-            <View style={styles.input}>
-              <Input
-                label="Серийный номер"
-                value={equipmentData.serialNumber}
-              ></Input>
-            </View>
-            <View style={styles.input}>
-              <Input label="Примечание" value={equipmentData.note}></Input>
-            </View>
-          </View>
-        </View>
-        <View style={[styles.button]}>
-          <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
-            Сохранить
-          </Button>
-        </View>
-      </View>
-    </View>
+                  </TextType>
+                </>
+              }
+            />
+          </>
+        ) : (
+          <TextType>На складе</TextType>
+        )}
+        <Inputs>
+          <Input label="Название" value={equipmentData.name}></Input>
+          <Input
+            label="Серийный номер"
+            value={equipmentData.serialNumber}
+          ></Input>
+          <Input label="Примечание" value={equipmentData.note}></Input>
+        </Inputs>
+      </Content>
+      <Buttons>
+        <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
+          Сохранить
+        </Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingTop: s(5),
-    paddingBottom: s(15),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  dataWrapper: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-  title: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    width: "100%",
-    marginBottom: s(10),
-    fontFamily: "Inter_400Regular",
-    color: colors.dark,
-  },
-  application: {
-    marginTop: s(16),
-    flexDirection: "row",
-  },
-  applicationLeftColumn: {
-    width: "50%",
-  },
-  applicationRightColumn: {
-    width: "50%",
-    alignItems: "flex-end",
-  },
-  applicationStatus: {
-    fontSize: s(20),
-    lineHeight: s(24),
-    fontFamily: "Inter_400Regular",
-    color: colors.dark,
-  },
-  applicationInstaller: {
-    fontSize: s(20),
-    lineHeight: s(24),
-    textAlign: "right",
-    borderBottomColor: colors.dark,
-    borderBottomWidth: s(1),
-    borderStyle: "dashed",
-    fontFamily: "Inter_400Regular",
-    color: colors.dark,
-  },
-  applicationData: {
-    fontSize: s(20),
-    lineHeight: s(24),
-    marginTop: s(4),
-    borderBottomColor: colors.dark,
-    borderBottomWidth: s(1),
-    borderStyle: "dashed",
-    fontFamily: "Inter_400Regular",
-    color: colors.dark,
-  },
-  inputs: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: s(16),
-  },
-  input: {
-    width: "100%",
-  },
-  button: {
-    marginBottom: s(14),
-  },
-});
+const styles = StyleSheet.create({});
