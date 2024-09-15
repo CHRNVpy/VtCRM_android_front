@@ -39,7 +39,7 @@ export default function Page() {
         linkText={`#${installerData.id} ${installerData.lastName} ${installerData.firstName} ${installerData.patronym}`}
       />
       <Title>Изменение пароля</Title>
-      <Content>
+      <Content isWithPaddings={true}>
         <Inputs>
           <Input label="Новый пароль" value={""} type="newPassword"></Input>
         </Inputs>

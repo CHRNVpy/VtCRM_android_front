@@ -6,20 +6,20 @@ import { s } from "react-native-size-matters";
 interface InputsProps {
   children?: ReactNode;
   verticalAlign?: "center";
-  isWithPadding?: boolean;
+  isWithPaddings?: boolean;
 }
 
 export default function Inputs({
   children,
   verticalAlign,
-  isWithPadding,
+  isWithPaddings,
 }: InputsProps) {
   return (
     <View
       style={[
         styles.inputs,
         verticalAlign == "center" && styles.verticalAlignCenter,
-        !!isWithPadding && styles.isWithPadding,
+        !!isWithPaddings && styles.isWithPaddings,
       ]}
     >
       {Children.map(children, (child, index) => {
@@ -45,11 +45,12 @@ const styles = StyleSheet.create({
   inputs: {
     justifyContent: "flex-start",
   },
-  isWithPadding: {
+  isWithPaddings: {
     paddingLeft: s(15),
     paddingRight: s(15),
   },
   verticalAlignCenter: {
+    flex: 1,
     justifyContent: "center",
   },
   input: {

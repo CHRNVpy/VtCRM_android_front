@@ -39,7 +39,7 @@ export default function Page() {
         linkText={`#${installerData.id} ${installerData.lastName} ${installerData.firstName} ${installerData.patronym}`}
       />
       <Title>Редактирование монтажника</Title>
-      <Content>
+      <Content isWithPaddings={true}>
         <Inputs>
           <Input label="Фамилия" value={installerData.lastName}></Input>
           <Input label="Имя" value={installerData.firstName}></Input>

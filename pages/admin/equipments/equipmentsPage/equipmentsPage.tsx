@@ -196,7 +196,7 @@ export default function Page() {
         Оборудование
       </Title>
       <MarginBottom>
-        <Inputs>
+        <Inputs isWithPaddings={true}>
           <Input label="Поиск по всем полям" isHasClearButton={true}></Input>
           <Input label="Статус" isHasClearButton={true}></Input>
           <Input label="Монтажник" isHasClearButton={true}></Input>

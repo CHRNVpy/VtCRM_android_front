@@ -38,7 +38,7 @@ export default function Page() {
       <Header linkText={`Монтажники`} />
       <Title>Добавление монтажника</Title>
       <Content>
-        <Inputs>
+        <Inputs isWithPaddings={true}>
           <Input label="Фамилия" value={installerData.lastName}></Input>
           <Input label="Имя" value={installerData.firstName}></Input>
           <Input label="Отчество" value={installerData.patronym}></Input>

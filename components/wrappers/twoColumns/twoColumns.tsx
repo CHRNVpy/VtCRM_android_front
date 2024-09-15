@@ -5,7 +5,7 @@ import { s } from "react-native-size-matters";
 interface TwoColumnsProps {
   leftColumn?: ReactNode;
   rightColumn?: ReactNode;
-  ratio?: "85/15";
+  ratio?: "85/15" | "15/85" | "30/70";
   gap?: "medium";
 }
 
@@ -21,6 +21,8 @@ export default function TwoColumns({
         style={[
           styles.leftColumn,
           ratio == "85/15" && styles.leftColumn85,
+          ratio == "15/85" && styles.leftColumn15,
+          ratio == "30/70" && styles.leftColumn30,
           gap == "medium" && styles.leftColumnGap,
         ]}
       >
@@ -30,6 +32,8 @@ export default function TwoColumns({
         style={[
           styles.rightColumn,
           ratio == "85/15" && styles.rightColumn15,
+          ratio == "15/85" && styles.rightColumn85,
+          ratio == "30/70" && styles.rightColumn70,
           gap == "medium" && styles.rightColumnGap,
         ]}
       >
@@ -49,6 +53,12 @@ const styles = StyleSheet.create({
   leftColumn: {
     width: "50%",
   },
+  leftColumn15: {
+    width: "15%",
+  },
+  leftColumn30: {
+    width: "30%",
+  },
   leftColumn85: {
     width: "85%",
   },
@@ -61,6 +71,12 @@ const styles = StyleSheet.create({
   },
   rightColumn15: {
     width: "15%",
+  },
+  rightColumn70: {
+    width: "70%",
+  },
+  rightColumn85: {
+    width: "85%",
   },
   rightColumnGap: {
     marginLeft: s(2),

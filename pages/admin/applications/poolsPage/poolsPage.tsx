@@ -1,8 +1,15 @@
-import { FlatList, StyleSheet, View, Text } from "react-native";
-import { useMemo } from "react";
-import colors from "@/helpers/colors";
+import { FlatList, StyleSheet } from "react-native";
+import React, { useMemo } from "react";
 import Header from "@/components/container/header/header";
+import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
+import ListItem from "@/components/wrappers/listItem/listItem";
+import Title from "@/components/wrappers/title/title";
+import Content from "@/components/wrappers/content/content";
+import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import TextType from "@/components/wrappers/textType/textType";
+import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
@@ -159,220 +166,114 @@ export default function Page() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header linkText={"На главную"} />
-      <View style={styles.content}>
-        <View style={styles.pools}>
-          <Text style={styles.title}>Пулы заявок</Text>
-          {!!poolsList.length && (
-            <View style={styles.poolsListWrapper}>
-              <FlatList
-                data={poolsList}
-                contentContainerStyle={styles.poolsList}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item, index }) => {
-                  const isLastItem = index === poolsList.length - 1;
+      <Title>Пулы заявок</Title>
+      <Content>
+        {!!poolsList.length && (
+          <FlatList
+            data={poolsList}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => {
+              return (
+                <ListItem isLastItem={index === poolsList.length - 1}>
+                  <MarginBottom>
+                    <TwoColumns
+                      leftColumn={
+                        <>
+                          <TextType isBold={true} isDashed={true}>
+                            Пул #{item.id}
+                          </TextType>
+                        </>
+                      }
+                      rightColumn={
+                        <>
+                          <TextType isBold={true} align="right">
+                            {item.applicationsCount}{" "}
+                            {ruApplicationsByCount({
+                              count: item.applicationsCount,
+                            })}
+                          </TextType>
+                        </>
+                      }
+                    />
+                  </MarginBottom>
+                  <MarginBottom>
+                    {item.applications.map(
+                      (applicationItem, applicationIndex) => {
+                        const itemElement = (
+                          <TwoColumns
+                            leftColumn={
+                              <>
+                                <TextType>
+                                  {applicationItem.client.name}
+                                </TextType>
+                                <TextType size="small">
+                                  {applicationItem.type == "connection"
+                                    ? "Подключение"
+                                    : applicationItem.type == "repair"
+                                    ? "Ремонт"
+                                    : "Монтаж ВОЛС"}
+                                </TextType>
+                              </>
+                            }
+                            rightColumn={
+                              <>
+                                <TextType align="right">
+                                  #{applicationItem.id}
+                                </TextType>
+                                <TextType align="right" size="small">
+                                  {formatDateString({
+                                    dateString: applicationItem.datetime,
+                                  })}
+                                </TextType>
+                              </>
+                            }
+                          />
+                        );
 
-                  return (
-                    <View
-                      style={[styles.poolItem, isLastItem && styles.isLastItem]}
+                        return (
+                          <React.Fragment key={applicationItem.id}>
+                            {applicationIndex ===
+                            item.applications.length - 1 ? (
+                              itemElement
+                            ) : (
+                              <MarginBottom size="small">
+                                {itemElement}
+                              </MarginBottom>
+                            )}
+                          </React.Fragment>
+                        );
+                      }
+                    )}
+                  </MarginBottom>
+                  <Buttons isItemButtons={true}>
+                    <Button
+                      icon={<AddIcon width={s(13)} height={s(14)} />}
+                      size={"small"}
                     >
-                      <View style={styles.poolInformation}>
-                        <Text style={styles.poolId}>Пул #{item.id}</Text>
-                        <Text style={styles.poolCount}>
-                          {item.applicationsCount}{" "}
-                          {ruApplicationsByCount({
-                            count: item.applicationsCount,
-                          })}
-                        </Text>
-                      </View>
-                      <View style={styles.applicationsList}>
-                        {item.applications.map(
-                          (applicationItem, applicationIndex) => {
-                            const isLastApplicationItem =
-                              applicationIndex === item.applications.length - 1;
-
-                            return (
-                              <View
-                                style={[
-                                  styles.applicationItem,
-                                  !!isLastApplicationItem &&
-                                    styles.applicationIsLastItem,
-                                ]}
-                                key={applicationItem.id}
-                              >
-                                <View style={styles.applicationItemLeftColumn}>
-                                  <Text style={styles.applicationClientName}>
-                                    {applicationItem.client.name}
-                                  </Text>
-                                  <Text style={styles.applicationType}>
-                                    {applicationItem.type == "connection"
-                                      ? "Подключение"
-                                      : applicationItem.type == "repair"
-                                      ? "Ремонт"
-                                      : "Монтаж ВОЛС"}
-                                  </Text>
-                                </View>
-                                <View style={styles.applicationItemRightColumn}>
-                                  <Text style={styles.applicationId}>
-                                    #{applicationItem.id}
-                                  </Text>
-                                  <Text style={styles.applicationDate}>
-                                    {formatDateString({
-                                      dateString: applicationItem.datetime,
-                                    })}
-                                  </Text>
-                                </View>
-                              </View>
-                            );
-                          }
-                        )}
-                      </View>
-                      <View style={styles.itemButtons}>
-                        <Button
-                          icon={<AddIcon width={s(13)} height={s(14)} />}
-                          style={styles.itemButton}
-                          size={"small"}
-                        >
-                          Добавить заявку
-                        </Button>
-                        <Button
-                          icon={<StartIcon width={s(13)} height={s(13)} />}
-                          style={[styles.itemButton, styles.isLastItemButton]}
-                          size={"small"}
-                        >
-                          Отправить в работу
-                        </Button>
-                      </View>
-                    </View>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-        <View style={styles.button}>
-          <Button icon={<AddIcon width={s(16)} height={s(16)} />}>
-            Добавить пул
-          </Button>
-        </View>
-      </View>
-    </View>
+                      Добавить заявку
+                    </Button>
+                    <Button
+                      icon={<StartIcon width={s(13)} height={s(13)} />}
+                      size={"small"}
+                    >
+                      Отправить в работу
+                    </Button>
+                  </Buttons>
+                </ListItem>
+              );
+            }}
+          />
+        )}
+      </Content>
+      <Buttons>
+        <Button icon={<AddIcon width={s(16)} height={s(16)} />}>
+          Добавить пул
+        </Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingTop: s(5),
-    paddingBottom: s(15),
-  },
-  title: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    width: "100%",
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    marginBottom: s(10),
-    fontFamily: "Inter_400Regular",
-  },
-  pools: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  poolsListWrapper: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-  poolsList: {
-    width: "100%",
-  },
-  poolItem: {
-    marginBottom: s(24),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  isLastItem: {
-    marginBottom: s(0),
-  },
-  poolInformation: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-  },
-  poolId: {
-    fontSize: s(22),
-    lineHeight: s(26),
-    fontFamily: "Inter_500Medium",
-    color: colors.dark,
-    borderBottomColor: colors.dark,
-    borderBottomWidth: s(1),
-    borderStyle: "dashed",
-  },
-  poolCount: {
-    fontSize: s(22),
-    lineHeight: s(26),
-    fontFamily: "Inter_500Medium",
-    color: colors.dark,
-  },
-  applicationsList: {
-    marginTop: s(20),
-  },
-  applicationItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginBottom: s(14),
-  },
-  applicationIsLastItem: {
-    marginBottom: s(0),
-  },
-  applicationItemLeftColumn: {},
-  applicationItemRightColumn: {},
-  applicationClientName: {
-    fontFamily: "Inter_400Regular",
-    fontSize: s(22),
-    lineHeight: s(26),
-  },
-  applicationType: {
-    fontFamily: "Inter_400Regular",
-    fontSize: s(18),
-    lineHeight: s(22),
-    marginTop: s(4),
-  },
-  applicationId: {
-    fontFamily: "Inter_400Regular",
-    fontSize: s(22),
-    lineHeight: s(26),
-    textAlign: "right",
-  },
-  applicationDate: {
-    fontFamily: "Inter_400Regular",
-    fontSize: s(18),
-    lineHeight: s(22),
-    marginTop: s(4),
-    textAlign: "right",
-  },
-  itemButtons: {
-    marginTop: s(16),
-  },
-  itemButton: {
-    marginBottom: s(8),
-  },
-  isLastItemButton: {
-    marginBottom: s(0),
-  },
-  button: {
-    paddingTop: s(15),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-    height: s(78),
-  },
-});
+const styles = StyleSheet.create({});

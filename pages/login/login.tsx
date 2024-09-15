@@ -1,7 +1,6 @@
 import { useRef, useMemo, useCallback } from "react";
 import { TextInput, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import Content from "@/components/wrappers/content/content";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Input from "@/components/controls/input/input";
 import Header from "@/components/container/header/header";
@@ -50,7 +49,7 @@ export default function Page() {
   return (
     <Wrapper>
       <Header />
-      <Inputs verticalAlign={"center"}>
+      <Inputs verticalAlign={"center"} isWithPaddings={true}>
         <Input
           label="Логин"
           onChangeText={handleLoginOnChangeText}

@@ -16,6 +16,7 @@ import AdminEditEquipmentPage from "@/pages/admin/equipments/editEquipmentPage/e
 import AdminCreateEquipmentPage from "@/pages/admin/equipments/createEquipmentPage/createEquipmentPage";
 import AdminApplicationsPoolsPage from "@/pages/admin/applications/poolsPage/poolsPage";
 import AdminApplicationsPoolPage from "@/pages/admin/applications/poolPage/poolPage";
+import AdminApplicationsPage from "@/pages/admin/applications/applicationPage/applicationPage";
 import colors from "@/helpers/colors";
 
 const Stack = createNativeStackNavigator();
@@ -26,7 +27,7 @@ export default function App() {
       <NavigationContainer>
         <View style={styles.container}>
           <StatusBar style="dark" backgroundColor={colors.white} />
-          <Stack.Navigator initialRouteName={"AdminEditEquipmentPage"}>
+          <Stack.Navigator initialRouteName={"AdminApplicationsPage"}>
             <Stack.Screen
               name="Login"
               component={Login}
@@ -90,6 +91,11 @@ export default function App() {
             <Stack.Screen
               name="AdminApplicationsPoolPage"
               component={AdminApplicationsPoolPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AdminApplicationsPage"
+              component={AdminApplicationsPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

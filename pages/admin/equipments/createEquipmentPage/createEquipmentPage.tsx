@@ -2,8 +2,13 @@ import { StyleSheet, View, Text } from "react-native";
 import { useMemo } from "react";
 import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
+import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
+import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
+import Content from "@/components/wrappers/content/content";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
+import Title from "@/components/wrappers/title/title";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -36,71 +41,26 @@ export default function Page() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header linkText={`Оборудование`} />
-      <View style={styles.content}>
-        <View style={styles.dataWrapper}>
-          <Text style={styles.title}>Добавление оборудования</Text>
-          <View style={styles.inputs}>
-            <View style={styles.input}>
-              <Input label="Название" value={equipmentData.name}></Input>
-            </View>
-            <View style={styles.input}>
-              <Input
-                label="Серийный номер"
-                value={equipmentData.serialNumber}
-              ></Input>
-            </View>
-            <View style={styles.input}>
-              <Input label="Примечание" value={equipmentData.note}></Input>
-            </View>
-          </View>
-        </View>
-        <View style={[styles.button]}>
-          <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
-            Добавить
-          </Button>
-        </View>
-      </View>
-    </View>
+      <Title>Добавление оборудования</Title>
+      <Content isWithPaddings={true}>
+        <Inputs>
+          <Input label="Название" value={equipmentData.name}></Input>
+          <Input
+            label="Серийный номер"
+            value={equipmentData.serialNumber}
+          ></Input>
+          <Input label="Примечание" value={equipmentData.note}></Input>
+        </Inputs>
+      </Content>
+      <Buttons>
+        <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
+          Добавить
+        </Button>
+      </Buttons>
+    </Wrapper>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  content: {
-    flex: 1,
-    paddingTop: s(5),
-    paddingBottom: s(15),
-    paddingLeft: s(15),
-    paddingRight: s(15),
-  },
-  dataWrapper: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
-  title: {
-    fontSize: s(30),
-    lineHeight: s(36),
-    width: "100%",
-    marginBottom: s(10),
-    fontFamily: "Inter_400Regular",
-    color: colors.dark,
-  },
-  inputs: {
-    flex: 1,
-    backgroundColor: colors.white,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  input: {
-    width: "100%",
-  },
-  button: {
-    marginBottom: s(14),
-  },
-});
+const styles = StyleSheet.create({});
