@@ -4,7 +4,7 @@ import { s } from "react-native-size-matters";
 
 interface MarginBottomProps {
   children?: ReactNode;
-  size?: "biggest" | "big" | "medium" | "small";
+  size?: "biggest" | "big" | "medium" | "small" | "smallest";
 }
 
 export default function MarginBottom({ children, size }: MarginBottomProps) {
@@ -12,6 +12,7 @@ export default function MarginBottom({ children, size }: MarginBottomProps) {
     <View
       style={[
         styles.marginBottom,
+        size == "smallest" && styles.marginBottomSmallest,
         size == "small" && styles.marginBottomSmall,
         size == "biggest" && styles.marginBottomBiggest,
         size == "big" && styles.marginBottomBig,
@@ -25,6 +26,9 @@ export default function MarginBottom({ children, size }: MarginBottomProps) {
 const styles = StyleSheet.create({
   marginBottom: {
     marginBottom: s(10),
+  },
+  marginBottomSmallest: {
+    marginBottom: s(4),
   },
   marginBottomSmall: {
     marginBottom: s(6),
