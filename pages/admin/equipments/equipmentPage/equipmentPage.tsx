@@ -2,7 +2,8 @@ import { StyleSheet, View, Text } from "react-native";
 import { useMemo } from "react";
 import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
-import Button from "@/components/button/button";
+import Button from "@/components/controls/button/button";
+import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import { s } from "react-native-size-matters";
 import EditIcon from "@/assets/editIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
@@ -36,7 +37,7 @@ export default function Page() {
   if (!fontsLoaded) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <Wrapper>
       <Header linkText={"Оборудование"} />
       <View style={styles.content}>
         <View style={styles.information}>
@@ -101,15 +102,11 @@ export default function Page() {
           </View>
         </View>
       </View>
-    </View>
+    </Wrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
   content: {
     flex: 1,
     paddingTop: s(5),

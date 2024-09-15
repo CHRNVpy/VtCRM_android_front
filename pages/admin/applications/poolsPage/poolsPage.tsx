@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, View, Text } from "react-native";
 import { useMemo } from "react";
 import colors from "@/helpers/colors";
 import Header from "@/components/container/header/header";
-import Button from "@/components/button/button";
+import Button from "@/components/controls/button/button";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
