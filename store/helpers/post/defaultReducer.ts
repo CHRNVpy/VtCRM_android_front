@@ -30,8 +30,8 @@ export const postDefaultReducer = (
       stateByPath.isError = defaultPostState.isError;
       stateByPath.errorFields = defaultPostState.errorFields;
       stateByPath.errorText = defaultPostState.errorText;
-      stateByPath.isPostSending = defaultPostState.isPostSending;
-      stateByPath.isPostDone = defaultPostState.isPostDone;
+      stateByPath.isInProcess = defaultPostState.isInProcess;
+      stateByPath.isDone = defaultPostState.isDone;
       stateByPath.responseData = defaultPostState.responseData;
     }
   }

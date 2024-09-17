@@ -11,6 +11,7 @@ import {
 } from "redux-persist";
 import storage from "@react-native-async-storage/async-storage"; // AsyncStorage для React Native
 import postLoginReducer from "@/store/login/post/post";
+import stateNavigationReducer from "@/store/navigation/state/state";
 
 const persistConfig = {
   key: "root",
@@ -22,9 +23,15 @@ const persistedPostLoginReducer = persistReducer(
   postLoginReducer
 );
 
+const persistedStateNavigationReducer = persistReducer(
+  persistConfig,
+  stateNavigationReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
+    stateNavigation: persistedStateNavigationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -11,8 +11,6 @@ export const setInputStateDefaultReducer = (
 ) => {
   const payload = action.payload;
 
-  console.log(payload);
-
   const stateByPath = path
     ? (path.reduce((result, item) => {
         if (!result) return undefined;

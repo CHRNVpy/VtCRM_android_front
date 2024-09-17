@@ -1,5 +1,5 @@
 import { useRef, useMemo, useCallback } from "react";
-import { TextInput, StyleSheet } from "react-native";
+import { TextInput, StyleSheet, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Input from "@/components/controls/input/input";
@@ -24,6 +24,9 @@ export default function Page() {
   );
   const password = useSelector(
     (state: RootState) => state.postLogin.postLoginFields.inputs.password.text
+  );
+  const accessToken = useSelector(
+    (state: RootState) => state.stateNavigation.accessToken.data
   );
 
   const handleLoginOnChangeText = useCallback(
@@ -77,6 +80,7 @@ export default function Page() {
           inputRef={passwordInputRef}
         ></Input>
       </Inputs>
+      <Text>{accessToken}</Text>
       <Buttons>
         <Button isDisabled={isButtonDisabled} onPress={handlePressButton}>
           Войти

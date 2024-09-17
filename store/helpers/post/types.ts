@@ -3,7 +3,7 @@ export interface PostState {
   isError: boolean;
   errorFields: Array<string> | null;
   errorText: string;
-  isPostSending: boolean;
-  isPostDone: boolean;
+  isInProcess: boolean;
+  isDone: boolean;
   responseData?: { [key: string]: string };
 }

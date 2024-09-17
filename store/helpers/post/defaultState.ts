@@ -5,7 +5,7 @@ export const defaultPostState: PostState = {
   isError: false,
   errorFields: null,
   errorText: "",
-  isPostSending: false,
-  isPostDone: false,
+  isInProcess: false,
+  isDone: false,
   responseData: undefined,
 };

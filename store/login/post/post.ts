@@ -11,6 +11,10 @@ import {
   postDefaultExtraReducer,
 } from "@/store/helpers/post";
 import { reducerName, postLoginAsyncThunk } from "@/store/login/post/config";
+import {
+  setAccessToken,
+  setRefreshToken,
+} from "@/store/navigation/state/state";
 
 const slice = createSlice({
   name: reducerName,
@@ -48,14 +52,20 @@ const slice = createSlice({
   },
   extraReducers: (builder) => {
     postDefaultExtraReducer(builder, postLoginAsyncThunk, {
-      fulfilled: (stateByPath, status) => {
-        console.log(status);
-
-        if (status == 401 || status == 403) {
-          stateByPath.responseData = null;
+      fulfilled: (stateByPath, status, data) => {
+        if (data.status == "error") {
+          stateByPath.responseData = data;
           stateByPath.isError = true;
-          stateByPath.errorFields = ["login", "password"];
-          stateByPath.errorText = "Неправильный номер договора или пароль";
+
+          if (data.code == "Incorrect username or password") {
+            stateByPath.errorFields = ["login", "password"];
+            stateByPath.errorText = "Неправильный номер договора или пароль";
+          }
+
+          if (data.code == "Incorrect username or password") {
+            stateByPath.errorFields = ["login", "password"];
+            stateByPath.errorText = "Произошла ошибка при авторизации";
+          }
         }
       },
     });
@@ -73,7 +83,7 @@ export const postLogin = createPostAsyncThunkWithArguments({
   isAuthorization: true,
   path: ["postLoginState"],
   reducerAction: setPostLoginStateReducer,
-  url: "/auth/access_token",
+  url: "/auth",
   postAsyncThunk: postLoginAsyncThunk,
   getDataFromStateFunction: (getState: Function) => {
     const {
@@ -89,25 +99,24 @@ export const postLogin = createPostAsyncThunkWithArguments({
 
     data.login = loginText;
     data.password = passwordText;
-    data.role = "installer";
 
     return data;
   },
   callbackAfterPost: async (dispatch, getState, responseData) => {
-    console.log(responseData);
-    /*
-    if (responseData?.access_token)
-      jsCookie.set("access-token", responseData?.access_token, {
-        path: "/",
-        expires: new Date(new Date().getTime() + 10 * 60 * 1000),
-      });
+    if (responseData.status != "ok") return;
+    if (!responseData.data) return;
+    if (!responseData.data.accessToken) return;
+    if (!responseData.data.refreshToken) return;
 
-    if (responseData?.refresh_token)
-      jsCookie.set("refresh-token", responseData?.refresh_token, {
-        path: "/",
-        expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-      });
-      */
+    dispatch(
+      setAccessToken({ action: "setData", data: responseData.data.accessToken })
+    );
+    dispatch(
+      setRefreshToken({
+        action: "setData",
+        data: responseData.data.refreshToken,
+      })
+    );
   },
 });
 

@@ -3,6 +3,7 @@ import ajaxRequest, {
   cancelTokenFunction,
 } from "@/services/ajaxRequest/ajaxRequest";
 
+//  Nested asyncThunks are needed to use templates for handling various scenarios with the same pattern
 export const createPostAsyncThunkWithArguments = ({
   reducer,
   path,
@@ -83,12 +84,14 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
 
         let ajaxCancel;
 
+        //  Make new cancel token
         const cancelToken = new cancelTokenFunction(function executor(
           cancelFunction
         ) {
           ajaxCancel = cancelFunction;
         });
 
+        //  Set cancel token to store
         if (reducerAction)
           dispatch(
             reducerAction({
@@ -97,20 +100,17 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
             })
           );
 
+        //  Get query data by function
         const data: { [key: string]: any } = payload.getDataFromStateFunction
           ? payload.getDataFromStateFunction(getState)
           : undefined;
 
+        //  Get url by settings or function
         const url: string = payload.urlFromStateFunction
           ? payload.urlFromStateFunction(getState)
           : payload.url;
 
-        console.log({
-          method: "post",
-          url,
-          data,
-        });
-
+        //  Make a request
         try {
           const response = await ajaxRequest(
             {
@@ -136,12 +136,10 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
 
           return { data: response.data, status: response.status };
         } catch (error: any) {
-          return rejectWithValue("Probably not error just canceled");
+          return rejectWithValue("Cancelled");
         }
       } catch (error) {
-        console.log(error);
-
-        return rejectWithValue("Ajax request error");
+        return rejectWithValue("Request error");
       }
     }
   );

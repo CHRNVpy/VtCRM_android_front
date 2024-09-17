@@ -10,6 +10,7 @@ import Content from "@/components/wrappers/content/content";
 import Title from "@/components/wrappers/title/title";
 import TextType from "@/components/wrappers/textType/textType";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
@@ -35,6 +36,7 @@ export default function Page() {
           patronym: "Иванович",
         },
         status: "done",
+        type: "connection",
       },
     };
   }, []);
@@ -44,8 +46,26 @@ export default function Page() {
   return (
     <Wrapper>
       <Header linkText={`#${equipmentData.id} ${equipmentData.name}`} />
-      <Title>Редактирование оборудования</Title>
+      <Title>Редактирование заявки</Title>
+
       <Content isWithPaddings={true}>
+        <MarginBottom size="big">
+          <TextType isDashed={true}>
+            Монтажник #{equipmentData.application.installer.id}{" "}
+            {equipmentData.application.installer.lastName}{" "}
+            {equipmentData.application.installer.firstName.charAt(0)}.
+            {equipmentData.application.installer.patronym.charAt(0)}.
+          </TextType>
+        </MarginBottom>
+        <MarginBottom>
+          <TextType isBold={true}>
+            {equipmentData.application.type == "connection"
+              ? "Подключение"
+              : equipmentData.application.type == "repair"
+              ? "Ремонт"
+              : "Монтаж ВОЛС"}
+          </TextType>
+        </MarginBottom>
         {!!equipmentData?.application?.id ? (
           <>
             <TwoColumns
