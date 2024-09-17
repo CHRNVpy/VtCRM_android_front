@@ -8,26 +8,35 @@ import Button from "@/components/controls/button/button";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Inputs from "@/components/wrappers/inputs/inputs";
 import { RootState, AppDispatch } from "@/store/store";
-import { setLogin, setPassword } from "@/store/auth";
+import {
+  setInputStateLoginReducer,
+  setInputStatePasswordReducer,
+  postLogin,
+} from "@/store/login/post/post";
 
 export default function Page() {
   const passwordInputRef = useRef<TextInput>(null);
 
   const dispatch: AppDispatch = useDispatch();
 
-  const login = useSelector((state: RootState) => state.auth.login);
-  const password = useSelector((state: RootState) => state.auth.password);
+  const login = useSelector(
+    (state: RootState) => state.postLogin.postLoginFields.inputs.login.text
+  );
+  const password = useSelector(
+    (state: RootState) => state.postLogin.postLoginFields.inputs.password.text
+  );
 
   const handleLoginOnChangeText = useCallback(
-    (value?: string) => {
-      dispatch(setLogin({ value }));
+    (text?: string) => {
+      console.log(text);
+      dispatch(setInputStateLoginReducer({ action: "setText", text }));
     },
     [dispatch]
   );
 
   const handlePasswordOnChangeText = useCallback(
-    (value?: string) => {
-      dispatch(setPassword({ value }));
+    (text?: string) => {
+      dispatch(setInputStatePasswordReducer({ action: "setText", text }));
     },
     [dispatch]
   );
@@ -45,6 +54,10 @@ export default function Page() {
 
     return false;
   }, [login, password]);
+
+  const handlePressButton = useCallback(() => {
+    dispatch(postLogin());
+  }, []);
 
   return (
     <Wrapper>
@@ -65,7 +78,9 @@ export default function Page() {
         ></Input>
       </Inputs>
       <Buttons>
-        <Button isDisabled={isButtonDisabled}>Войти</Button>
+        <Button isDisabled={isButtonDisabled} onPress={handlePressButton}>
+          Войти
+        </Button>
       </Buttons>
     </Wrapper>
   );

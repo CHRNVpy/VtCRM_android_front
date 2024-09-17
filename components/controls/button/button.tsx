@@ -4,8 +4,9 @@ import {
   View,
   ViewProps,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { s } from "react-native-size-matters";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 import colors from "@/helpers/colors";
@@ -16,6 +17,7 @@ interface ButtonProps extends ViewProps {
   isDisabled?: boolean;
   size?: "small";
   icon?: ReactNode;
+  onPress?: () => void;
 }
 
 export default function Button({
@@ -25,40 +27,51 @@ export default function Button({
   size,
   style,
   icon,
+  onPress,
 }: ButtonProps) {
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
   });
 
+  const handleOnPress = useCallback(() => {
+    if (isDisabled) return;
+
+    if (!onPress) return;
+
+    onPress();
+  }, [isDisabled, onPress]);
+
   if (!fontsLoaded) return null;
 
   return (
-    <View
-      style={[
-        styles.button,
-        !!isDisabled && styles.isDisabled,
-        size == "small" && styles.buttonSmall,
-        style,
-      ]}
-    >
-      {isInProcess ? (
-        <ActivityIndicator
-          size={size == "small" ? 12 : 26}
-          color={colors.dark}
-        />
-      ) : (
-        <>
-          {!!icon && (
-            <View style={[styles.icon, size == "small" && styles.smallIcon]}>
-              {icon}
-            </View>
-          )}
-          <Text style={[styles.text, size == "small" && styles.smallText]}>
-            {children}
-          </Text>
-        </>
-      )}
-    </View>
+    <Pressable onPress={handleOnPress}>
+      <View
+        style={[
+          styles.button,
+          !!isDisabled && styles.isDisabled,
+          size == "small" && styles.buttonSmall,
+          style,
+        ]}
+      >
+        {isInProcess ? (
+          <ActivityIndicator
+            size={size == "small" ? 12 : 26}
+            color={colors.dark}
+          />
+        ) : (
+          <>
+            {!!icon && (
+              <View style={[styles.icon, size == "small" && styles.smallIcon]}>
+                {icon}
+              </View>
+            )}
+            <Text style={[styles.text, size == "small" && styles.smallText]}>
+              {children}
+            </Text>
+          </>
+        )}
+      </View>
+    </Pressable>
   );
 }
 

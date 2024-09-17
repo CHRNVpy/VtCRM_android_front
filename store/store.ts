@@ -10,23 +10,35 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "@react-native-async-storage/async-storage"; // AsyncStorage для React Native
-import authReducer from "@/store/auth";
+import postLoginReducer from "@/store/login/post/post";
 
 const persistConfig = {
   key: "root",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistedPostLoginReducer = persistReducer(
+  persistConfig,
+  postLoginReducer
+);
 
 const store = configureStore({
   reducer: {
-    auth: persistedReducer,
+    postLogin: persistedPostLoginReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActionPaths: [
+          "payload.ajaxCancel",
+          "meta.arg.reducerAction",
+          "meta.arg.getDataFromStateFunction",
+          "meta.arg.urlFromStateFunction",
+          "meta.arg.callbackAfterPost",
+          "meta.arg.callbackAfterPatch",
+        ],
+        ignoredPaths: ["postLogin.postLoginState"],
       },
     }),
 });

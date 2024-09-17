@@ -64,8 +64,56 @@ export default function Page() {
         password: "adslfIYNGHlfIYNGH-454",
         isActive: true,
       },
+      images: [
+        {
+          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
+        },
+        {
+          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
+        },
+        {
+          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
+        },
+        {
+          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
+        },
+      ],
     };
   }, []);
+
+  const leftColumnImages = useMemo(() => {
+    if (!applicationItem.images) return [];
+
+    if (!applicationItem.images?.length) return [];
+
+    const images = applicationItem.images.reduce<{ url: string }[]>(
+      (result, item, index) => {
+        if (index % 2 == 0) result.push(item);
+
+        return result;
+      },
+      []
+    );
+
+    return images;
+  }, [applicationItem]);
+
+  const rightColumnImages = useMemo(() => {
+    if (!applicationItem.images) return [];
+
+    if (!applicationItem.images?.length) return [];
+
+    const images = applicationItem.images.reduce<{ url: string }[]>(
+      (result, item, index) => {
+        if (index % 2 == 1) result.push(item);
+
+        return result;
+      },
+      []
+    );
+
+    return images;
+  }, [applicationItem]);
 
   if (!fontsLoaded) return null;
 
@@ -147,44 +195,62 @@ export default function Page() {
             leftColumn={
               <>
                 <Content>
-                  <MarginBottom size="smallest">
-                    <Image
-                      source={{
-                        uri: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-                      }}
-                      style={styles.images}
-                      resizeMode={"contain"}
-                    />
-                  </MarginBottom>
-                  <Image
-                    source={{
-                      uri: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-                    }}
-                    style={styles.images}
-                    resizeMode={"contain"}
-                  />
+                  {!!leftColumnImages.length &&
+                    leftColumnImages.map((imageObject, imageIndex) => {
+                      const isLastImage =
+                        imageIndex === leftColumnImages.length - 1;
+
+                      const image = (
+                        <Image
+                          source={{
+                            uri: imageObject.url,
+                          }}
+                          style={styles.images}
+                          resizeMode={"contain"}
+                        />
+                      );
+
+                      return (
+                        <React.Fragment key={imageIndex}>
+                          {isLastImage ? (
+                            image
+                          ) : (
+                            <MarginBottom size="smallest">{image}</MarginBottom>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
                 </Content>
               </>
             }
             rightColumn={
               <>
                 <Content>
-                  <MarginBottom size="smallest">
-                    <Image
-                      source={{
-                        uri: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-                      }}
-                      style={styles.images}
-                      resizeMode={"contain"}
-                    />
-                  </MarginBottom>
-                  <Image
-                    source={{
-                      uri: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-                    }}
-                    style={styles.images}
-                    resizeMode={"contain"}
-                  />
+                  {!!rightColumnImages.length &&
+                    rightColumnImages.map((imageObject, imageIndex) => {
+                      const isLastImage =
+                        imageIndex === rightColumnImages.length - 1;
+
+                      const image = (
+                        <Image
+                          source={{
+                            uri: imageObject.url,
+                          }}
+                          style={styles.images}
+                          resizeMode={"contain"}
+                        />
+                      );
+
+                      return (
+                        <React.Fragment key={imageIndex}>
+                          {isLastImage ? (
+                            image
+                          ) : (
+                            <MarginBottom size="smallest">{image}</MarginBottom>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
                 </Content>
               </>
             }

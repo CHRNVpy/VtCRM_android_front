@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Login from "@/pages/login/login";
+import LoginPage from "@/pages/loginPage/loginPage";
 import AdminMainPage from "@/pages/admin/mainPage/mainPage";
 import AdminInstallersPage from "@/pages/admin/installers/installersPage/installersPage";
 import AdminInstallerPage from "@/pages/admin/installers/installerPage/installerPage";
@@ -17,6 +17,7 @@ import AdminCreateEquipmentPage from "@/pages/admin/equipments/createEquipmentPa
 import AdminApplicationsPoolsPage from "@/pages/admin/applications/poolsPage/poolsPage";
 import AdminApplicationsPoolPage from "@/pages/admin/applications/poolPage/poolPage";
 import AdminApplicationPage from "@/pages/admin/applications/applicationPage/applicationPage";
+import AdminEditApplicationPage from "@/pages/admin/applications/editApplicationPage/editApplicationPage";
 import colors from "@/helpers/colors";
 
 const Stack = createNativeStackNavigator();
@@ -29,8 +30,8 @@ export default function App() {
           <StatusBar style="dark" backgroundColor={colors.white} />
           <Stack.Navigator initialRouteName={"AdminApplicationPage"}>
             <Stack.Screen
-              name="Login"
-              component={Login}
+              name="LoginPage"
+              component={LoginPage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -96,6 +97,11 @@ export default function App() {
             <Stack.Screen
               name="AdminApplicationPage"
               component={AdminApplicationPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="AdminEditApplicationPage"
+              component={AdminEditApplicationPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

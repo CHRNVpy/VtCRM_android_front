@@ -68,6 +68,7 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
     ) => {
       try {
         const path = payload.path;
+
         const reducerAction = payload.reducerAction;
 
         const stateByPath = path.reduce((result, item) => {
@@ -104,6 +105,12 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
           ? payload.urlFromStateFunction(getState)
           : payload.url;
 
+        console.log({
+          method: "post",
+          url,
+          data,
+        });
+
         try {
           const response = await ajaxRequest(
             {
@@ -132,6 +139,8 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
           return rejectWithValue("Probably not error just canceled");
         }
       } catch (error) {
+        console.log(error);
+
         return rejectWithValue("Ajax request error");
       }
     }
