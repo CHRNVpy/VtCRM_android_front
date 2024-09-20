@@ -13,22 +13,24 @@ interface TextTypeProps {
   size?: "biggest" | "big" | "medium" | "small";
   align?: "right";
   marginBottom?: "small";
-  color?: "gray";
+  color?: "gray" | "red";
   isDashed?: boolean;
   isBold?: boolean;
   numberOfLines?: number;
+  minNumberOfLines?: number;
   ellipsizeMode?: "tail" | "clip";
 }
 
 export default function TextType({
   children,
-  size,
+  size = "big",
   align,
   marginBottom,
   color,
   isDashed,
   isBold,
   numberOfLines,
+  minNumberOfLines,
   ellipsizeMode,
 }: TextTypeProps) {
   let [fontsLoaded] = useFonts({
@@ -49,10 +51,23 @@ export default function TextType({
         style={[
           styles.textTypeText,
           align == "right" && styles.alignRightText,
+          size == "big" &&
+            minNumberOfLines == 2 &&
+            styles.big_minNumberOfLines2,
           size == "biggest" && styles.sizeBiggest,
+          size == "biggest" &&
+            minNumberOfLines == 2 &&
+            styles.biggest_minNumberOfLines2,
           size == "medium" && styles.sizeMedium,
+          size == "medium" &&
+            minNumberOfLines == 2 &&
+            styles.medium_minNumberOfLines2,
           size == "small" && styles.sizeSmall,
+          size == "small" &&
+            minNumberOfLines == 2 &&
+            styles.small_minNumberOfLines2,
           color == "gray" && styles.gray,
+          color == "red" && styles.red,
           isDashed && styles.isDashed,
           isBold && styles.isBold,
         ]}
@@ -79,17 +94,29 @@ const styles = StyleSheet.create({
     color: colors.dark,
     alignSelf: "flex-start",
   },
+  big_minNumberOfLines2: {
+    minHeight: 2 * s(24),
+  },
   sizeBiggest: {
     fontSize: s(30),
     lineHeight: s(36),
+  },
+  biggest_minNumberOfLines2: {
+    minHeight: 2 * s(36),
   },
   sizeMedium: {
     fontSize: s(18),
     lineHeight: s(22),
   },
+  medium_minNumberOfLines2: {
+    minHeight: 2 * s(22),
+  },
   sizeSmall: {
     fontSize: s(16),
     lineHeight: s(20),
+  },
+  small_minNumberOfLines2: {
+    minHeight: 2 * s(20),
   },
   alignRightText: {
     textAlign: "right",
@@ -97,6 +124,9 @@ const styles = StyleSheet.create({
   },
   gray: {
     color: colors.gray,
+  },
+  red: {
+    color: colors.red,
   },
   isDashed: {
     borderBottomColor: colors.gray,

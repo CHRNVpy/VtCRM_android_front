@@ -11,6 +11,8 @@ export const createPostAsyncThunkWithArguments = ({
   url,
   urlFromStateFunction,
   getDataFromStateFunction,
+  setAccessToken,
+  setRefreshToken,
   callbackAfterPost,
   postAsyncThunk,
   isAuthorization,
@@ -21,10 +23,13 @@ export const createPostAsyncThunkWithArguments = ({
   url?: string;
   urlFromStateFunction?: Function;
   getDataFromStateFunction: Function;
+  setAccessToken?: Function;
+  setRefreshToken?: Function;
   callbackAfterPost?: (
     dispatch: any,
     getState?: Function,
-    responseData?: any
+    responseData?: any,
+    responseStatus?: any
   ) => Promise<void>;
   postAsyncThunk: any;
   isAuthorization?: boolean;
@@ -40,6 +45,8 @@ export const createPostAsyncThunkWithArguments = ({
           url,
           urlFromStateFunction,
           getDataFromStateFunction,
+          setAccessToken,
+          setRefreshToken,
           callbackAfterPost,
           isAuthorization,
         })
@@ -58,10 +65,13 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
         url?: string;
         urlFromStateFunction?: Function;
         getDataFromStateFunction: Function;
+        setAccessToken?: Function;
+        setRefreshToken?: Function;
         callbackAfterPost?: (
           dispatch: any,
           getState?: Function,
-          responseData?: any
+          responseData?: any,
+          responseStatus?: any
         ) => Promise<void>;
         isAuthorization: boolean;
       },
@@ -117,22 +127,25 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
               method: "post",
               url,
               data,
+              setAccessToken: (data) =>
+                !!payload.setAccessToken &&
+                dispatch(payload.setAccessToken(data)),
+              setRefreshToken: (data) =>
+                !!payload.setRefreshToken &&
+                dispatch(payload.setRefreshToken(data)),
               cancelToken,
               isAuthorization: !!payload?.isAuthorization,
             },
             !!payload?.isAuthorization
           );
 
-          if (response.status == 200) {
-            if (payload.callbackAfterPost)
-              await payload.callbackAfterPost(
-                dispatch,
-                getState,
-                response.data
-              );
-
-            return { data: response.data, status: response.status };
-          }
+          if (payload.callbackAfterPost)
+            await payload.callbackAfterPost(
+              dispatch,
+              getState,
+              response.data,
+              response.status
+            );
 
           return { data: response.data, status: response.status };
         } catch (error: any) {

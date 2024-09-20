@@ -1,7 +1,10 @@
+import React, { useMemo, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigationContext } from "@/NavigationContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoginPage from "@/pages/loginPage/loginPage";
 import AdminMainPage from "@/pages/admin/mainPage/mainPage";
@@ -23,90 +26,116 @@ import colors from "@/helpers/colors";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const { navigate } = useNavigationContext();
+
+  const accessToken = useSelector(
+    (state: RootState) => state.stateNavigation.accessToken.data
+  );
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate("LoginPage");
+      return;
+    }
+
+    navigate("AdminMainPage");
+  }, [navigate, accessToken]);
+
+  const initialRouteName = useMemo(() => {
+    if (!accessToken) {
+      return "LoginPage";
+    }
+
+    return "AdminMainPage";
+  }, [accessToken]);
+
   return (
     <SafeAreaView style={styles.wrapper}>
-      <NavigationContainer>
-        <View style={styles.container}>
-          <StatusBar style="dark" backgroundColor={colors.white} />
-          <Stack.Navigator initialRouteName={"LoginPage"}>
-            <Stack.Screen
-              name="LoginPage"
-              component={LoginPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminMainPage"
-              component={AdminMainPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminInstallersPage"
-              component={AdminInstallersPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminInstallerPage"
-              component={AdminInstallerPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEditInstallerPage"
-              component={AdminEditInstallerPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEditInstallerPasswordPage"
-              component={AdminEditInstallerPasswordPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminCreateInstallerPage"
-              component={AdminCreateInstallerPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEquipmentsPage"
-              component={AdminEquipmentsPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEquipmentPage"
-              component={AdminEquipmentPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEditEquipmentPage"
-              component={AdminEditEquipmentPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminCreateEquipmentPage"
-              component={AdminCreateEquipmentPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminApplicationsPoolsPage"
-              component={AdminApplicationsPoolsPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminApplicationsPoolPage"
-              component={AdminApplicationsPoolPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminApplicationPage"
-              component={AdminApplicationPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AdminEditApplicationPage"
-              component={AdminEditApplicationPage}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </View>
-      </NavigationContainer>
+      <View style={styles.container}>
+        <StatusBar style="dark" backgroundColor={colors.white} />
+        <Stack.Navigator
+          initialRouteName={initialRouteName}
+          screenOptions={{
+            animation: "slide_from_right",
+          }}
+        >
+          <Stack.Screen
+            name="LoginPage"
+            component={LoginPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminMainPage"
+            component={AdminMainPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminInstallersPage"
+            component={AdminInstallersPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminInstallerPage"
+            component={AdminInstallerPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEditInstallerPage"
+            component={AdminEditInstallerPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEditInstallerPasswordPage"
+            component={AdminEditInstallerPasswordPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminCreateInstallerPage"
+            component={AdminCreateInstallerPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEquipmentsPage"
+            component={AdminEquipmentsPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEquipmentPage"
+            component={AdminEquipmentPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEditEquipmentPage"
+            component={AdminEditEquipmentPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminCreateEquipmentPage"
+            component={AdminCreateEquipmentPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminApplicationsPoolsPage"
+            component={AdminApplicationsPoolsPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminApplicationsPoolPage"
+            component={AdminApplicationsPoolPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminApplicationPage"
+            component={AdminApplicationPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEditApplicationPage"
+            component={AdminEditApplicationPage}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </View>
     </SafeAreaView>
   );
 }

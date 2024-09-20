@@ -6,16 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AppContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/AppContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/passwordVisible.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/passwordVisible.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/controls/input/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/controls/input/input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/textType/textType.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/textType/textType.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/ajaxRequest/ajaxRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/ajaxRequest/ajaxRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/input/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/input/defaultReducer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultState.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/login/post/post.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/login/post/post.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
     </list>
@@ -41,19 +40,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Data/job/projects/vtcrm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Data/job/projects/vtcrm",
+    "settings.editor.selected.configurable": "configurable.group.tools"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

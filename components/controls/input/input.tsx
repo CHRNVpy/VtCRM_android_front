@@ -30,6 +30,7 @@ interface InputProps extends TextInputProps {
   inputRef?: React.RefObject<TextInput>;
   isDisabled?: boolean;
   isHasClearButton?: boolean;
+  isError?: boolean;
 }
 
 export default function Input({
@@ -41,6 +42,7 @@ export default function Input({
   onChangeText,
   isDisabled = false,
   isHasClearButton = false,
+  isError = false,
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -139,9 +141,15 @@ export default function Input({
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View style={[styles.touchable]}>
-        <View style={[styles.inputWrapper, isDisabled && styles.isDisabled]}>
+        <View
+          style={[
+            styles.inputWrapper,
+            !!isDisabled && styles.isDisabled,
+            !!isError && styles.isInputWrapperError,
+          ]}
+        >
           <TextInput
-            style={[styles.textInput]}
+            style={[styles.textInput, !!isError && styles.isTextInputError]}
             onSubmitEditing={onSubmitEditing}
             onChangeText={onChangeText}
             onFocus={handleTextInputFocus}
@@ -152,7 +160,13 @@ export default function Input({
             editable={!isDisabled}
           />
           <View pointerEvents={"none"} style={[styles.labelWrapper]}>
-            <Animated.Text style={[styles.label, labelAnimatedStyle]}>
+            <Animated.Text
+              style={[
+                styles.label,
+                !!isError && styles.isLabelError,
+                labelAnimatedStyle,
+              ]}
+            >
               {label}
             </Animated.Text>
           </View>
@@ -162,9 +176,17 @@ export default function Input({
               onPress={handlePasswordIconPress}
             >
               {isPasswordVisible ? (
-                <PasswordHiddenSvg width={s(24)} height={s(24)} />
+                <PasswordHiddenSvg
+                  width={s(24)}
+                  height={s(24)}
+                  style={!isError ? styles.svg : styles.isSvgError}
+                />
               ) : (
-                <PasswordVisibleSvg width={s(24)} height={s(24)} />
+                <PasswordVisibleSvg
+                  width={s(24)}
+                  height={s(24)}
+                  style={!isError ? styles.svg : styles.isSvgError}
+                />
               )}
             </TouchableOpacity>
           )}
@@ -173,7 +195,11 @@ export default function Input({
               style={styles.passwordIconWrapper}
               onPress={handleRandomPasswordIconPress}
             >
-              <RandomPasswordSvg width={s(20)} height={s(20)} />
+              <RandomPasswordSvg
+                width={s(20)}
+                height={s(20)}
+                style={!isError ? styles.svg : styles.isSvgError}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -196,6 +222,9 @@ const styles = StyleSheet.create({
     borderBottomStyle: "solid",
     paddingTop: s(16),
   },
+  isInputWrapperError: {
+    borderBottomColor: colors.red,
+  },
   isDisabled: {
     opacity: 0.6,
   },
@@ -207,6 +236,9 @@ const styles = StyleSheet.create({
     lineHeight: s(24),
     height: s(24),
   },
+  isTextInputError: {
+    color: colors.red,
+  },
   labelWrapper: {
     position: "absolute",
   },
@@ -217,6 +249,9 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     color: colors.dark,
     top: s(16),
+  },
+  isLabelError: {
+    color: colors.red,
   },
   labelFinalPosition: {
     height: s(16),
@@ -232,5 +267,11 @@ const styles = StyleSheet.create({
     top: s(18),
     alignItems: "center",
     justifyContent: "center",
+  },
+  svg: {
+    color: colors.dark,
+  },
+  isSvgError: {
+    color: colors.red,
   },
 });

@@ -7,10 +7,24 @@ import Button from "@/components/controls/button/button";
 import ApplicationsLinkIcon from "@/assets/applicationsLinkIcon.svg";
 import EquipmentsLinkIcon from "@/assets/equipmentsLinkIcon.svg";
 import InstallersLinkIcon from "@/assets/installersLinkIcon.svg";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import {
+  setAccessToken,
+  setRefreshToken,
+} from "@/store/navigation/state/state";
 import { s } from "react-native-size-matters";
 import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
+import { useCallback } from "react";
 
 export default function Page() {
+  const dispatch: AppDispatch = useDispatch();
+
+  const handleLogout = useCallback(() => {
+    dispatch(setAccessToken({ action: "clear" }));
+    dispatch(setRefreshToken({ action: "clear" }));
+  }, []);
+
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
   });
@@ -41,7 +55,7 @@ export default function Page() {
         </View>
       </View>
       <Buttons>
-        <Button>Выйти</Button>
+        <Button onPress={handleLogout}>Выйти</Button>
       </Buttons>
     </Wrapper>
   );

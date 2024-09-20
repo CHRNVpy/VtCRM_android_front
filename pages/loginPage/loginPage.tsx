@@ -1,5 +1,5 @@
 import { useRef, useMemo, useCallback } from "react";
-import { TextInput, StyleSheet, Text } from "react-native";
+import { TextInput, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Input from "@/components/controls/input/input";
@@ -7,10 +7,13 @@ import Header from "@/components/container/header/header";
 import Button from "@/components/controls/button/button";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Inputs from "@/components/wrappers/inputs/inputs";
+import TextType from "@/components/wrappers/textType/textType";
+import Content from "@/components/wrappers/content/content";
 import { RootState, AppDispatch } from "@/store/store";
 import {
   setInputStateLoginReducer,
   setInputStatePasswordReducer,
+  setPostLoginStateReducer,
   postLogin,
 } from "@/store/login/post/post";
 
@@ -25,13 +28,13 @@ export default function Page() {
   const password = useSelector(
     (state: RootState) => state.postLogin.postLoginFields.inputs.password.text
   );
-  const accessToken = useSelector(
-    (state: RootState) => state.stateNavigation.accessToken.data
+  const postLoginState = useSelector(
+    (state: RootState) => state.postLogin.postLoginState
   );
 
   const handleLoginOnChangeText = useCallback(
     (text?: string) => {
-      console.log(text);
+      dispatch(setPostLoginStateReducer({ action: "reset" }));
       dispatch(setInputStateLoginReducer({ action: "setText", text }));
     },
     [dispatch]
@@ -39,6 +42,7 @@ export default function Page() {
 
   const handlePasswordOnChangeText = useCallback(
     (text?: string) => {
+      dispatch(setPostLoginStateReducer({ action: "reset" }));
       dispatch(setInputStatePasswordReducer({ action: "setText", text }));
     },
     [dispatch]
@@ -65,24 +69,42 @@ export default function Page() {
   return (
     <Wrapper>
       <Header />
-      <Inputs verticalAlign={"center"} isWithPaddings={true}>
-        <Input
-          label="Логин"
-          onChangeText={handleLoginOnChangeText}
-          onSubmitEditing={handleSubmitLoginEditing}
-          value={login}
-        ></Input>
-        <Input
-          label="Пароль"
-          onChangeText={handlePasswordOnChangeText}
-          value={password}
-          type={"password"}
-          inputRef={passwordInputRef}
-        ></Input>
-      </Inputs>
-      <Text>{accessToken}</Text>
+      <Content isWithPaddings={true}>
+        <Inputs verticalAlign={"center"}>
+          <Input
+            label="Логин"
+            onChangeText={handleLoginOnChangeText}
+            onSubmitEditing={handleSubmitLoginEditing}
+            value={login}
+            isError={
+              !!postLoginState.isError &&
+              !!postLoginState.errorFields?.includes("login")
+            }
+            isDisabled={postLoginState.isInProcess}
+          ></Input>
+          <Input
+            label="Пароль"
+            onChangeText={handlePasswordOnChangeText}
+            value={password}
+            type={"password"}
+            inputRef={passwordInputRef}
+            isError={
+              !!postLoginState.isError &&
+              !!postLoginState.errorFields?.includes("password")
+            }
+            isDisabled={postLoginState.isInProcess}
+          ></Input>
+        </Inputs>
+        <TextType minNumberOfLines={2} color="red">
+          {!!postLoginState.isError ? postLoginState.errorText : ""}
+        </TextType>
+      </Content>
       <Buttons>
-        <Button isDisabled={isButtonDisabled} onPress={handlePressButton}>
+        <Button
+          isDisabled={isButtonDisabled}
+          onPress={handlePressButton}
+          isInProcess={postLoginState.isInProcess}
+        >
           Войти
         </Button>
       </Buttons>

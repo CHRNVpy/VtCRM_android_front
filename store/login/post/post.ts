@@ -53,7 +53,7 @@ const slice = createSlice({
   extraReducers: (builder) => {
     postDefaultExtraReducer(builder, postLoginAsyncThunk, {
       fulfilled: (stateByPath, status, data) => {
-        if (data.status == "error") {
+        if (status == "error") {
           stateByPath.responseData = data;
           stateByPath.isError = true;
 
@@ -62,7 +62,7 @@ const slice = createSlice({
             stateByPath.errorText = "Неправильный номер договора или пароль";
           }
 
-          if (data.code == "Incorrect username or password") {
+          if (data.code !== "Incorrect username or password") {
             stateByPath.errorFields = ["login", "password"];
             stateByPath.errorText = "Произошла ошибка при авторизации";
           }
@@ -85,6 +85,8 @@ export const postLogin = createPostAsyncThunkWithArguments({
   reducerAction: setPostLoginStateReducer,
   url: "/auth",
   postAsyncThunk: postLoginAsyncThunk,
+  setAccessToken,
+  setRefreshToken,
   getDataFromStateFunction: (getState: Function) => {
     const {
       postLoginFields: {
@@ -102,11 +104,28 @@ export const postLogin = createPostAsyncThunkWithArguments({
 
     return data;
   },
-  callbackAfterPost: async (dispatch, getState, responseData) => {
-    if (responseData.status != "ok") return;
-    if (!responseData.data) return;
-    if (!responseData.data.accessToken) return;
-    if (!responseData.data.refreshToken) return;
+  callbackAfterPost: async (
+    dispatch,
+    getState,
+    responseData,
+    responseStatus
+  ) => {
+    if (
+      responseStatus !== 200 ||
+      responseData.status != "ok" ||
+      !responseData.data ||
+      !responseData.data.accessToken ||
+      !responseData.data.refreshToken
+    ) {
+      dispatch(setAccessToken({ action: "clear" }));
+      dispatch(
+        setRefreshToken({
+          action: "clear",
+        })
+      );
+
+      return;
+    }
 
     dispatch(
       setAccessToken({ action: "setData", data: responseData.data.accessToken })

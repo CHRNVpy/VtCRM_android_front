@@ -44,6 +44,8 @@ const store = configureStore({
           "meta.arg.urlFromStateFunction",
           "meta.arg.callbackAfterPost",
           "meta.arg.callbackAfterPatch",
+          "meta.arg.setAccessToken",
+          "meta.arg.setRefreshToken",
         ],
         ignoredPaths: ["postLogin.postLoginState"],
       },

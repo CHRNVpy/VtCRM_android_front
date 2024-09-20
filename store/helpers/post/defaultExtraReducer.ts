@@ -65,7 +65,7 @@ export const postDefaultExtraReducer = (
       const data = action.payload.data;
 
       if (additionalActions?.fulfilled)
-        additionalActions.fulfilled(stateByPath, status, data);
+        additionalActions.fulfilled(stateByPath, data?.status, data?.data);
 
       if (data.status == "error") return;
 
