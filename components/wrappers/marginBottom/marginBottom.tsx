@@ -7,7 +7,7 @@ interface MarginBottomProps {
   size?: "biggest" | "big" | "medium" | "small" | "smallest";
 }
 
-export default function MarginBottom({ children, size }: MarginBottomProps) {
+export default function Component({ children, size }: MarginBottomProps) {
   return (
     <View
       style={[

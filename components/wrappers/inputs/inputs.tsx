@@ -9,7 +9,7 @@ interface InputsProps {
   isWithPaddings?: boolean;
 }
 
-export default function Inputs({
+export default function Component({
   children,
   verticalAlign,
   isWithPaddings,

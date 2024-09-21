@@ -92,7 +92,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"На главную"} />
+      <Header linkText={"На главную"} to={"AdminMainPage"} />
       <Title>Монтажники</Title>
       {!!installersList.length && (
         <Content>

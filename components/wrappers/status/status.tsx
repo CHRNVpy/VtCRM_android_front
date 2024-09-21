@@ -7,7 +7,7 @@ interface StatusProps {
   size?: "big";
 }
 
-export default function Status({ isActive, size }: StatusProps) {
+export default function Component({ isActive, size }: StatusProps) {
   return (
     <View style={[styles.status, size == "big" && styles.statusBig]}>
       <View

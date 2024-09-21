@@ -7,7 +7,7 @@ interface ContentProps {
   isWithPaddings?: boolean;
 }
 
-export default function Content({
+export default function Component({
   children,
   isWithPaddings = false,
 }: ContentProps) {

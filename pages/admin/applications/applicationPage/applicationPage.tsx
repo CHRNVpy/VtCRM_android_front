@@ -13,20 +13,10 @@ import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString } from "@/helpers/strings";
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-} from "@expo-google-fonts/inter";
 import TextType from "@/components/wrappers/textType/textType";
 import colors from "@/helpers/colors";
 
 export default function Page() {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-  });
-
   const applicationItem = useMemo(() => {
     return {
       id: 1,
@@ -114,8 +104,6 @@ export default function Page() {
 
     return images;
   }, [applicationItem]);
-
-  if (!fontsLoaded) return null;
 
   return (
     <Wrapper>

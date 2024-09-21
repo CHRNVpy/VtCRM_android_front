@@ -18,21 +18,21 @@ export const postDefaultReducer = (
       }, state) as PostState)
     : undefined;
 
-  if (stateByPath) {
-    if (payload.action == "setAjaxCancel") {
-      stateByPath.ajaxCancel = payload?.ajaxCancel;
-    }
+  if (!stateByPath) return;
 
-    if (payload.action == "reset") {
-      if (stateByPath.ajaxCancel) stateByPath.ajaxCancel();
+  if (payload.action == "setAjaxCancel") {
+    stateByPath.ajaxCancel = payload?.ajaxCancel;
+  }
 
-      stateByPath.ajaxCancel = defaultPostState.ajaxCancel;
-      stateByPath.isError = defaultPostState.isError;
-      stateByPath.errorFields = defaultPostState.errorFields;
-      stateByPath.errorText = defaultPostState.errorText;
-      stateByPath.isInProcess = defaultPostState.isInProcess;
-      stateByPath.isDone = defaultPostState.isDone;
-      stateByPath.responseData = defaultPostState.responseData;
-    }
+  if (payload.action == "reset") {
+    if (stateByPath.ajaxCancel) stateByPath.ajaxCancel();
+
+    stateByPath.ajaxCancel = defaultPostState.ajaxCancel;
+    stateByPath.isError = defaultPostState.isError;
+    stateByPath.errorFields = defaultPostState.errorFields;
+    stateByPath.errorText = defaultPostState.errorText;
+    stateByPath.isInProcess = defaultPostState.isInProcess;
+    stateByPath.isDone = defaultPostState.isDone;
+    stateByPath.responseData = defaultPostState.responseData;
   }
 };

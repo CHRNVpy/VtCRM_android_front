@@ -8,14 +8,39 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AppContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/AppContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/passwordVisible.svg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/passwordVisible.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/container/header/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/container/header/header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/controls/button/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/controls/button/button.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/controls/input/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/controls/input/input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/buttons/buttons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/buttons/buttons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/content/content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/content/content.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/inputs/inputs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/inputs/inputs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/listItem/listItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/listItem/listItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/marginBottom/marginBottom.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/marginBottom/marginBottom.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/status/status.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/status/status.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/wrappers/textType/textType.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/textType/textType.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/title/title.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/title/title.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/twoColumns/twoColumns.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/twoColumns/twoColumns.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/wrapper/wrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/wrapper/wrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/applicationPage/applicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/applicationPage/applicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/poolPage/poolPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/poolPage/poolPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/poolsPage/poolsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/poolsPage/poolsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/mainPage/mainPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/login/post/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/login/post/config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/login/post/post.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/login/post/post.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/navigation/state/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/navigation/state/state.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,20 +65,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Data/job/projects/vtcrm",
-    "settings.editor.selected.configurable": "configurable.group.tools"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Data/job/projects/vtcrm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.tools&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

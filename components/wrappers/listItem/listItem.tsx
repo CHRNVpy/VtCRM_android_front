@@ -7,7 +7,7 @@ interface ListProps {
   isLastItem?: boolean;
 }
 
-export default function List({ children, isLastItem }: ListProps) {
+export default function Component({ children, isLastItem }: ListProps) {
   return (
     <View style={[styles.item, !!isLastItem && styles.isLastItem]}>
       {children}

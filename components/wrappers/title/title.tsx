@@ -11,7 +11,7 @@ interface TitleProps {
   isNoMargin?: boolean;
 }
 
-export default function Title({
+export default function Component({
   children,
   isNoPadding,
   isWithSettings,

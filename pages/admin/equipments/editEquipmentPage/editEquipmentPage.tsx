@@ -12,13 +12,8 @@ import TextType from "@/components/wrappers/textType/textType";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
-import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
 export default function Page() {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-  });
-
   const equipmentData = useMemo(() => {
     return {
       id: "1",
@@ -38,8 +33,6 @@ export default function Page() {
       },
     };
   }, []);
-
-  if (!fontsLoaded) return null;
 
   return (
     <Wrapper>

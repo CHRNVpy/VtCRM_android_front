@@ -1,28 +1,28 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { store, persistor } from "./store/store";
+import { store, persistor } from "@/store/store";
+import NavigationContainer from "@/NavigationContainer";
 import {
-  NavigationContainer,
-  NavigationContainerRef,
-} from "@react-navigation/native";
-import { NavigationProvider, RootStackParamList } from "@/NavigationContext";
-import AppContent from "@/AppContent";
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+} from "@expo-google-fonts/inter";
 
 const App = () => {
-  const navigationRef =
-    useRef<NavigationContainerRef<RootStackParamList>>(null);
+  let [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+  });
+
+  if (!fontsLoaded) return null;
 
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <NavigationContainer ref={navigationRef}>
-            <NavigationProvider navigationRef={navigationRef}>
-              <AppContent />
-            </NavigationProvider>
-          </NavigationContainer>
+          <NavigationContainer />
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

@@ -117,10 +117,10 @@ export const postLogin = createPostAsyncThunkWithArguments({
       !responseData.data.accessToken ||
       !responseData.data.refreshToken
     ) {
-      dispatch(setAccessToken({ action: "clear" }));
+      dispatch(setAccessToken({ action: "reset" }));
       dispatch(
         setRefreshToken({
-          action: "clear",
+          action: "reset",
         })
       );
 

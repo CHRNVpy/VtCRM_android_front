@@ -15,13 +15,8 @@ import TextType from "@/components/wrappers/textType/textType";
 import EditIcon from "@/assets/editIcon.svg";
 import AddIcon from "@/assets/addIcon.svg";
 import { s } from "react-native-size-matters";
-import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 
 export default function Page() {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-  });
-
   const equipmentsList = useMemo(() => {
     return [
       {
@@ -187,11 +182,9 @@ export default function Page() {
     ];
   }, []);
 
-  if (!fontsLoaded) return null;
-
   return (
     <Wrapper>
-      <Header linkText={"На главную"} />
+      <Header linkText={"На главную"} to={"AdminMainPage"} />
       <Title isWithSettings={true} isNoMargin={true}>
         Оборудование
       </Title>

@@ -14,18 +14,8 @@ import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString, ruApplicationsByCount } from "@/helpers/strings";
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-} from "@expo-google-fonts/inter";
 
 export default function Page() {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-  });
-
   const poolsList = useMemo(() => {
     return [
       {
@@ -163,11 +153,9 @@ export default function Page() {
     ];
   }, []);
 
-  if (!fontsLoaded) return null;
-
   return (
     <Wrapper>
-      <Header linkText={"На главную"} />
+      <Header linkText={"На главную"} to={"AdminMainPage"} />
       <Title>Пулы заявок</Title>
       <Content>
         {!!poolsList.length && (

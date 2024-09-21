@@ -2,11 +2,6 @@ import { View, StyleSheet, Text } from "react-native";
 import { ReactNode } from "react";
 import { s } from "react-native-size-matters";
 import colors from "@/helpers/colors";
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-} from "@expo-google-fonts/inter";
 
 interface TextTypeProps {
   children?: ReactNode;
@@ -21,7 +16,7 @@ interface TextTypeProps {
   ellipsizeMode?: "tail" | "clip";
 }
 
-export default function TextType({
+export default function Component({
   children,
   size = "big",
   align,
@@ -33,13 +28,6 @@ export default function TextType({
   minNumberOfLines,
   ellipsizeMode,
 }: TextTypeProps) {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-  });
-
-  if (!fontsLoaded) return null;
-
   return (
     <View
       style={[

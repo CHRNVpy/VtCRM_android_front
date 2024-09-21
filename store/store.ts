@@ -12,26 +12,43 @@ import {
 import storage from "@react-native-async-storage/async-storage"; // AsyncStorage для React Native
 import postLoginReducer from "@/store/login/post/post";
 import stateNavigationReducer from "@/store/navigation/state/state";
+import getCollectionInstallerReducer from "@/store/installer/getCollection/getCollection";
 
-const persistConfig = {
-  key: "root",
+const postLoginPersistConfig = {
+  key: "postLogin",
+  storage,
+};
+
+const stateNavigationPersistConfig = {
+  key: "stateNavigation",
+  storage,
+};
+
+const getCollectionInstallerPersistConfig = {
+  key: "getCollectionInstaller",
   storage,
 };
 
 const persistedPostLoginReducer = persistReducer(
-  persistConfig,
+  postLoginPersistConfig,
   postLoginReducer
 );
 
 const persistedStateNavigationReducer = persistReducer(
-  persistConfig,
+  stateNavigationPersistConfig,
   stateNavigationReducer
+);
+
+const persistedGetCollectionInstallerReducer = persistReducer(
+  getCollectionInstallerPersistConfig,
+  getCollectionInstallerReducer
 );
 
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
     stateNavigation: persistedStateNavigationReducer,
+    getCollectionInstaller: persistedGetCollectionInstallerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

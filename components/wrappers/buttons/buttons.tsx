@@ -8,7 +8,7 @@ interface ButtonsProps {
   isItemButtons?: boolean;
 }
 
-export default function Buttons({
+export default function Component({
   children,
   isItemButtons = false,
 }: ButtonsProps) {

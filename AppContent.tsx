@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,40 +21,54 @@ import AdminApplicationsPoolsPage from "@/pages/admin/applications/poolsPage/poo
 import AdminApplicationsPoolPage from "@/pages/admin/applications/poolPage/poolPage";
 import AdminApplicationPage from "@/pages/admin/applications/applicationPage/applicationPage";
 import AdminEditApplicationPage from "@/pages/admin/applications/editApplicationPage/editApplicationPage";
+import { setPage } from "@/store/navigation/state/state";
+import { setPostLoginStateReducer } from "@/store/login/post/post";
 import colors from "@/helpers/colors";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const dispatch: AppDispatch = useDispatch();
+
   const { navigate } = useNavigationContext();
 
   const accessToken = useSelector(
     (state: RootState) => state.stateNavigation.accessToken.data
   );
 
+  const page = useSelector(
+    (state: RootState) => state.stateNavigation.page.data
+  );
+
+  //  Clear the login state to avoid persisting a pending state after the app is restarted, which can happen if the state is persisted
+  useEffect(() => {
+    dispatch(setPostLoginStateReducer({ action: "reset" }));
+  }, []);
+
+  //  Navigate if accessToken or page changed
   useEffect(() => {
     if (!accessToken) {
       navigate("LoginPage");
+
       return;
     }
 
-    navigate("AdminMainPage");
-  }, [navigate, accessToken]);
+    if (page) {
+      navigate(page);
 
-  const initialRouteName = useMemo(() => {
-    if (!accessToken) {
-      return "LoginPage";
+      return;
     }
 
-    return "AdminMainPage";
-  }, [accessToken]);
+    //  Default admin page
+    dispatch(setPage({ action: "setData", data: "AdminMainPage" }));
+    navigate("AdminMainPage");
+  }, [navigate, accessToken, page]);
 
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <StatusBar style="dark" backgroundColor={colors.white} />
         <Stack.Navigator
-          initialRouteName={initialRouteName}
           screenOptions={{
             animation: "slide_from_right",
           }}

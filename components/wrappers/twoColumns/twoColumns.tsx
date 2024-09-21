@@ -9,7 +9,7 @@ interface TwoColumnsProps {
   gap?: "medium";
 }
 
-export default function TwoColumns({
+export default function Component({
   leftColumn,
   rightColumn,
   ratio,

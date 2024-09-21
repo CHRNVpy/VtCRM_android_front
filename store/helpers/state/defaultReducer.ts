@@ -1,12 +1,12 @@
 import { Draft } from "immer";
-import { State } from "@/store/helpers/state";
+import {
+  SetStateState,
+  SetStateDefaultReducerActionType,
+} from "@/store/helpers/state";
 
 export const setStateDefaultReducer = (
   state: Draft<any>,
-  action: {
-    payload: any;
-    type: string;
-  },
+  action: SetStateDefaultReducerActionType,
   path: Array<string>
 ) => {
   const payload = action.payload;
@@ -17,12 +17,12 @@ export const setStateDefaultReducer = (
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as State)
+      }, state) as SetStateState)
     : undefined;
 
-  if (stateByPath) {
-    if (payload.action == "setData") stateByPath.data = payload.data;
+  if (!stateByPath) return;
 
-    if (payload.action == "clear") stateByPath.data = null;
-  }
+  if (payload.action == "setData") stateByPath.data = payload.data;
+
+  if (payload.action == "reset") stateByPath.data = null;
 };

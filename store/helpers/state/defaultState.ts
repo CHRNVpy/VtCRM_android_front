@@ -1,5 +1,5 @@
-import { State } from "@/store/helpers/state";
+import { SetStateState } from "@/store/helpers/state";
 
-export const defaultState: State = {
+export const defaultState: SetStateState = {
   data: null,
 };

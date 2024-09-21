@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { ReactNode, useCallback } from "react";
 import { s } from "react-native-size-matters";
-import { useFonts, Inter_400Regular } from "@expo-google-fonts/inter";
 import colors from "@/helpers/colors";
 
 interface ButtonProps extends ViewProps {
@@ -20,7 +19,7 @@ interface ButtonProps extends ViewProps {
   onPress?: () => void;
 }
 
-export default function Button({
+export default function Component({
   children,
   isInProcess = false,
   isDisabled = false,
@@ -29,10 +28,6 @@ export default function Button({
   icon,
   onPress,
 }: ButtonProps) {
-  let [fontsLoaded] = useFonts({
-    Inter_400Regular,
-  });
-
   const handleOnPress = useCallback(() => {
     if (isDisabled) return;
 
@@ -40,8 +35,6 @@ export default function Button({
 
     onPress();
   }, [isDisabled, onPress]);
-
-  if (!fontsLoaded) return null;
 
   return (
     <Pressable onPress={handleOnPress}>
