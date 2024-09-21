@@ -35,7 +35,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={`Оборудование`} />
+      <Header linkText={`Оборудование`} to={"AdminEquipmentsPage"} />
       <Title>Добавление оборудования</Title>
       <Content isWithPaddings={true}>
         <Inputs>

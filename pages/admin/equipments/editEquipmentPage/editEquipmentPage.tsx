@@ -1,5 +1,7 @@
 import { StyleSheet, Text } from "react-native";
 import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
@@ -10,10 +12,20 @@ import Content from "@/components/wrappers/content/content";
 import Title from "@/components/wrappers/title/title";
 import TextType from "@/components/wrappers/textType/textType";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 
 export default function Page() {
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
+
   const equipmentData = useMemo(() => {
     return {
       id: "1",
@@ -36,7 +48,11 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={`#${equipmentData.id} ${equipmentData.name}`} />
+      <Header
+        linkText={`#${equipmentData.id} ${equipmentData.name}`}
+        to={`AdminEquipmentPage`}
+        toParams={{ id: pageParamsWhenMounted.id }}
+      />
       <Title>Редактирование оборудования</Title>
       <Content isWithPaddings={true}>
         {!!equipmentData?.application?.id ? (
@@ -44,22 +60,46 @@ export default function Page() {
             <TwoColumns
               leftColumn={
                 <>
-                  <TextType>У монтажника</TextType>
+                  <PressableArea
+                    to={"AdminInstallerPage"}
+                    toParams={{
+                      id: equipmentData.application.installer.id,
+                      backLink: {
+                        text: `#${equipmentData.id} ${equipmentData.name}`,
+                        to: "AdminEditEquipmentPage",
+                        params: { id: pageParamsWhenMounted.id },
+                      },
+                    }}
+                  >
+                    <TextType>У монтажника</TextType>
+                  </PressableArea>
                 </>
               }
               rightColumn={
                 <>
-                  <TextType
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    align="right"
-                    isDashed={true}
+                  <PressableArea
+                    to={"AdminInstallerPage"}
+                    toParams={{
+                      id: equipmentData.application.installer.id,
+                      backLink: {
+                        text: `#${equipmentData.id} ${equipmentData.name}`,
+                        to: "AdminEditEquipmentPage",
+                        params: { id: pageParamsWhenMounted.id },
+                      },
+                    }}
                   >
-                    #{equipmentData.application.installer.id}{" "}
-                    {equipmentData.application.installer.lastName}{" "}
-                    {equipmentData.application.installer.firstName.charAt(0)}.{" "}
-                    {equipmentData.application.installer.patronym.charAt(0)}.
-                  </TextType>
+                    <TextType
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      align="right"
+                      isDashed={true}
+                    >
+                      #{equipmentData.application.installer.id}{" "}
+                      {equipmentData.application.installer.lastName}{" "}
+                      {equipmentData.application.installer.firstName.charAt(0)}.{" "}
+                      {equipmentData.application.installer.patronym.charAt(0)}.
+                    </TextType>
+                  </PressableArea>
                   <TextType align="right" isDashed={true}>
                     Заявка #{equipmentData.application.id}
                   </TextType>

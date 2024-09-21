@@ -1,5 +1,7 @@
 import { StyleSheet } from "react-native";
 import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Content from "@/components/wrappers/content/content";
@@ -20,6 +22,15 @@ import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 
 export default function Page() {
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
+
   const installerData = useMemo(() => {
     return {
       id: "1",
@@ -33,7 +44,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"Монтажники"} />
+      <Header linkText={"Монтажники"} to={"AdminInstallersPage"} />
       <Content isWithPaddings={true}>
         <MarginBottom size="biggest">
           <TwoColumns
@@ -91,10 +102,22 @@ export default function Page() {
         >
           {installerData.isActive ? "Выключить" : "Включить"}
         </Button>
-        <Button icon={<ChangePasswordIcon width={s(22)} height={s(20)} />}>
+        <Button
+          icon={<ChangePasswordIcon width={s(22)} height={s(20)} />}
+          to={"AdminEditPasswordInstallerPage"}
+          toParams={{
+            id: pageParamsWhenMounted?.id,
+          }}
+        >
           Сменить пароль
         </Button>
-        <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
+        <Button
+          icon={<EditIcon width={s(7)} height={s(22)} />}
+          to={"AdminEditInstallerPage"}
+          toParams={{
+            id: pageParamsWhenMounted?.id,
+          }}
+        >
           Редактировать
         </Button>
       </Buttons>

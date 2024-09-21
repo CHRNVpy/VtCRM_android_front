@@ -1,31 +1,51 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import LogoSvg from "@/assets/logo.svg";
 import BackLinkIconSvg from "@/assets/backLinkIcon.svg";
 import { RootStackParamList } from "@/NavigationContext";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { setPage } from "@/store/navigation/state/state";
 import { s } from "react-native-size-matters";
 
 interface ContentProps {
   linkText?: string;
   to?: keyof RootStackParamList;
+  toParams?: { [key: string]: any };
 }
 
-export default function Header({ linkText, to }: ContentProps) {
+export default function Header({ linkText, to, toParams }: ContentProps) {
   const dispatch: AppDispatch = useDispatch();
+
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
 
   const handleOnPress = useCallback(() => {
     if (!to) return;
 
-    dispatch(setPage({ action: "setData", data: to }));
-  }, [to]);
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : to,
+        params: pageParamsWhenMounted?.backLink?.params
+          ? pageParamsWhenMounted?.backLink?.params
+          : toParams,
+      })
+    );
+  }, [to, toParams, pageParamsWhenMounted]);
 
   return (
     <Pressable onPress={handleOnPress}>
       <View style={[styles.header, !!linkText && styles.isWithLink]}>
-        {linkText ? (
+        {linkText || pageParamsWhenMounted?.backLink?.text ? (
           <View style={styles.backLink}>
             <BackLinkIconSvg width={s(31)} height={s(26)} />
             <Text
@@ -33,7 +53,9 @@ export default function Header({ linkText, to }: ContentProps) {
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {linkText}
+              {pageParamsWhenMounted?.backLink?.text
+                ? pageParamsWhenMounted?.backLink?.text
+                : linkText}
             </Text>
           </View>
         ) : (

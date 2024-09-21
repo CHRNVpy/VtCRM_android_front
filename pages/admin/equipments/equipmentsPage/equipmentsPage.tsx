@@ -12,6 +12,7 @@ import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import ListItem from "@/components/wrappers/listItem/listItem";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import TextType from "@/components/wrappers/textType/textType";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import EditIcon from "@/assets/editIcon.svg";
 import AddIcon from "@/assets/addIcon.svg";
 import { s } from "react-native-size-matters";
@@ -203,45 +204,82 @@ export default function Page() {
             renderItem={({ item, index }) => {
               return (
                 <ListItem isLastItem={index === equipmentsList.length - 1}>
-                  <MarginBottom>
-                    <TwoColumns
-                      ratio="85/15"
-                      leftColumn={
-                        <>
-                          <MarginBottom size="small">
-                            <TextType>{item.name}</TextType>
-                          </MarginBottom>
-                          <TextType>{item.serialNumber}</TextType>
-                        </>
-                      }
-                      rightColumn={
-                        <TextType align="right">#{item.id}</TextType>
-                      }
-                    />
-                  </MarginBottom>
-                  <MarginBottom>
-                    <TextType size="small">{item.note}</TextType>
-                  </MarginBottom>
+                  <PressableArea
+                    to={"AdminEquipmentPage"}
+                    toParams={{
+                      id: item.id,
+                    }}
+                  >
+                    <MarginBottom>
+                      <TwoColumns
+                        ratio="85/15"
+                        leftColumn={
+                          <>
+                            <MarginBottom size="small">
+                              <TextType>{item.name}</TextType>
+                            </MarginBottom>
+                            <TextType>{item.serialNumber}</TextType>
+                          </>
+                        }
+                        rightColumn={
+                          <TextType align="right">#{item.id}</TextType>
+                        }
+                      />
+                    </MarginBottom>
+                    <MarginBottom>
+                      <TextType size="small">{item.note}</TextType>
+                    </MarginBottom>
+                  </PressableArea>
                   <MarginBottom>
                     {!!item?.application?.id ? (
                       <>
                         <MarginBottom size="small">
                           <TwoColumns
-                            leftColumn={<TextType>У монтажника</TextType>}
+                            leftColumn={
+                              <PressableArea
+                                to={"AdminInstallerPage"}
+                                toParams={{
+                                  id: item.application.installer.id,
+                                  backLink: {
+                                    text: "Оборудование",
+                                    to: "AdminEquipmentsPage",
+                                  },
+                                }}
+                              >
+                                <TextType>У монтажника</TextType>
+                              </PressableArea>
+                            }
                             rightColumn={
                               <>
-                                <TextType align="right" isDashed={true}>
-                                  Заявка #{item.application.id}
-                                </TextType>
+                                <PressableArea
+                                  to={"AdminInstallerPage"}
+                                  toParams={{
+                                    id: item.application.installer.id,
+                                    backLink: {
+                                      text: "Оборудование",
+                                      to: "AdminEquipmentsPage",
+                                    },
+                                  }}
+                                >
+                                  <TextType isDashed={true} align="right">
+                                    #{item.application.installer.id}{" "}
+                                    {item.application.installer.lastName}{" "}
+                                    {item.application.installer.firstName.charAt(
+                                      0
+                                    )}
+                                    .{" "}
+                                    {item.application.installer.patronym.charAt(
+                                      0
+                                    )}
+                                    .
+                                  </TextType>
+                                </PressableArea>
                               </>
                             }
                           />
                         </MarginBottom>
-                        <TextType isDashed={true} align="right">
-                          #{item.application.installer.id}{" "}
-                          {item.application.installer.lastName}{" "}
-                          {item.application.installer.firstName.charAt(0)}.{" "}
-                          {item.application.installer.patronym.charAt(0)}.
+                        <TextType align="right" isDashed={true}>
+                          Заявка #{item.application.id}
                         </TextType>
                       </>
                     ) : (
@@ -252,6 +290,14 @@ export default function Page() {
                     <Button
                       icon={<EditIcon width={s(5)} height={s(16)} />}
                       size={"small"}
+                      to={"AdminEditEquipmentPage"}
+                      toParams={{
+                        id: item.id,
+                        backLink: {
+                          text: "Оборудование",
+                          to: "AdminEquipmentsPage",
+                        },
+                      }}
                     >
                       Редактировать
                     </Button>
@@ -263,7 +309,10 @@ export default function Page() {
         </Content>
       )}
       <Buttons>
-        <Button icon={<AddIcon width={s(16)} height={s(16)} />}>
+        <Button
+          icon={<AddIcon width={s(16)} height={s(16)} />}
+          to={"AdminCreateEquipmentPage"}
+        >
           Добавить оборудование
         </Button>
       </Buttons>

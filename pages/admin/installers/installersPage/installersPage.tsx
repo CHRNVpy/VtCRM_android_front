@@ -11,6 +11,7 @@ import ListItem from "@/components/wrappers/listItem/listItem";
 import Title from "@/components/wrappers/title/title";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import ChangePasswordIcon from "@/assets/changePasswordIcon.svg";
 import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
@@ -102,31 +103,38 @@ export default function Page() {
             renderItem={({ item, index }) => {
               return (
                 <ListItem isLastItem={index === installersList.length - 1}>
-                  <MarginBottom size="medium">
-                    <TwoColumns
-                      ratio="85/15"
-                      leftColumn={
-                        <>
-                          <TextType size="big" marginBottom="small">
-                            {item.name}
-                          </TextType>
-                          <TextType size="medium">{item.phone}</TextType>
-                        </>
-                      }
-                      rightColumn={
-                        <>
-                          <TextType
-                            size="big"
-                            align="right"
-                            marginBottom="small"
-                          >
-                            #{item.id}
-                          </TextType>
-                          <Status isActive={item.isActive} />
-                        </>
-                      }
-                    />
-                  </MarginBottom>
+                  <PressableArea
+                    to={"AdminInstallerPage"}
+                    toParams={{
+                      id: item.id,
+                    }}
+                  >
+                    <MarginBottom size="medium">
+                      <TwoColumns
+                        ratio="85/15"
+                        leftColumn={
+                          <>
+                            <TextType size="big" marginBottom="small">
+                              {item.name}
+                            </TextType>
+                            <TextType size="medium">{item.phone}</TextType>
+                          </>
+                        }
+                        rightColumn={
+                          <>
+                            <TextType
+                              size="big"
+                              align="right"
+                              marginBottom="small"
+                            >
+                              #{item.id}
+                            </TextType>
+                            <Status isActive={item.isActive} />
+                          </>
+                        }
+                      />
+                    </MarginBottom>
+                  </PressableArea>
                   <TwoColumns
                     gap={"medium"}
                     leftColumn={
@@ -136,12 +144,28 @@ export default function Page() {
                             <ChangePasswordIcon width={s(13)} height={s(12)} />
                           }
                           size={"small"}
+                          to={"AdminEditInstallerPasswordPage"}
+                          toParams={{
+                            id: item.id,
+                            backLink: {
+                              text: "Монтажники",
+                              to: "AdminInstallersPage",
+                            },
+                          }}
                         >
                           Сменить пароль
                         </Button>
                         <Button
                           icon={<EditIcon width={s(5)} height={s(16)} />}
                           size={"small"}
+                          to={"AdminEditInstallerPage"}
+                          toParams={{
+                            id: item.id,
+                            backLink: {
+                              text: "Монтажники",
+                              to: "AdminInstallersPage",
+                            },
+                          }}
                         >
                           Редактировать
                         </Button>
@@ -177,7 +201,7 @@ export default function Page() {
         </Content>
       )}
       <Buttons>
-        <Button>Добавить монтажника</Button>
+        <Button to={"AdminCreateInstallerPage"}>Добавить монтажника</Button>
       </Buttons>
     </Wrapper>
   );

@@ -1,5 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
 import { useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Header from "@/components/container/header/header";
 import Content from "@/components/wrappers/content/content";
@@ -12,6 +14,15 @@ import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
 
 export default function Page() {
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
+
   const installerData = useMemo(() => {
     return {
       id: "1",
@@ -30,6 +41,8 @@ export default function Page() {
     <Wrapper>
       <Header
         linkText={`#${installerData.id} ${installerData.lastName} ${installerData.firstName} ${installerData.patronym}`}
+        to={"AdminInstallerPage"}
+        toParams={{ id: pageParamsWhenMounted?.id }}
       />
       <Title>Редактирование монтажника</Title>
       <Content isWithPaddings={true}>

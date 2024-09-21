@@ -1,6 +1,7 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { useMemo } from "react";
-import colors from "@/helpers/colors";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
@@ -11,11 +12,21 @@ import Title from "@/components/wrappers/title/title";
 import TextType from "@/components/wrappers/textType/textType";
 import Status from "@/components/wrappers/status/status";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import { s } from "react-native-size-matters";
 import EditIcon from "@/assets/editIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 
 export default function Page() {
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
+
   const equipmentData = useMemo(() => {
     return {
       id: "1",
@@ -38,7 +49,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"Оборудование"} />
+      <Header linkText={"Оборудование"} to={"AdminEquipmentsPage"} />
       <Content isWithPaddings={true}>
         <MarginBottom>
           <TwoColumns
@@ -66,23 +77,45 @@ export default function Page() {
           <>
             <TwoColumns
               leftColumn={
-                <>
+                <PressableArea
+                  to={"AdminInstallerPage"}
+                  toParams={{
+                    id: equipmentData.application.installer.id,
+                    backLink: {
+                      text: `#${equipmentData.id} ${equipmentData.name}`,
+                      to: "AdminEquipmentPage",
+                      params: { id: equipmentData.id },
+                    },
+                  }}
+                >
                   <TextType>У монтажника</TextType>
-                </>
+                </PressableArea>
               }
               rightColumn={
                 <>
-                  <TextType
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    isDashed={true}
-                    align="right"
+                  <PressableArea
+                    to={"AdminInstallerPage"}
+                    toParams={{
+                      id: equipmentData.application.installer.id,
+                      backLink: {
+                        text: `#${equipmentData.id} ${equipmentData.name}`,
+                        to: "AdminEquipmentPage",
+                        params: { id: equipmentData.id },
+                      },
+                    }}
                   >
-                    #{equipmentData.application.installer.id}{" "}
-                    {equipmentData.application.installer.lastName}{" "}
-                    {equipmentData.application.installer.firstName.charAt(0)}.{" "}
-                    {equipmentData.application.installer.patronym.charAt(0)}.
-                  </TextType>
+                    <TextType
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      isDashed={true}
+                      align="right"
+                    >
+                      #{equipmentData.application.installer.id}{" "}
+                      {equipmentData.application.installer.lastName}{" "}
+                      {equipmentData.application.installer.firstName.charAt(0)}.{" "}
+                      {equipmentData.application.installer.patronym.charAt(0)}.
+                    </TextType>
+                  </PressableArea>
                   <TextType isDashed={true} align="right">
                     Заявка #{equipmentData.application.id}
                   </TextType>
@@ -98,7 +131,13 @@ export default function Page() {
         <Button icon={<ShareIcon width={s(18)} height={s(20)} />}>
           Поделиться
         </Button>
-        <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
+        <Button
+          icon={<EditIcon width={s(7)} height={s(22)} />}
+          to={"AdminEditEquipmentPage"}
+          toParams={{
+            id: pageParamsWhenMounted.id,
+          }}
+        >
           Редактировать
         </Button>
       </Buttons>

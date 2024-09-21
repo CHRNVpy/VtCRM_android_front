@@ -28,7 +28,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={`Монтажники`} />
+      <Header linkText={`Монтажники`} to={"AdminInstallersPage"} />
       <Title>Добавление монтажника</Title>
       <Content>
         <Inputs isWithPaddings={true}>

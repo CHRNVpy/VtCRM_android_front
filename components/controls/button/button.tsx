@@ -7,8 +7,12 @@ import {
   Pressable,
 } from "react-native";
 import { ReactNode, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
 import { s } from "react-native-size-matters";
+import { RootStackParamList } from "@/NavigationContext";
 import colors from "@/helpers/colors";
+import { setPage } from "@/store/navigation/state/state";
 
 interface ButtonProps extends ViewProps {
   children?: ReactNode;
@@ -17,6 +21,8 @@ interface ButtonProps extends ViewProps {
   size?: "small";
   icon?: ReactNode;
   onPress?: () => void;
+  to?: keyof RootStackParamList;
+  toParams?: { [key: string]: any };
 }
 
 export default function Component({
@@ -27,14 +33,19 @@ export default function Component({
   style,
   icon,
   onPress,
+  to,
+  toParams,
 }: ButtonProps) {
+  const dispatch: AppDispatch = useDispatch();
+
   const handleOnPress = useCallback(() => {
     if (isDisabled) return;
 
-    if (!onPress) return;
+    if (to)
+      dispatch(setPage({ action: "setData", data: to, params: toParams }));
 
-    onPress();
-  }, [isDisabled, onPress]);
+    if (onPress) onPress();
+  }, [isDisabled, onPress, to, toParams]);
 
   return (
     <Pressable onPress={handleOnPress}>
