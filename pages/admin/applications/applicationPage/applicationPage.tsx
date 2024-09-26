@@ -107,7 +107,11 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={`Пул #${applicationItem.pool.id}`} />
+      <Header
+        linkText={`Пул #${applicationItem.pool.id}`}
+        to={"AdminApplicationsPoolPage"}
+        toParams={{ id: applicationItem.pool.id }}
+      />
       <ScrollView>
         <MarginBottom>
           <TwoColumns
@@ -246,7 +250,13 @@ export default function Page() {
         </Content>
       </ScrollView>
       <Buttons>
-        <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
+        <Button
+          icon={<EditIcon width={s(7)} height={s(22)} />}
+          to={"AdminEditApplicationPage"}
+          toParams={{
+            id: applicationItem.id,
+          }}
+        >
           Редактировать
         </Button>
         <Button

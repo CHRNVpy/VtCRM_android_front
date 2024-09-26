@@ -10,6 +10,7 @@ import Content from "@/components/wrappers/content/content";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import TextType from "@/components/wrappers/textType/textType";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
@@ -166,58 +167,72 @@ export default function Page() {
               return (
                 <ListItem isLastItem={index === poolsList.length - 1}>
                   <MarginBottom>
-                    <TwoColumns
-                      leftColumn={
-                        <>
-                          <TextType isBold={true} isDashed={true}>
-                            Пул #{item.id}
-                          </TextType>
-                        </>
-                      }
-                      rightColumn={
-                        <>
-                          <TextType isBold={true} align="right">
-                            {item.applicationsCount}{" "}
-                            {ruApplicationsByCount({
-                              count: item.applicationsCount,
-                            })}
-                          </TextType>
-                        </>
-                      }
-                    />
+                    <PressableArea
+                      to={"AdminApplicationsPoolPage"}
+                      toParams={{
+                        id: item.id,
+                      }}
+                    >
+                      <TwoColumns
+                        leftColumn={
+                          <>
+                            <TextType isBold={true} isDashed={true}>
+                              Пул #{item.id}
+                            </TextType>
+                          </>
+                        }
+                        rightColumn={
+                          <>
+                            <TextType isBold={true} align="right">
+                              {item.applicationsCount}{" "}
+                              {ruApplicationsByCount({
+                                count: item.applicationsCount,
+                              })}
+                            </TextType>
+                          </>
+                        }
+                      />
+                    </PressableArea>
                   </MarginBottom>
                   <MarginBottom>
                     {item.applications.map(
                       (applicationItem, applicationIndex) => {
                         const itemElement = (
-                          <TwoColumns
-                            leftColumn={
-                              <>
-                                <TextType>
-                                  {applicationItem.client.name}
-                                </TextType>
-                                <TextType size="small">
-                                  {applicationItem.type == "connection"
-                                    ? "Подключение"
-                                    : applicationItem.type == "repair"
-                                    ? "Ремонт"
-                                    : "Монтаж ВОЛС"}
-                                </TextType>
-                              </>
-                            }
-                            rightColumn={
-                              <>
-                                <TextType align="right">
-                                  #{applicationItem.id}
-                                </TextType>
-                                <TextType align="right" size="small">
-                                  {formatDateString({
-                                    dateString: applicationItem.datetime,
-                                  })}
-                                </TextType>
-                              </>
-                            }
-                          />
+                          <PressableArea
+                            to={"AdminApplicationPage"}
+                            toParams={{
+                              id: applicationItem.id,
+                            }}
+                          >
+                            <TwoColumns
+                              leftColumn={
+                                <>
+                                  <TextType>
+                                    {applicationItem.client.name}
+                                  </TextType>
+                                  <TextType size="small">
+                                    {applicationItem.type == "connection"
+                                      ? "Подключение"
+                                      : applicationItem.type == "repair"
+                                      ? "Ремонт"
+                                      : "Монтаж ВОЛС"}
+                                  </TextType>
+                                </>
+                              }
+                              rightColumn={
+                                <>
+                                  <TextType align="right">
+                                    #{applicationItem.id}
+                                  </TextType>
+                                  <TextType align="right" size="small">
+                                    {formatDateString({
+                                      dateString: applicationItem.datetime,
+                                    })}
+                                  </TextType>
+                                </>
+                              }
+                            />
+                          </PressableArea>
                         );
 
                         return (
@@ -239,6 +254,10 @@ export default function Page() {
                     <Button
                       icon={<AddIcon width={s(13)} height={s(14)} />}
                       size={"small"}
+                      to={"AdminCreateApplicationPage"}
+                      toParams={{
+                        id: item.id,
+                      }}
                     >
                       Добавить заявку
                     </Button>
@@ -256,7 +275,10 @@ export default function Page() {
         )}
       </Content>
       <Buttons>
-        <Button icon={<AddIcon width={s(16)} height={s(16)} />}>
+        <Button
+          icon={<AddIcon width={s(16)} height={s(16)} />}
+          to={"AdminCreateApplicationPage"}
+        >
           Добавить пул
         </Button>
       </Buttons>

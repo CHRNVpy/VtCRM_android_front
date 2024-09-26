@@ -21,6 +21,7 @@ import AdminApplicationsPoolsPage from "@/pages/admin/applications/poolsPage/poo
 import AdminApplicationsPoolPage from "@/pages/admin/applications/poolPage/poolPage";
 import AdminApplicationPage from "@/pages/admin/applications/applicationPage/applicationPage";
 import AdminEditApplicationPage from "@/pages/admin/applications/editApplicationPage/editApplicationPage";
+import AdminCreateApplicationPage from "@/pages/admin/applications/createApplicationPage/createApplicationPage";
 import { setPage } from "@/store/navigation/state/state";
 import { setPostLoginStateReducer } from "@/store/login/post/post";
 import colors from "@/helpers/colors";
@@ -146,6 +147,11 @@ export default function App() {
           <Stack.Screen
             name="AdminEditApplicationPage"
             component={AdminEditApplicationPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminCreateApplicationPage"
+            component={AdminCreateApplicationPage}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

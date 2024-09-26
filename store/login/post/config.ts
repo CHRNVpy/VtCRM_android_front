@@ -1,6 +1,6 @@
 import { createPostAsyncThunk } from "@/store/helpers/post";
 
-export const reducerName = "loginPost";
+export const reducerName = "postLogin";
 
 export const postLoginAsyncThunk = createPostAsyncThunk({
   reducer: reducerName,

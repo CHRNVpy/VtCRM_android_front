@@ -6,20 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/container/header/header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/container/header/header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/controls/button/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/controls/button/button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPage/editInstallerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/editInstallerPasswordPage/editInstallerPasswordPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installerPage/installerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installerPage/installerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AppContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/AppContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/applicationPage/applicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/applicationPage/applicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/poolPage/poolPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/poolPage/poolPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/poolsPage/poolsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/poolsPage/poolsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/login/post/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/login/post/config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

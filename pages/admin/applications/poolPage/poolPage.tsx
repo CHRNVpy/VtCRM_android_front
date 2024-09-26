@@ -11,6 +11,7 @@ import Inputs from "@/components/wrappers/inputs/inputs";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import ListItem from "@/components/wrappers/listItem/listItem";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import EditIcon from "@/assets/editIcon.svg";
@@ -114,7 +115,7 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"Пулы заявок"} />
+      <Header linkText={"Пулы заявок"} to={"AdminApplicationsPoolsPage"} />
       <Title isWithSettings={true} isNoMargin={true}>
         Пул #{poolItem.id}
       </Title>
@@ -135,80 +136,111 @@ export default function Page() {
                   isLastItem={index === poolItem.applications.length - 1}
                 >
                   <MarginBottom size="small">
-                    <TwoColumns
-                      leftColumn={
-                        <TextType isBold={true}>{item.client.name}</TextType>
-                      }
-                      rightColumn={
-                        <TextType isBold={true} align="right">
-                          #{item.id}
+                    <PressableArea
+                      to={"AdminApplicationPage"}
+                      toParams={{ id: item.id }}
+                    >
+                      <TwoColumns
+                        leftColumn={
+                          <TextType isBold={true}>{item.client.name}</TextType>
+                        }
+                        rightColumn={
+                          <TextType isBold={true} align="right">
+                            #{item.id}
+                          </TextType>
+                        }
+                      />
+                    </PressableArea>
+                  </MarginBottom>
+                  <MarginBottom>
+                    <PressableArea
+                      to={"AdminInstallerPage"}
+                      toParams={{
+                        id: poolItem.installer.id,
+                        backLink: {
+                          text: `Пул #${poolItem.id}`,
+                          to: "AdminApplicationsPoolPage",
+                          params: { id: poolItem.id },
+                        },
+                      }}
+                    >
+                      {!!poolItem?.installer && (
+                        <TextType size="medium" isDashed={true}>
+                          Монтажник #{poolItem.installer.id}{" "}
+                          {poolItem.installer.lastName}{" "}
+                          {poolItem.installer.firstName.charAt(0)}.
+                          {poolItem.installer.patronym.charAt(0)}.
                         </TextType>
-                      }
-                    />
+                      )}
+                    </PressableArea>
                   </MarginBottom>
-                  <MarginBottom>
-                    {!!poolItem?.installer && (
-                      <TextType size="medium" isDashed={true}>
-                        Монтажник #{poolItem.installer.id}{" "}
-                        {poolItem.installer.lastName}{" "}
-                        {poolItem.installer.firstName.charAt(0)}.
-                        {poolItem.installer.patronym.charAt(0)}.
-                      </TextType>
-                    )}
-                  </MarginBottom>
-                  <MarginBottom>
-                    <TextType size="small">{item.note}</TextType>
-                  </MarginBottom>
-                  {item.equipments.length > 0 && (
+                  <PressableArea
+                    to={"AdminApplicationPage"}
+                    toParams={{ id: item.id }}
+                  >
                     <MarginBottom>
-                      {item.equipments.map((equipment, equipmentIndex) => {
-                        const isLastItem =
-                          equipmentIndex === item.equipments.length - 1;
-
-                        const equipmentItem = (
-                          <>
-                            <TextType isBold={true}>
-                              #{equipment.id} {equipment.name}
-                            </TextType>
-                            <TextType>{equipment.serialNumber}</TextType>
-                          </>
-                        );
-
-                        return (
-                          <React.Fragment key={equipmentIndex}>
-                            {isLastItem ? (
-                              equipmentItem
-                            ) : (
-                              <MarginBottom>{equipmentItem}</MarginBottom>
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
+                      <TextType size="small">{item.note}</TextType>
                     </MarginBottom>
-                  )}
-                  <MarginBottom>
-                    <TextType isBold={true}>
-                      {item.type == "connection"
-                        ? "Подключение"
-                        : item.type == "repair"
-                        ? "Ремонт"
-                        : "Монтаж ВОЛС"}
-                    </TextType>
-                    <TextType>
-                      {formatDateString({
-                        dateString: item.datetime,
-                      })}
-                    </TextType>
-                  </MarginBottom>
-                  <MarginBottom>
-                    <TextType isBold={true}>
-                      {item.isActive ? "В работе" : "Отменена"}
-                    </TextType>
-                  </MarginBottom>
+                    {item.equipments.length > 0 && (
+                      <MarginBottom>
+                        {item.equipments.map((equipment, equipmentIndex) => {
+                          const isLastItem =
+                            equipmentIndex === item.equipments.length - 1;
+
+                          const equipmentItem = (
+                            <>
+                              <TextType isBold={true}>
+                                #{equipment.id} {equipment.name}
+                              </TextType>
+                              <TextType>{equipment.serialNumber}</TextType>
+                            </>
+                          );
+
+                          return (
+                            <React.Fragment key={equipmentIndex}>
+                              {isLastItem ? (
+                                equipmentItem
+                              ) : (
+                                <MarginBottom>{equipmentItem}</MarginBottom>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                      </MarginBottom>
+                    )}
+                    <MarginBottom>
+                      <TextType isBold={true}>
+                        {item.type == "connection"
+                          ? "Подключение"
+                          : item.type == "repair"
+                          ? "Ремонт"
+                          : "Монтаж ВОЛС"}
+                      </TextType>
+                      <TextType>
+                        {formatDateString({
+                          dateString: item.datetime,
+                        })}
+                      </TextType>
+                    </MarginBottom>
+                    <MarginBottom>
+                      <TextType isBold={true}>
+                        {item.isActive ? "В работе" : "Отменена"}
+                      </TextType>
+                    </MarginBottom>
+                  </PressableArea>
                   <Buttons isItemButtons={true}>
                     <Button
                       icon={<EditIcon width={s(5)} height={s(16)} />}
                       size={"small"}
+                      to={"AdminEditApplicationPage"}
+                      toParams={{
+                        id: item.id,
+                        backLink: {
+                          text: `Пул #${poolItem.id}`,
+                          to: "AdminApplicationsPoolPage",
+                          params: { id: poolItem.id },
+                        },
+                      }}
                     >
                       Редактировать
                     </Button>
@@ -235,7 +267,18 @@ export default function Page() {
         <Button icon={<StartIcon width={s(15)} height={s(16)} />}>
           Отправить в работу
         </Button>
-        <Button icon={<AddIcon width={s(16)} height={s(16)} />}>
+        <Button
+          icon={<AddIcon width={s(16)} height={s(16)} />}
+          to={"AdminCreateApplicationPage"}
+          toParams={{
+            id: poolItem.id,
+            backLink: {
+              text: `Пул #${poolItem.id}`,
+              to: "AdminApplicationsPoolPage",
+              params: { id: poolItem.id },
+            },
+          }}
+        >
           Добавить заявку
         </Button>
       </Buttons>
