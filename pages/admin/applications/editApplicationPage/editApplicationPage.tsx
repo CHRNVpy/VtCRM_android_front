@@ -12,8 +12,8 @@ import TextType from "@/components/wrappers/textType/textType";
 import ListItem from "@/components/wrappers/listItem/listItem";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import EditIcon from "@/assets/editIcon.svg";
-import { s } from "react-native-size-matters";
 import SaveIcon from "@/assets/saveIcon.svg";
+import { s } from "react-native-size-matters";
 
 export default function Page() {
   const equipmentData = useMemo(() => {
@@ -124,7 +124,11 @@ export default function Page() {
         }
       />
       <Buttons>
-        <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
+        <Button
+          icon={<EditIcon width={s(7)} height={s(22)} />}
+          to={"AdminEditEquipmentsListInApplicationPage"}
+          toParams={{ id: equipmentData.application.id }}
+        >
           Изменить оборудование
         </Button>
         <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>

@@ -22,6 +22,7 @@ import AdminApplicationsPoolPage from "@/pages/admin/applications/poolPage/poolP
 import AdminApplicationPage from "@/pages/admin/applications/applicationPage/applicationPage";
 import AdminEditApplicationPage from "@/pages/admin/applications/editApplicationPage/editApplicationPage";
 import AdminCreateApplicationPage from "@/pages/admin/applications/createApplicationPage/createApplicationPage";
+import AdminEditEquipmentsListInApplicationPage from "@/pages/admin/applications/editEquipmentsListInApplicationPage/editEquipmentsListInApplicationPage";
 import { setPage } from "@/store/navigation/state/state";
 import { setPostLoginStateReducer } from "@/store/login/post/post";
 import colors from "@/helpers/colors";
@@ -152,6 +153,11 @@ export default function App() {
           <Stack.Screen
             name="AdminCreateApplicationPage"
             component={AdminCreateApplicationPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminEditEquipmentsListInApplicationPage"
+            component={AdminEditEquipmentsListInApplicationPage}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
