@@ -1,4 +1,4 @@
-export interface SetStateState {
+export interface DefaultStateType {
   data: any;
   params: any;
 }

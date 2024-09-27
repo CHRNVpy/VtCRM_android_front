@@ -6,9 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AppContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/AppContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/wrappers/title/title.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/title/title.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/editApplicationPage/editApplicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/controls/input/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/controls/input/input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/buttons/buttons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/buttons/buttons.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/wrappers/content/content.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/wrappers/content/content.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helpers/strings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/strings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/loginPage/loginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/defaultState.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/state/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installer/getCollection/config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installer/getCollection/getCollection.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

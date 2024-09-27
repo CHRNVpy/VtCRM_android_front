@@ -12,7 +12,8 @@ import {
 import storage from "@react-native-async-storage/async-storage"; // AsyncStorage для React Native
 import postLoginReducer from "@/store/login/post/post";
 import stateNavigationReducer from "@/store/navigation/state/state";
-import getCollectionInstallerReducer from "@/store/installer/getCollection/getCollection";
+import getCollectionInstallersReducer from "@/store/installers/getCollection/getCollection";
+import stateInstallersReducer from "@/store/installers/state/state";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -24,8 +25,13 @@ const stateNavigationPersistConfig = {
   storage,
 };
 
-const getCollectionInstallerPersistConfig = {
-  key: "getCollectionInstaller",
+const getCollectionInstallersPersistConfig = {
+  key: "getCollectionInstallers",
+  storage,
+};
+
+const stateInstallersPersistConfig = {
+  key: "stateInstallers",
   storage,
 };
 
@@ -39,16 +45,22 @@ const persistedStateNavigationReducer = persistReducer(
   stateNavigationReducer
 );
 
-const persistedGetCollectionInstallerReducer = persistReducer(
-  getCollectionInstallerPersistConfig,
-  getCollectionInstallerReducer
+const persistedGetCollectionInstallersReducer = persistReducer(
+  getCollectionInstallersPersistConfig,
+  getCollectionInstallersReducer
+);
+
+const persistedStateInstallersReducer = persistReducer(
+  stateInstallersPersistConfig,
+  stateInstallersReducer
 );
 
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
     stateNavigation: persistedStateNavigationReducer,
-    getCollectionInstaller: persistedGetCollectionInstallerReducer,
+    getCollectionInstallers: persistedGetCollectionInstallersReducer,
+    stateInstallers: persistedStateInstallersReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -70,6 +82,8 @@ const store = configureStore({
 });
 
 const persistor = persistStore(store);
+
+//persistor.purge();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

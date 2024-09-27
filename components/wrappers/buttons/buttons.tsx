@@ -2,6 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { ReactNode, Children, isValidElement } from "react";
 import Button from "@/components/controls/button/button";
 import { s } from "react-native-size-matters";
+import colors from "@/helpers/colors";
 
 interface ButtonsProps {
   children?: ReactNode;
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     paddingLeft: s(15),
     paddingRight: s(15),
     width: "100%",
+    backgroundColor: colors.white,
   },
   isItemButtons: {
     paddingLeft: s(0),

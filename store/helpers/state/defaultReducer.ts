@@ -1,6 +1,6 @@
 import { Draft } from "immer";
 import {
-  SetStateState,
+  DefaultStateType,
   SetStateDefaultReducerActionType,
 } from "@/store/helpers/state/types";
 import { defaultState } from "@/store/helpers/state/defaultState";
@@ -8,7 +8,8 @@ import { defaultState } from "@/store/helpers/state/defaultState";
 export const setStateDefaultReducer = (
   state: Draft<any>,
   action: SetStateDefaultReducerActionType,
-  path: Array<string>
+  path: Array<string>,
+  externalDefaultState?: any //  На случай использования стороннего defaultState
 ) => {
   const payload = action.payload;
 
@@ -18,15 +19,23 @@ export const setStateDefaultReducer = (
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as SetStateState)
+      }, state) as DefaultStateType)
     : undefined;
 
   if (!stateByPath) return;
 
   if (payload.action == "setData") {
     stateByPath.data = payload.data;
-    stateByPath.params = payload.params ? payload.params : defaultState.params;
+    stateByPath.params = payload.params
+      ? payload.params
+      : externalDefaultState?.params
+      ? externalDefaultState?.params
+      : defaultState.params;
   }
 
-  if (payload.action == "reset") stateByPath.data = null;
+  if (payload.action == "reset") {
+    stateByPath.data = externalDefaultState?.data
+      ? externalDefaultState?.data
+      : defaultState.data;
+  }
 };

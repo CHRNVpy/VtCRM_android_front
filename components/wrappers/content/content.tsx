@@ -1,20 +1,24 @@
-import { View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { ReactNode } from "react";
 import { s } from "react-native-size-matters";
 
 interface ContentProps {
   children?: ReactNode;
   isWithPaddings?: boolean;
+  isWithScrollView?: boolean;
 }
 
 export default function Component({
   children,
   isWithPaddings = false,
+  isWithScrollView = false,
 }: ContentProps) {
+  const Tag = isWithScrollView ? ScrollView : View;
+
   return (
-    <View style={[styles.content, !!isWithPaddings && styles.isWithPaddings]}>
+    <Tag style={[styles.content, !!isWithPaddings && styles.isWithPaddings]}>
       {children}
-    </View>
+    </Tag>
   );
 }
 

@@ -49,10 +49,11 @@ export default function Page() {
   );
 
   const handleSubmitLoginEditing = useCallback(() => {
+    if (!login) return;
     if (!passwordInputRef.current) return;
 
     passwordInputRef.current.focus();
-  }, [passwordInputRef]);
+  }, [passwordInputRef, login]);
 
   const isButtonDisabled = useMemo(() => {
     if (!login) return true;

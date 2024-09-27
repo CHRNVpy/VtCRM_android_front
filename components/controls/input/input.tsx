@@ -18,6 +18,7 @@ import colors from "@/helpers/colors";
 import PasswordVisibleSvg from "@/assets/passwordVisible.svg";
 import PasswordHiddenSvg from "@/assets/passwordHidden.svg";
 import RandomPasswordSvg from "@/assets/randomPassword.svg";
+import { normalizePhone } from "@/helpers/strings";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -30,6 +31,7 @@ interface InputProps extends TextInputProps {
   isDisabled?: boolean;
   isHasClearButton?: boolean;
   isError?: boolean;
+  isPhoneMask?: boolean;
 }
 
 export default function Input({
@@ -42,6 +44,7 @@ export default function Input({
   isDisabled = false,
   isHasClearButton = false,
   isError = false,
+  isPhoneMask = false,
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -72,8 +75,7 @@ export default function Input({
   });
 
   const handlePress = useCallback(() => {
-    if (!isDisabled) return;
-
+    if (isDisabled) return;
     if (!inputForwardOrLocalRef.current) return;
 
     inputForwardOrLocalRef.current.focus();
@@ -131,6 +133,20 @@ export default function Input({
     });
   }, [value, isDisabled]);
 
+  const handleSubmitEditing = useCallback(
+    (event: any) => {
+      if (!!onChangeText && !!isPhoneMask)
+        onChangeText(normalizePhone({ phone: value }));
+
+      if (!onSubmitEditing) return;
+
+      setTimeout(() => {
+        onSubmitEditing(event);
+      }, 200);
+    },
+    [onSubmitEditing, isPhoneMask, value]
+  );
+
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View style={[styles.touchable]}>
@@ -143,13 +159,13 @@ export default function Input({
         >
           <TextInput
             style={[styles.textInput, !!isError && styles.isTextInputError]}
-            onSubmitEditing={onSubmitEditing}
+            onSubmitEditing={handleSubmitEditing}
             onChangeText={onChangeText}
             onFocus={handleTextInputFocus}
             onBlur={handleTextInputBlur}
             secureTextEntry={type == "password" && !isPasswordVisible}
             value={value}
-            ref={inputRef}
+            ref={inputForwardOrLocalRef}
             editable={!isDisabled}
           />
           <View pointerEvents={"none"} style={[styles.labelWrapper]}>

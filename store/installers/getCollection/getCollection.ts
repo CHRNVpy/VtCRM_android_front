@@ -8,7 +8,7 @@ import {
 import {
   reducerName,
   getCollectionAsyncThunk,
-} from "@/store/installer/getCollection/config";
+} from "@/store/installers/getCollection/config";
 import { RootState } from "@/store/store";
 
 const installersGetCollectionSlice = createSlice({
@@ -40,7 +40,7 @@ export const getTransactionCollection =
     getParamsFromStateFunction: (getState: Function) => {
       const {
         installersGetCollectionState: { variables, filters, page, perPage },
-      } = (getState() as RootState)?.getCollectionInstaller;
+      } = (getState() as RootState)?.getCollectionInstallers;
 
       const params: { [key: string]: any } = {};
 
@@ -53,5 +53,5 @@ export const getTransactionCollection =
     getAsyncThunk: getCollectionAsyncThunk,
   });
 
-export { reducerName } from "@/store/installer/getCollection/config";
+export { reducerName } from "@/store/installers/getCollection/config";
 export default installersGetCollectionSlice.reducer;

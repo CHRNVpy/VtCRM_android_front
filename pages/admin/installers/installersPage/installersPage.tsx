@@ -1,5 +1,7 @@
-import { FlatList, StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { FlatList } from "react-native";
+import { useEffect, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Header from "@/components/container/header/header";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
@@ -18,88 +20,35 @@ import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
+import { nameFromNameParts } from "@/helpers/strings";
+import { setInstallers } from "@/store/installers/state/state";
 
 export default function Page() {
-  const installersList = useMemo(() => {
-    return [
-      {
-        id: "1",
-        name: "Иванов Иван Иванович",
-        phone: "+7 912 345-67-89",
-        isActive: true,
-      },
-      {
-        id: "2",
-        name: "Петрова Мария Николаевна",
-        phone: "+7 923 456-78-90",
-        isActive: false,
-      },
-      {
-        id: "3",
-        name: "Сидоров Алексей Петрович",
-        phone: "+7 934 567-89-01",
-        isActive: false,
-      },
-      {
-        id: "4",
-        name: "Кузнецова Светлана Васильевна",
-        phone: "+7 945 678-90-12",
-        isActive: true,
-      },
-      {
-        id: "5",
-        name: "Никитин Дмитрий Александрович",
-        phone: "+7 956 789-01-23",
-        isActive: false,
-      },
-      {
-        id: "6",
-        name: "Морозова Ольга Сергеевна",
-        phone: "+7 967 890-12-34",
-        isActive: true,
-      },
-      {
-        id: "7",
-        name: "Кириллов Андрей Валерьевич",
-        phone: "+7 978 901-23-45",
-        isActive: true,
-      },
-      {
-        id: "8",
-        name: "Григорьева Наталья Дмитриевна",
-        phone: "+7 989 012-34-56",
-        isActive: false,
-      },
-      {
-        id: "9",
-        name: "Лебедев Игорь Юрьевич",
-        phone: "+7 990 123-45-67",
-        isActive: true,
-      },
-      {
-        id: "10",
-        name: "Белоусов Сергей Петрович",
-        phone: "+7 991 234-56-78",
-        isActive: true,
-      },
-      {
-        id: "11",
-        name: "Смирнова Екатерина Олеговна",
-        phone: "+7 992 345-67-89",
-        isActive: false,
-      },
-    ];
-  }, []);
+  const dispatch = useDispatch();
+
+  const installersList = useSelector(
+    (state: RootState) => state.stateInstallers.installers.data
+  );
+
+  const installersListData = useSelector(
+    (state: RootState) => state.stateInstallers.installers
+  );
 
   return (
     <Wrapper>
       <Header linkText={"На главную"} to={"AdminMainPage"} />
       <Title>Монтажники</Title>
-      {!!installersList.length && (
-        <Content>
+      <Content>
+        {!installersList?.length ? (
+          <Content isWithPaddings={true}>
+            <TextType color="gray">Монтажников нет</TextType>
+          </Content>
+        ) : (
           <FlatList
             data={installersList}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) =>
+              item?.id ? item.id : `new-${index}`
+            }
             renderItem={({ item, index }) => {
               return (
                 <ListItem isLastItem={index === installersList.length - 1}>
@@ -115,7 +64,7 @@ export default function Page() {
                         leftColumn={
                           <>
                             <TextType size="big" marginBottom="small">
-                              {item.name}
+                              {nameFromNameParts(item)}
                             </TextType>
                             <TextType size="medium">{item.phone}</TextType>
                           </>
@@ -129,7 +78,7 @@ export default function Page() {
                             >
                               #{item.id}
                             </TextType>
-                            <Status isActive={item.isActive} />
+                            <Status isActive={item.status == "active"} />
                           </>
                         }
                       />
@@ -175,7 +124,7 @@ export default function Page() {
                       <Buttons isItemButtons={true}>
                         <Button
                           icon={
-                            item.isActive ? (
+                            item.status == "active" ? (
                               <TurnOffIcon width={s(9)} height={s(17)} />
                             ) : (
                               <TurnOnIcon width={s(9)} height={s(17)} />
@@ -183,7 +132,7 @@ export default function Page() {
                           }
                           size={"small"}
                         >
-                          {item.isActive ? "Выключить" : "Включить"}
+                          {item.status == "active" ? "Выключить" : "Включить"}
                         </Button>
                         <Button
                           icon={<ShareIcon width={s(13)} height={s(14)} />}
@@ -198,13 +147,11 @@ export default function Page() {
               );
             }}
           />
-        </Content>
-      )}
+        )}
+      </Content>
       <Buttons>
         <Button to={"AdminCreateInstallerPage"}>Добавить монтажника</Button>
       </Buttons>
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});
