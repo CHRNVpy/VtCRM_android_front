@@ -47,7 +47,11 @@ export default function Page() {
           <FlatList
             data={installersList}
             keyExtractor={(item, index) =>
-              item?.id ? item.id : `new-${index}`
+              item?.id
+                ? item?.id.toString()
+                : item?.draftId
+                ? item?.draftId.toString()
+                : `noid-${index}`
             }
             renderItem={({ item, index }) => {
               return (
@@ -56,6 +60,7 @@ export default function Page() {
                     to={"AdminInstallerPage"}
                     toParams={{
                       id: item.id,
+                      draftId: item.draftId,
                     }}
                   >
                     <MarginBottom size="medium">
@@ -76,7 +81,11 @@ export default function Page() {
                               align="right"
                               marginBottom="small"
                             >
-                              #{item.id}
+                              {item.id
+                                ? `#${item.id}`
+                                : item.draftId
+                                ? `#(${item.draftId})`
+                                : ""}
                             </TextType>
                             <Status isActive={item.status == "active"} />
                           </>

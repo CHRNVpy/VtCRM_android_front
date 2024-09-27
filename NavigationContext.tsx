@@ -7,7 +7,10 @@ export type RootStackParamList = Record<
 >;
 
 type NavigationContextType = {
-  navigate: (name: keyof RootStackParamList) => void;
+  navigate: (
+    name: keyof RootStackParamList,
+    params?: { [params: string]: any }
+  ) => void;
   navigationRef: React.RefObject<NavigationContainerRef<RootStackParamList>>;
 };
 
@@ -27,8 +30,11 @@ export const NavigationProvider: React.FC<{
   children: React.ReactNode;
   navigationRef: RefObject<NavigationContainerRef<RootStackParamList>>;
 }> = ({ children, navigationRef }) => {
-  const navigate = (name: keyof RootStackParamList) => {
-    navigationRef.current?.navigate(name);
+  const navigate = (
+    name: keyof RootStackParamList,
+    params?: { [params: string]: any }
+  ) => {
+    navigationRef.current?.navigate(name, params);
   };
 
   return (

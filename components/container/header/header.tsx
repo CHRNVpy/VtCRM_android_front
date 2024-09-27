@@ -1,5 +1,6 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import LogoSvg from "@/assets/logo.svg";
 import BackLinkIconSvg from "@/assets/backLinkIcon.svg";
 import { RootStackParamList } from "@/NavigationContext";
@@ -16,6 +17,7 @@ interface ContentProps {
 
 export default function Header({ linkText, to, toParams }: ContentProps) {
   const dispatch: AppDispatch = useDispatch();
+  const navigation = useNavigation();
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -40,7 +42,29 @@ export default function Header({ linkText, to, toParams }: ContentProps) {
           : toParams,
       })
     );
-  }, [to, toParams, pageParamsWhenMounted]);
+  }, [dispatch, to, toParams, pageParamsWhenMounted]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type !== "GO_BACK") return;
+
+      e.preventDefault();
+
+      dispatch(
+        setPage({
+          action: "setData",
+          data: pageParamsWhenMounted?.backLink?.to
+            ? pageParamsWhenMounted?.backLink?.to
+            : to,
+          params: pageParamsWhenMounted?.backLink?.params
+            ? pageParamsWhenMounted?.backLink?.params
+            : toParams,
+        })
+      );
+    });
+
+    return unsubscribe;
+  }, [dispatch, navigation, to, toParams, pageParamsWhenMounted]);
 
   return (
     <Pressable onPress={handleOnPress}>

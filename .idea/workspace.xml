@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/input/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/input/defaultReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/input/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/input/defaultState.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/input/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/input/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/installers/state/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/state/state.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/state/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -16,7 +16,10 @@ export default function Component({
   const Tag = isWithScrollView ? ScrollView : View;
 
   return (
-    <Tag style={[styles.content, !!isWithPaddings && styles.isWithPaddings]}>
+    <Tag
+      keyboardShouldPersistTaps="always"
+      style={[styles.content, !!isWithPaddings && styles.isWithPaddings]}
+    >
       {children}
     </Tag>
   );

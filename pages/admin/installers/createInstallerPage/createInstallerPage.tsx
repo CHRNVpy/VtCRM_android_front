@@ -172,7 +172,16 @@ export default function Page() {
   const handleCreateInstaller = useCallback(() => {
     if (isButtonDisabled) return;
 
+    const draftId = installersData.reduce((id, installer) => {
+      if (!installer?.draftId) return id;
+
+      if (id >= installer?.draftId + 1) return id;
+
+      return installer?.draftId + 1;
+    }, 1);
+
     const newInstaller: DefaultInstallerStateType = {
+      draftId,
       lastname,
       firstname,
       middlename,
@@ -231,6 +240,7 @@ export default function Page() {
             value={lastname}
             onChangeText={handleChangeLastnameText}
             onSubmitEditing={handleSubmitLastnameEditing}
+            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Имя"
@@ -238,6 +248,7 @@ export default function Page() {
             onChangeText={handleChangeFirstnameText}
             inputRef={firstnameInputRef}
             onSubmitEditing={handleSubmitFirstnameEditing}
+            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Отчество"
@@ -245,6 +256,7 @@ export default function Page() {
             inputRef={middlenameInputRef}
             onChangeText={handleChangeMiddlenameText}
             onSubmitEditing={handleSubmitMiddlenameEditing}
+            onBlur={buildLoginFromName}
           ></Input>
           <Input label="Логин" value={login} isDisabled={true}></Input>
           <Input
@@ -254,6 +266,7 @@ export default function Page() {
             onChangeText={handleChangePhoneText}
             onSubmitEditing={handleSubmitPhoneEditing}
             isPhoneMask={true}
+            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Новый пароль"

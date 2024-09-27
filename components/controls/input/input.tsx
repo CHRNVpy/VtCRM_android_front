@@ -24,6 +24,7 @@ interface InputProps extends TextInputProps {
   label: string;
   children?: ReactNode;
   onSubmitEditing?: (event: any) => void;
+  onBlur?: (event: any) => void;
   onChangeText?: (value?: string) => void;
   type?: "password" | "newPassword";
   value?: string;
@@ -40,6 +41,7 @@ export default function Input({
   value,
   inputRef,
   onSubmitEditing,
+  onBlur,
   onChangeText,
   isDisabled = false,
   isHasClearButton = false,
@@ -114,24 +116,32 @@ export default function Input({
     });
   }, [value, isDisabled]);
 
-  const handleTextInputBlur = useCallback(() => {
-    if (isDisabled) return;
+  const handleTextInputBlur = useCallback(
+    (event: any) => {
+      if (isDisabled) return;
 
-    if (!!value) return;
+      if (!!onChangeText && !!isPhoneMask)
+        onChangeText(normalizePhone({ phone: value }));
 
-    labelHeight.value = withTiming(labelInitialHeight, {
-      duration: animationDuration,
-    });
-    labelLineHeight.value = withTiming(labelInitialLineHeight, {
-      duration: animationDuration,
-    });
-    labelFontSize.value = withTiming(labelInitialFontSize, {
-      duration: animationDuration,
-    });
-    labelTop.value = withTiming(labelInitialTop, {
-      duration: animationDuration,
-    });
-  }, [value, isDisabled]);
+      if (onBlur) onBlur(event);
+
+      if (!!value) return;
+
+      labelHeight.value = withTiming(labelInitialHeight, {
+        duration: animationDuration,
+      });
+      labelLineHeight.value = withTiming(labelInitialLineHeight, {
+        duration: animationDuration,
+      });
+      labelFontSize.value = withTiming(labelInitialFontSize, {
+        duration: animationDuration,
+      });
+      labelTop.value = withTiming(labelInitialTop, {
+        duration: animationDuration,
+      });
+    },
+    [value, isDisabled, onBlur, onChangeText, isPhoneMask]
+  );
 
   const handleSubmitEditing = useCallback(
     (event: any) => {

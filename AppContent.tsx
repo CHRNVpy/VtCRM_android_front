@@ -42,6 +42,10 @@ export default function App() {
     (state: RootState) => state.stateNavigation.page.data
   );
 
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
   //  Clear the login state to avoid persisting a pending state after the app is restarted, which can happen if the state is persisted
   useEffect(() => {
     dispatch(setPostLoginStateReducer({ action: "reset" }));
@@ -56,7 +60,7 @@ export default function App() {
     }
 
     if (page) {
-      navigate(page);
+      navigate(page, pageParams);
 
       return;
     }
@@ -64,7 +68,7 @@ export default function App() {
     //  Default admin page
     dispatch(setPage({ action: "setData", data: "AdminMainPage" }));
     navigate("AdminMainPage");
-  }, [navigate, accessToken, page]);
+  }, [navigate, accessToken, page, pageParams]);
 
   return (
     <SafeAreaView style={styles.wrapper}>

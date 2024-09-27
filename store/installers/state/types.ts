@@ -1,7 +1,8 @@
 import { DefaultStateType } from "@/store/helpers/state";
 
 export interface DefaultInstallerStateType {
-  id?: string;
+  id?: number;
+  draftId?: number;
   login: string;
   password: string;
   firstname: string;
@@ -15,14 +16,3 @@ export interface DefaultInstallerStateType {
 export interface DefaultInstallersStateType extends DefaultStateType {
   data: DefaultInstallerStateType[];
 }
-
-/*
-export type SetStateDefaultReducerActionType = {
-  payload: {
-    action: "setData" | "reset";
-    data?: any;
-    params?: { [key: string]: any };
-  };
-  type: string;
-};
-*/
