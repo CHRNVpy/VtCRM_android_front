@@ -1,12 +1,12 @@
 import { Draft } from "immer";
-import { InputState } from "@/store/helpers/input";
+import {
+  InputStateDefaultReducerActionType,
+  InputStateType,
+} from "@/store/helpers/input";
 
 export const setInputStateDefaultReducer = (
   state: Draft<any>,
-  action: {
-    payload: any;
-    type: string;
-  },
+  action: InputStateDefaultReducerActionType,
   path: Array<string>
 ) => {
   const payload = action.payload;
@@ -17,21 +17,11 @@ export const setInputStateDefaultReducer = (
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as InputState)
+      }, state) as InputStateType)
     : undefined;
 
   if (stateByPath) {
     if (payload.action == "setText") stateByPath.text = payload.text;
-
-    if (payload.action == "clear") stateByPath.text = "";
-
-    if (payload.action == "setIsDisabled")
-      stateByPath.isDisabled = payload.isDisabled;
-
-    if (payload.action == "setIsVisible")
-      stateByPath.isVisible = payload.isVisible;
-
-    if (payload.action == "switchVisibility")
-      stateByPath.isVisible = !stateByPath.isVisible;
+    if (payload.action == "reset") stateByPath.text = "";
   }
 };

@@ -187,6 +187,14 @@ export default function Page() {
     //  Set new installer to store
     dispatch(setInstallers({ action: "setData", data }));
 
+    //  Clear all inputs and states
+    dispatch(setInputStateLastnameReducer({ action: "reset" }));
+    dispatch(setInputStateFirstnameReducer({ action: "reset" }));
+    dispatch(setInputStateMiddlenameReducer({ action: "reset" }));
+    dispatch(setInputStatePhoneReducer({ action: "reset" }));
+    dispatch(setInputStatePasswordReducer({ action: "reset" }));
+    dispatch(setLogin({ action: "reset" }));
+
     //  Change page to parent
     dispatch(
       setPage({

@@ -1,5 +1,11 @@
-export interface InputState {
+export interface InputStateType {
   text: string;
-  isDisabled?: boolean;
-  isVisible?: boolean;
 }
+
+export type InputStateDefaultReducerActionType = {
+  payload: {
+    action: "setText" | "reset";
+    text?: any;
+  };
+  type: string;
+};

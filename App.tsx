@@ -4,6 +4,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { store, persistor } from "@/store/store";
 import NavigationContainer from "@/NavigationContainer";
+import SyncData from "@/SyncData";
 import {
   useFonts,
   Inter_400Regular,
@@ -22,7 +23,9 @@ const App = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <NavigationContainer />
+          <SyncData>
+            <NavigationContainer />
+          </SyncData>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

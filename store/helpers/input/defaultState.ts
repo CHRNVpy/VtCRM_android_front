@@ -1,7 +1,5 @@
-import { InputState } from "@/store/helpers/input";
+import { InputStateType } from "@/store/helpers/input";
 
-export const defaultInputState: InputState = {
+export const defaultInputState: InputStateType = {
   text: "",
-  isDisabled: false,
-  isVisible: false,
 };

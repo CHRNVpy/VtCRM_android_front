@@ -5,27 +5,12 @@ import {
   SetStateDefaultReducerActionType,
 } from "@/store/helpers/state";
 import {
+  InputStateDefaultReducerActionType,
   defaultInputState,
   setInputStateDefaultReducer,
 } from "@/store/helpers/input";
 import { reducerName } from "@/store/installers/state/config";
 import { defaultInstallersState } from "@/store/installers/state/defaultState";
-
-/*
-  data: [
-    {
-      id: "1",
-      login: "test",
-      password: "test",
-      firstname: "Иван", V
-      middlename: "Иванович", V
-      lastname: "Иванов", V
-      phone: "+7 912 345-67-89",
-      status: "active", //inactive
-      role: "",
-    },
-  ],
-*/
 
 const slice = createSlice({
   name: reducerName,
@@ -65,35 +50,50 @@ const slice = createSlice({
         defaultInstallersState
       );
     },
-    setInputStateLastnameReducer(state, action) {
+    setInputStateLastnameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
         "inputs",
         "lastname",
       ]);
     },
-    setInputStateFirstnameReducer(state, action) {
+    setInputStateFirstnameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
         "inputs",
         "firstname",
       ]);
     },
-    setInputStateMiddlenameReducer(state, action) {
+    setInputStateMiddlenameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
         "inputs",
         "middlename",
       ]);
     },
-    setInputStatePhoneReducer(state, action) {
+    setInputStatePhoneReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
         "inputs",
         "phone",
       ]);
     },
-    setInputStatePasswordReducer(state, action) {
+    setInputStatePasswordReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
         "inputs",
@@ -107,32 +107,6 @@ const slice = createSlice({
         "login",
       ]);
     },
-    /*
-    createInstaller(state, action) {
-      const lastname = state.createInstallerFields.inputs.lastname.text;
-      const firstname = state.createInstallerFields.inputs.firstname.text;
-      const middlename = state.createInstallerFields.inputs.middlename.text;
-      const phone = state.createInstallerFields.inputs.phone.text;
-      const password = state.createInstallerFields.inputs.password.text;
-      const login = state.createInstallerFields.states.login.data;
-
-      state.installers.data.push({
-        lastname,
-        firstname,
-        middlename,
-        login,
-        phone,
-        password,
-        status: "active",
-      });
-
-      state.createInstallerFields.inputs.lastname.text = defaultInputState.text;
-      state.createInstallerFields.inputs.firstname.text = defaultInputState.text;
-      state.createInstallerFields.inputs.middlename.text = defaultInputState.text;
-      state.createInstallerFields.inputs.phone.text = defaultInputState.text;
-      state.createInstallerFields.inputs.password.text = defaultInputState.text;
-    },
-    */
   },
 });
 
