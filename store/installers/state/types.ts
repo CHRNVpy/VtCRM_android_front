@@ -10,6 +10,8 @@ export interface DefaultInstallerStateType {
   phone: string;
   status: "active" | "inactive";
   role?: string;
+  hash?: string;
+  isModified?: boolean;
 }
 
 export interface DefaultInstallersStateType extends DefaultStateType {

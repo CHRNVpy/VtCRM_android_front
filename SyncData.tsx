@@ -4,7 +4,10 @@ import { RootState, AppDispatch } from "@/store/store";
 import NetInfo from "@react-native-community/netinfo";
 import debounce from "lodash.debounce";
 import { postInstaller } from "@/store/installers/post/post";
-import { setAccessToken } from "@/store/navigation/state/state";
+import {
+  setAccessToken,
+  setRefreshToken,
+} from "@/store/navigation/state/state";
 import { getInstallersCollection } from "@/store/installers/getCollection/getCollection";
 
 interface ContentProps {
@@ -23,8 +26,6 @@ export default function SyncData({ children }: ContentProps) {
   //  Sync all the data with the server
   const syncData = useCallback(async () => {
     if (!isConnected) return;
-
-    console.log("??");
 
     //  Get current state of installers collection
     await dispatch(getInstallersCollection());

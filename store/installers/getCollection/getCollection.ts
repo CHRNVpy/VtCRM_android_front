@@ -15,6 +15,7 @@ import {
 } from "@/store/navigation/state/state";
 import { setVer } from "@/store/installers/state/state";
 import { RootState } from "@/store/store";
+import { DefaultInstallerStateType } from "@/store/installers/state/types";
 
 const installersGetCollectionSlice = createSlice({
   name: reducerName,
@@ -58,27 +59,69 @@ export const getInstallersCollection =
     },
     callbackAfterGet: async (dispatch, getState, payload) => {
       const {
+        installers: { data: localInstallers },
         ver: { data: ver },
       } = (getState() as RootState)?.stateInstallers;
 
-      console.log("VER UPDATED");
-
       //  If we have up-to-date local ver
-      if (ver == payload.ver) return;
+      if (ver >= payload.ver) return;
 
-      /*
-        если версия которая пришла больше локальной:
-        1. проходимся по тем где есть id (те, что пришли с сервера)
-        если их нет локально, создаем
-        если они есть локально и хеши совпадают ничего не делаем
-        если они есть локально и хеши не совпадают, и были локальные изменения, считаем локальные более важными
-        если они есть локально и хеши не совпадают, и не было локальных изменений, считаем удаленные более важными
-        2. проходимся по тем локальным, у которых нет id, а есть draftId
-        если hash совпадает, присваиваем id из удаленного
-        если hash не совпадает, сохраняем draftId до отправки обновления
-      */
+      const modifiedLocalInstallers = [...localInstallers];
 
-      console.log(payload, ver);
+      const remoteInstallers = payload?.entities?.length
+        ? payload?.entities
+        : [];
+
+      if (!remoteInstallers.length) return;
+
+      remoteInstallers.forEach((remoteInstaller: DefaultInstallerStateType) => {
+        const localInstallerIndexWithSameId = localInstallers.findIndex(
+          (localInstaller) => {
+            return remoteInstaller?.id === localInstaller?.id;
+          }
+        );
+
+        //  If local version is not found, add to local storage
+        if (localInstallerIndexWithSameId === -1) {
+          modifiedLocalInstallers.push({ ...remoteInstaller });
+
+          return;
+        }
+
+        //  If remote and local have same hashes, do nothing
+        if (
+          localInstallers[localInstallerIndexWithSameId].hash ==
+          remoteInstaller.hash
+        )
+          return;
+
+        //  If it was modified locally, do nothing, it will be updated in next sync step
+        if (localInstallers[localInstallerIndexWithSameId]?.isModified) return;
+
+        //  If it was modified remotely, replace local installer with remote copy
+        modifiedLocalInstallers.splice(localInstallerIndexWithSameId, 1, {
+          ...remoteInstaller,
+        });
+      });
+
+      modifiedLocalInstallers.map((localInstaller) => {
+        //  If local have id, do nothing
+        if (localInstaller?.id) return localInstaller;
+        //  If local don't have draftId, do nothing
+        if (!localInstaller?.draftId) return localInstaller;
+
+        const remoteInstallerIndexWithSameHash = remoteInstallers.findIndex(
+          (remoteInstaller: DefaultInstallerStateType) => {
+            return remoteInstaller?.hash === localInstaller?.hash;
+          }
+        );
+
+        //  If nothing with same hash found, do nothing
+        if (remoteInstallerIndexWithSameHash === -1) return localInstaller;
+
+        //  If found remote with same id, set data to local
+        return remoteInstallers[remoteInstallerIndexWithSameHash];
+      });
 
       dispatch(setVer({ action: "setData", data: payload.ver }));
     },

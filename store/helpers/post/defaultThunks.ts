@@ -166,11 +166,9 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
 
           return { data: response.data, status: response.status };
         } catch (error: any) {
-          console.log(error);
           return rejectWithValue("Cancelled");
         }
       } catch (error) {
-        console.log(error);
         return rejectWithValue("Request error");
       }
     }

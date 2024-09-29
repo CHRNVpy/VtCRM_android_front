@@ -72,6 +72,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     data.middlename = installer?.middlename;
     data.phone = installer?.phone;
     data.password = installer?.password;
+    data.status = "active";
 
     const dataString = JSON.stringify(data);
 

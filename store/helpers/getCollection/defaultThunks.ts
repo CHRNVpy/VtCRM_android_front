@@ -143,8 +143,6 @@ export const createGetCollectionAsyncThunk = ({
           });
 
           if (response.status == 200 && response.data.status == "ok") {
-            console.log(response.data);
-
             const entities: Array<any> = response.data.data.entities;
             const totalRows: number = response.data.data.totalRows;
             const variables: { [key: string]: any } = response.data.data
