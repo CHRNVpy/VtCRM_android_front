@@ -17,12 +17,10 @@ import {
   setInputStateMiddlenameReducer,
   setInputStatePhoneReducer,
   setInputStatePasswordReducer,
-  setLogin,
   setInstallers,
 } from "@/store/installers/state/state";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setPage } from "@/store/navigation/state/state";
-import { loginFromNameParts } from "@/helpers/strings";
 import { s } from "react-native-size-matters";
 
 export default function Page() {
@@ -55,11 +53,6 @@ export default function Page() {
   const middlename = useSelector(
     (state: RootState) =>
       state.stateInstallers.createInstallerFields.inputs.middlename.text
-  );
-
-  const login = useSelector(
-    (state: RootState) =>
-      state.stateInstallers.createInstallerFields.states.login.data
   );
 
   const phone = useSelector(
@@ -116,18 +109,7 @@ export default function Page() {
     [dispatch]
   );
 
-  const buildLoginFromName = useCallback(() => {
-    dispatch(
-      setLogin({
-        action: "setData",
-        data: loginFromNameParts({ lastname, firstname, middlename }),
-      })
-    );
-  }, [dispatch, lastname, firstname, middlename]);
-
   const handleSubmitLastnameEditing = useCallback(() => {
-    buildLoginFromName();
-
     if (!lastname) return;
     if (!firstnameInputRef.current) return;
 
@@ -135,8 +117,6 @@ export default function Page() {
   }, [firstnameInputRef, lastname, firstname, middlename]);
 
   const handleSubmitFirstnameEditing = useCallback(() => {
-    buildLoginFromName();
-
     if (!firstname) return;
     if (!middlenameInputRef.current) return;
 
@@ -144,8 +124,6 @@ export default function Page() {
   }, [middlenameInputRef, lastname, firstname, middlename]);
 
   const handleSubmitMiddlenameEditing = useCallback(() => {
-    buildLoginFromName();
-
     if (!middlename) return;
     if (!phoneInputRef.current) return;
 
@@ -173,11 +151,17 @@ export default function Page() {
     if (isButtonDisabled) return;
 
     const draftId = installersData.reduce((id, installer) => {
-      if (!installer?.draftId) return id;
+      if (!installer?.draftId && !installer?.id) return id;
 
-      if (id >= installer?.draftId + 1) return id;
+      const installerId = installer?.id
+        ? installer.id
+        : installer?.draftId
+        ? installer.draftId
+        : 0;
 
-      return installer?.draftId + 1;
+      if (id >= installerId + 1) return id;
+
+      return installerId + 1;
     }, 1);
 
     const newInstaller: DefaultInstallerStateType = {
@@ -187,7 +171,6 @@ export default function Page() {
       middlename,
       phone,
       password,
-      login,
       status: "active",
     };
 
@@ -202,7 +185,6 @@ export default function Page() {
     dispatch(setInputStateMiddlenameReducer({ action: "reset" }));
     dispatch(setInputStatePhoneReducer({ action: "reset" }));
     dispatch(setInputStatePasswordReducer({ action: "reset" }));
-    dispatch(setLogin({ action: "reset" }));
 
     //  Change page to parent
     dispatch(
@@ -224,7 +206,6 @@ export default function Page() {
     middlename,
     phone,
     password,
-    login,
     installersData,
     pageParamsWhenMounted,
   ]);
@@ -240,7 +221,6 @@ export default function Page() {
             value={lastname}
             onChangeText={handleChangeLastnameText}
             onSubmitEditing={handleSubmitLastnameEditing}
-            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Имя"
@@ -248,7 +228,6 @@ export default function Page() {
             onChangeText={handleChangeFirstnameText}
             inputRef={firstnameInputRef}
             onSubmitEditing={handleSubmitFirstnameEditing}
-            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Отчество"
@@ -256,9 +235,7 @@ export default function Page() {
             inputRef={middlenameInputRef}
             onChangeText={handleChangeMiddlenameText}
             onSubmitEditing={handleSubmitMiddlenameEditing}
-            onBlur={buildLoginFromName}
           ></Input>
-          <Input label="Логин" value={login} isDisabled={true}></Input>
           <Input
             label="Телефон"
             value={phone}
@@ -266,7 +243,6 @@ export default function Page() {
             onChangeText={handleChangePhoneText}
             onSubmitEditing={handleSubmitPhoneEditing}
             isPhoneMask={true}
-            onBlur={buildLoginFromName}
           ></Input>
           <Input
             label="Новый пароль"

@@ -8,6 +8,8 @@ export const createGetCollectionAsyncThunkWithArguments = ({
   reducer,
   path,
   reducerAction,
+  setAccessToken,
+  setRefreshToken,
   url,
   urlFromStateFunction,
   getParamsFromStateFunction,
@@ -20,10 +22,16 @@ export const createGetCollectionAsyncThunkWithArguments = ({
     GetCollectionDefaultReducerActionType["payload"],
     any
   >;
+  setAccessToken?: Function;
+  setRefreshToken?: Function;
   url?: string;
   urlFromStateFunction?: Function;
   getParamsFromStateFunction: Function;
-  callbackAfterGet: (dispatch: any, payload: any) => Promise<void>;
+  callbackAfterGet: (
+    dispatch: any,
+    getState: Function,
+    payload: any
+  ) => Promise<void>;
   getAsyncThunk: any;
 }) => {
   return createAsyncThunk(
@@ -34,6 +42,8 @@ export const createGetCollectionAsyncThunkWithArguments = ({
           reducer,
           path,
           reducerAction,
+          setAccessToken,
+          setRefreshToken,
           url,
           urlFromStateFunction,
           getParamsFromStateFunction,
@@ -59,14 +69,25 @@ export const createGetCollectionAsyncThunk = ({
           GetCollectionDefaultReducerActionType["payload"],
           any
         >;
+        setAccessToken?: Function;
+        setRefreshToken?: Function;
         url?: string;
         urlFromStateFunction?: Function;
         getParamsFromStateFunction: Function;
-        callbackAfterGet: (dispatch: any, payload: any) => Promise<void>;
+        callbackAfterGet: (
+          dispatch: any,
+          getState: Function,
+          payload: any
+        ) => Promise<void>;
       },
       { dispatch, getState, rejectWithValue }
     ) => {
       try {
+        const accessToken = (getState() as { [name: string]: any })
+          ?.stateNavigation?.accessToken?.data;
+        const refreshToken = (getState() as { [name: string]: any })
+          ?.stateNavigation?.refreshToken?.data;
+
         const path = payload.path;
         const reducerAction = payload.reducerAction;
 
@@ -108,29 +129,44 @@ export const createGetCollectionAsyncThunk = ({
         try {
           const response = await ajaxRequest({
             method: "get",
+            accessToken,
+            refreshToken,
+            setAccessToken: (data) =>
+              !!payload.setAccessToken &&
+              dispatch(payload.setAccessToken(data)),
+            setRefreshToken: (data) =>
+              !!payload.setRefreshToken &&
+              dispatch(payload.setRefreshToken(data)),
             url,
             params,
             cancelToken,
           });
 
           if (response.status == 200 && response.data.status == "ok") {
+            console.log(response.data);
+
             const entities: Array<any> = response.data.data.entities;
             const totalRows: number = response.data.data.totalRows;
             const variables: { [key: string]: any } = response.data.data
               ?.variables
               ? response.data.data.variables
               : undefined;
+            const ver: { [key: string]: any } = response.data.data?.ver
+              ? response.data.data.ver
+              : undefined;
 
             if (payload.callbackAfterGet)
-              await payload.callbackAfterGet(dispatch, {
+              await payload.callbackAfterGet(dispatch, getState, {
                 entities,
                 totalRows,
                 variables,
+                ver,
               });
 
             return {
               entities,
               variables,
+              ver,
               totalRows,
             };
           }

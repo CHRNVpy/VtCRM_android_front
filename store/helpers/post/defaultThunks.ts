@@ -27,16 +27,17 @@ export const createPostAsyncThunkWithArguments = ({
   setRefreshToken?: Function;
   callbackAfterPost?: (
     dispatch: any,
-    getState?: Function,
+    getState: Function,
     responseData?: any,
-    responseStatus?: any
+    responseStatus?: any,
+    payload?: any
   ) => Promise<void>;
   postAsyncThunk: any;
   isAuthorization?: boolean;
 }) => {
   return createAsyncThunk(
     `Post ${reducer} with wrapper`,
-    async (payload, { dispatch }) => {
+    async (payload: { id: number }, { dispatch }) => {
       await dispatch(
         postAsyncThunk({
           reducer,
@@ -49,6 +50,7 @@ export const createPostAsyncThunkWithArguments = ({
           setRefreshToken,
           callbackAfterPost,
           isAuthorization,
+          id: payload?.id,
         })
       );
     }
@@ -71,14 +73,23 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
           dispatch: any,
           getState?: Function,
           responseData?: any,
-          responseStatus?: any
+          responseStatus?: any,
+          payload?: any
         ) => Promise<void>;
         isAuthorization: boolean;
+        id?: number;
       },
       { dispatch, getState, rejectWithValue }
     ) => {
       try {
-        const path = payload.path;
+        const accessToken = (getState() as { [name: string]: any })
+          ?.stateNavigation?.accessToken?.data;
+        const refreshToken = (getState() as { [name: string]: any })
+          ?.stateNavigation?.refreshToken?.data;
+
+        const path = payload.id
+          ? [...payload.path, payload.id.toString()]
+          : payload.path;
 
         const reducerAction = payload.reducerAction;
 
@@ -90,7 +101,7 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
         }, (getState() as { [name: string]: any })?.[reducer]);
 
         //  Cancel previous ajax query
-        if (stateByPath.ajaxCancel) stateByPath.ajaxCancel();
+        if (stateByPath?.ajaxCancel) stateByPath.ajaxCancel();
 
         let ajaxCancel;
 
@@ -107,17 +118,18 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
             reducerAction({
               action: "setAjaxCancel",
               ajaxCancel,
+              id: payload.id,
             })
           );
 
         //  Get query data by function
         const data: { [key: string]: any } = payload.getDataFromStateFunction
-          ? payload.getDataFromStateFunction(getState)
+          ? payload.getDataFromStateFunction(getState, payload)
           : undefined;
 
         //  Get url by settings or function
         const url: string = payload.urlFromStateFunction
-          ? payload.urlFromStateFunction(getState)
+          ? payload.urlFromStateFunction(getState, payload)
           : payload.url;
 
         //  Make a request
@@ -127,6 +139,8 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
               method: "post",
               url,
               data,
+              accessToken,
+              refreshToken,
               setAccessToken: (data) =>
                 !!payload.setAccessToken &&
                 dispatch(payload.setAccessToken(data)),
@@ -139,19 +153,24 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
             !!payload?.isAuthorization
           );
 
+          console.log(response.data, response.status);
+
           if (payload.callbackAfterPost)
             await payload.callbackAfterPost(
               dispatch,
               getState,
               response.data,
-              response.status
+              response.status,
+              payload
             );
 
           return { data: response.data, status: response.status };
         } catch (error: any) {
+          console.log(error);
           return rejectWithValue("Cancelled");
         }
       } catch (error) {
+        console.log(error);
         return rejectWithValue("Request error");
       }
     }

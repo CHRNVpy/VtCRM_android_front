@@ -48,8 +48,20 @@ const ajaxRequest = async (
     headers?: { [key: string]: any };
     accessToken?: string;
     refreshToken?: string;
-    setAccessToken?: (accessToken: string) => void;
-    setRefreshToken?: (refreshToken: string) => void;
+    setAccessToken?: ({
+      action,
+      data,
+    }: {
+      action: "setData" | "reset";
+      data?: string;
+    }) => void;
+    setRefreshToken?: ({
+      action,
+      data,
+    }: {
+      action: "setData" | "reset";
+      data?: string;
+    }) => void;
     cancelToken?: CancelToken;
     timeout?: number;
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
@@ -91,8 +103,8 @@ const ajaxRequest = async (
   } catch (error) {
     //  Not query error, logout
     if (!axios.isAxiosError(error)) {
-      setAccessToken && setAccessToken("");
-      setRefreshToken && setRefreshToken("");
+      setAccessToken && setAccessToken({ action: "reset" });
+      setRefreshToken && setRefreshToken({ action: "reset" });
 
       throw error;
     }
@@ -115,20 +127,20 @@ const ajaxRequest = async (
     const response: AxiosResponse = axiosError.response;
 
     //  If authorization error
-    if (response.status == 401) {
+    if (response.status == 401 || response.status == 403) {
       if (isAuthorization) return response;
 
       //  If repeat prevented, logout
       if (preventRepeat) {
-        setAccessToken && setAccessToken("");
-        setRefreshToken && setRefreshToken("");
+        setAccessToken && setAccessToken({ action: "reset" });
+        setRefreshToken && setRefreshToken({ action: "reset" });
 
         throw Error("Authorization error");
       }
 
       //  If not refresh token, logout
       if (!refreshToken) {
-        setAccessToken && setAccessToken("");
+        setAccessToken && setAccessToken({ action: "reset" });
 
         throw Error("Authorization error");
       }
@@ -140,7 +152,7 @@ const ajaxRequest = async (
             method: "post",
             url: `/refresh-token`,
             data: {
-              refresh_token: refreshToken,
+              refreshToken,
             },
             timeout: 1000,
             accessToken,
@@ -152,23 +164,37 @@ const ajaxRequest = async (
         );
 
         //  Problem while getting new access token
-        if (!refreshTokenResult) {
-          setAccessToken && setAccessToken("");
-          setRefreshToken && setRefreshToken("");
+        if (!refreshTokenResult || refreshTokenResult?.data?.status !== "ok") {
+          setAccessToken && setAccessToken({ action: "reset" });
+          setRefreshToken && setRefreshToken({ action: "reset" });
 
           throw Error("Authorization error");
         }
 
         //  Set new access token
         setAccessToken &&
-          setAccessToken(refreshTokenResult.data["access_token"]);
+          setAccessToken({
+            action: "setData",
+            data: refreshTokenResult.data.data.accessToken,
+          });
+
+        //  Set new refresh token
+        setAccessToken &&
+          setAccessToken({
+            action: "setData",
+            data: refreshTokenResult.data.data.refreshToken,
+          });
+
+        originalRequest.accessToken = refreshTokenResult.data.data.accessToken;
+        originalRequest.refreshToken =
+          refreshTokenResult.data.data.refreshToken;
 
         //  Repeat request
         return ajaxRequest(originalRequest, true);
       } catch (error) {
         //  Logout
-        setAccessToken && setAccessToken("");
-        setRefreshToken && setRefreshToken("");
+        setAccessToken && setAccessToken({ action: "reset" });
+        setRefreshToken && setRefreshToken({ action: "reset" });
 
         throw Error("Authorization error");
       }

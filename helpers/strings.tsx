@@ -115,28 +115,6 @@ function transliterate(text: string): string {
     .join("");
 }
 
-export function loginFromNameParts({
-  firstname,
-  middlename,
-  lastname,
-}: {
-  firstname?: string;
-  middlename?: string;
-  lastname?: string;
-}) {
-  const lastnameTranslit = lastname
-    ? transliterate(lastname.toLowerCase())
-    : "";
-  const firstnameInitial = firstname
-    ? transliterate(firstname[0].toLowerCase())
-    : "";
-  const middlenameInitial = middlename
-    ? transliterate(middlename[0].toLowerCase())
-    : "";
-
-  return `${firstnameInitial}${middlenameInitial}${lastnameTranslit}`;
-}
-
 export function normalizePhone({ phone }: { phone?: string }) {
   if (!phone) return;
 

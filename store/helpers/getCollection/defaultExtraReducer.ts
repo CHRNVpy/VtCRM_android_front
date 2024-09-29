@@ -1,4 +1,5 @@
 import { GetCollectionState } from "@/store/helpers/getCollection/types";
+import { defaultGetCollectionState } from "@/store/helpers/getCollection/defaultState";
 
 export const getCollectionDefaultExtraReducer = (
   builder: any,
@@ -61,12 +62,15 @@ export const getCollectionDefaultExtraReducer = (
 
       stateByPath.data = action.payload?.entities
         ? action.payload.entities
-        : [];
+        : defaultGetCollectionState.data;
       stateByPath.variables = action.payload?.variables
         ? action.payload.variables
-        : [];
+        : defaultGetCollectionState.variables;
+      stateByPath.ver = action.payload?.ver
+        ? action.payload.ver
+        : defaultGetCollectionState.ver;
       stateByPath.totalRows = action.payload?.totalRows
         ? action.payload.totalRows
-        : 0;
+        : defaultGetCollectionState.totalRows;
     });
 };

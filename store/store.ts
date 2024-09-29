@@ -14,6 +14,7 @@ import postLoginReducer from "@/store/login/post/post";
 import stateNavigationReducer from "@/store/navigation/state/state";
 import getCollectionInstallersReducer from "@/store/installers/getCollection/getCollection";
 import stateInstallersReducer from "@/store/installers/state/state";
+import postInstallerReducer from "@/store/installers/post/post";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -32,6 +33,11 @@ const getCollectionInstallersPersistConfig = {
 
 const stateInstallersPersistConfig = {
   key: "stateInstallers",
+  storage,
+};
+
+const postInstallerPersistConfig = {
+  key: "postInstaller",
   storage,
 };
 
@@ -55,28 +61,29 @@ const persistedStateInstallersReducer = persistReducer(
   stateInstallersReducer
 );
 
+const persistedPostInstallerReducer = persistReducer(
+  postInstallerPersistConfig,
+  postInstallerReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
     stateNavigation: persistedStateNavigationReducer,
     getCollectionInstallers: persistedGetCollectionInstallersReducer,
     stateInstallers: persistedStateInstallersReducer,
+    postInstaller: persistedPostInstallerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        ignoredActionPaths: [
-          "payload.ajaxCancel",
-          "meta.arg.reducerAction",
-          "meta.arg.getDataFromStateFunction",
-          "meta.arg.urlFromStateFunction",
-          "meta.arg.callbackAfterPost",
-          "meta.arg.callbackAfterPatch",
-          "meta.arg.setAccessToken",
-          "meta.arg.setRefreshToken",
+        ignoredActionPaths: ["payload", "meta.arg"],
+        ignoredPaths: [
+          "postLogin.postLoginState",
+          "postInstaller.postInstallerState",
+          "getCollectionInstallers.installersGetCollectionState",
         ],
-        ignoredPaths: ["postLogin.postLoginState"],
       },
     }),
 });

@@ -41,6 +41,7 @@ export const setGetCollectionStateDefaultReducer = (
 
     stateByPath.data = defaultGetCollectionState.data;
     stateByPath.variables = defaultGetCollectionState.variables;
+    stateByPath.ver = defaultGetCollectionState.ver;
     stateByPath.totalRows = defaultGetCollectionState.totalRows;
     stateByPath.page = defaultGetCollectionState.page;
     stateByPath.perPage = defaultGetCollectionState.perPage;

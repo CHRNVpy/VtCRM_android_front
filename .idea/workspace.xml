@@ -6,9 +6,25 @@
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/createInstallerPage/createInstallerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/installers/installersPage/installersPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/installers/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/state/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SyncData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/SyncData.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/ajaxRequest/ajaxRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/ajaxRequest/ajaxRequest.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/getCollection/defaultExtraReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/getCollection/defaultExtraReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/getCollection/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/getCollection/defaultReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/getCollection/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/getCollection/defaultState.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/getCollection/defaultThunks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/getCollection/defaultThunks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/getCollection/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/getCollection/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/getCollection/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/getCollection/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/getCollection/getCollection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/getCollection/getCollection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/post/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/post/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/post/post.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/post/post.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/state/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/state/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/installers/state/state.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/state/state.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/navigation/state/config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/navigation/state/config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

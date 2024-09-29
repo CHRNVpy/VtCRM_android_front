@@ -1,1 +1,1 @@
-export const reducerName = "navigationState";
+export const reducerName = "stateNavigation";

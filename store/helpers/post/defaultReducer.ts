@@ -4,21 +4,33 @@ import { defaultPostState } from "./defaultState";
 
 export const postDefaultReducer = (
   state: Draft<any>,
-  action: any,
-  path: Array<string>
+  action: {
+    payload: {
+      action: "setAjaxCancel" | "reset";
+      ajaxCancel: any;
+      id?: number;
+    };
+  },
+  path?: string[]
 ) => {
   const payload = action.payload;
+  const id = payload.id;
 
-  const stateByPath = path
+  const stateByPathWithoutId = path
     ? (path.reduce((result, item) => {
         if (!result) return undefined;
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as PostState)
+      }, state) as any)
     : undefined;
 
-  if (!stateByPath) return;
+  if (!stateByPathWithoutId) return;
+
+  if (id && !stateByPathWithoutId[id])
+    stateByPathWithoutId[id] = { ...defaultPostState };
+
+  const stateByPath = id ? stateByPathWithoutId[id] : stateByPathWithoutId;
 
   if (payload.action == "setAjaxCancel") {
     stateByPath.ajaxCancel = payload?.ajaxCancel;

@@ -4,6 +4,7 @@ import { GetCollectionState } from "@/store/helpers/getCollection/types";
 export const defaultGetCollectionState: GetCollectionState = {
   data: [],
   variables: {},
+  ver: 0,
   filters: {},
   totalRows: 0,
   page: 0,

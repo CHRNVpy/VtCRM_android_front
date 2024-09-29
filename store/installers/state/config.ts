@@ -1,1 +1,1 @@
-export const reducerName = "installersState";
+export const reducerName = "stateInstallers";

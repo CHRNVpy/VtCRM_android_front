@@ -48,9 +48,9 @@ export default function Page() {
             data={installersList}
             keyExtractor={(item, index) =>
               item?.id
-                ? item?.id.toString()
+                ? `remote-${item?.id.toString()}`
                 : item?.draftId
-                ? item?.draftId.toString()
+                ? `draft-${item?.draftId.toString()}`
                 : `noid-${index}`
             }
             renderItem={({ item, index }) => {

@@ -1,106 +1,82 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import {
-  defaultInputState,
-  setInputStateDefaultReducer,
-} from "@/store/helpers/input";
-import {
   postDefaultReducer,
   defaultPostState,
   createPostAsyncThunkWithArguments,
   postDefaultExtraReducer,
 } from "@/store/helpers/post";
-import { reducerName, postLoginAsyncThunk } from "@/store/login/post/config";
+import {
+  reducerName,
+  postInstallerAsyncThunk,
+} from "@/store/installers/post/config";
 import {
   setAccessToken,
   setRefreshToken,
 } from "@/store/navigation/state/state";
+import { DefaultInstallerStateType } from "@/store/installers/state/types";
+import { setVer, setInstallers } from "@/store/installers/state/state";
+import CryptoJS from "crypto-js";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    postLoginState: { ...defaultPostState },
-    postLoginFields: {
-      inputs: {
-        login: {
-          ...defaultInputState,
-        },
-        password: {
-          ...defaultInputState,
-        },
-      },
-    },
+    postInstallerState: {},
   },
   reducers: {
-    setPostLoginStateReducer(state, action) {
-      postDefaultReducer(state, action, ["postLoginState"]);
+    setPostInstallerStateReducer(state, action) {
+      postDefaultReducer(state, action, ["postInstallerState"]);
     },
-    setInputStateLoginReducer(state, action) {
-      setInputStateDefaultReducer(state, action, [
-        "postLoginFields",
-        "inputs",
-        "login",
-      ]);
-    },
-    setInputStatePasswordReducer(state, action) {
-      setInputStateDefaultReducer(state, action, [
-        "postLoginFields",
-        "inputs",
-        "password",
-      ]);
-    },
-  },
-  extraReducers: (builder) => {
-    postDefaultExtraReducer(builder, postLoginAsyncThunk, {
-      fulfilled: (stateByPath, status, data) => {
-        if (status == "error") {
-          stateByPath.responseData = data;
-          stateByPath.isError = true;
-
-          if (data.code == "Incorrect username or password") {
-            stateByPath.errorFields = ["login", "password"];
-            stateByPath.errorText = "Неправильный номер договора или пароль";
-          }
-
-          if (data.code !== "Incorrect username or password") {
-            stateByPath.errorFields = ["login", "password"];
-            stateByPath.errorText = "Произошла ошибка при авторизации";
-          }
-        }
-      },
-    });
   },
 });
 
-export const {
-  setInputStateLoginReducer,
-  setInputStatePasswordReducer,
-  setPostLoginStateReducer,
-} = slice.actions;
+export const { setPostInstallerStateReducer } = slice.actions;
 
-export const postLogin = createPostAsyncThunkWithArguments({
+export const postInstaller = createPostAsyncThunkWithArguments({
   reducer: reducerName,
-  isAuthorization: true,
-  path: ["postLoginState"],
-  reducerAction: setPostLoginStateReducer,
-  url: "/auth",
-  postAsyncThunk: postLoginAsyncThunk,
+  path: ["postInstallerState"],
+  reducerAction: setPostInstallerStateReducer,
+  url: "/installer",
+  postAsyncThunk: postInstallerAsyncThunk,
   setAccessToken,
   setRefreshToken,
-  getDataFromStateFunction: (getState: Function) => {
+  getDataFromStateFunction: (
+    getState: Function,
+    payload: { [key: string]: any }
+  ) => {
+    const id = payload?.id;
+
     const {
-      postLoginFields: {
-        inputs: {
-          login: { text: loginText },
-          password: { text: passwordText },
-        },
+      installers: { data: installers },
+      ver: { data: ver },
+    } = (getState() as RootState)?.stateInstallers;
+
+    const installer = installers.reduce(
+      (
+        result?: DefaultInstallerStateType,
+        item?: DefaultInstallerStateType
+      ) => {
+        if (result) return result;
+
+        if (item?.draftId == id) return item;
+
+        return result;
       },
-    } = (getState() as RootState)?.postLogin;
+      undefined
+    );
 
     const data: { [key: string]: any } = {};
 
-    data.login = loginText;
-    data.password = passwordText;
+    data.lastname = installer?.lastname;
+    data.firstname = installer?.firstname;
+    data.middlename = installer?.middlename;
+    data.phone = installer?.phone;
+    data.password = installer?.password;
+
+    const dataString = JSON.stringify(data);
+
+    data.hash = CryptoJS.SHA256(dataString).toString(CryptoJS.enc.Hex);
+    data.ver = ver;
 
     return data;
   },
@@ -108,34 +84,29 @@ export const postLogin = createPostAsyncThunkWithArguments({
     dispatch,
     getState,
     responseData,
-    responseStatus
+    responseStatus,
+    payload
   ) => {
-    if (
-      responseStatus !== 200 ||
-      responseData.status != "ok" ||
-      !responseData.data ||
-      !responseData.data.accessToken ||
-      !responseData.data.refreshToken
-    ) {
-      dispatch(setAccessToken({ action: "reset" }));
-      dispatch(
-        setRefreshToken({
-          action: "reset",
-        })
-      );
+    if (responseStatus !== 200) return;
+    if (responseData.status !== "ok") return;
 
-      return;
-    }
+    const id = payload?.id;
 
-    dispatch(
-      setAccessToken({ action: "setData", data: responseData.data.accessToken })
-    );
-    dispatch(
-      setRefreshToken({
-        action: "setData",
-        data: responseData.data.refreshToken,
-      })
-    );
+    const {
+      installers: { data: installers },
+    } = (getState() as RootState)?.stateInstallers;
+
+    const ver = responseData.data.ver;
+    const entity = responseData.data.entity;
+
+    const modifiedInstallers = [...installers].map((installer) => {
+      if (installer?.draftId == id) return entity;
+
+      return installer;
+    });
+
+    dispatch(setVer({ action: "setData", data: ver }));
+    //dispatch(setInstallers({ action: "setData", data: modifiedInstallers }));
   },
 });
 

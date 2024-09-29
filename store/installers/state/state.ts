@@ -15,6 +15,7 @@ import { defaultInstallersState } from "@/store/installers/state/defaultState";
 const slice = createSlice({
   name: reducerName,
   initialState: {
+    ver: { ...defaultState, data: 0 },
     installers: {
       ...defaultInstallersState,
     },
@@ -36,12 +37,12 @@ const slice = createSlice({
           ...defaultInputState,
         },
       },
-      states: {
-        login: defaultState,
-      },
     },
   },
   reducers: {
+    setVer(state, action: SetStateDefaultReducerActionType) {
+      setStateDefaultReducer(state, action, ["ver"]);
+    },
     setInstallers(state, action: SetStateDefaultReducerActionType) {
       setStateDefaultReducer(
         state,
@@ -100,24 +101,17 @@ const slice = createSlice({
         "password",
       ]);
     },
-    setLogin(state, action: SetStateDefaultReducerActionType) {
-      setStateDefaultReducer(state, action, [
-        "createInstallerFields",
-        "states",
-        "login",
-      ]);
-    },
   },
 });
 
 export const {
+  setVer,
   setInstallers,
   setInputStateLastnameReducer,
   setInputStateFirstnameReducer,
   setInputStateMiddlenameReducer,
   setInputStatePhoneReducer,
   setInputStatePasswordReducer,
-  setLogin,
 } = slice.actions;
 
 export default slice.reducer;
