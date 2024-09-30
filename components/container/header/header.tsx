@@ -37,7 +37,7 @@ export default function Header({ linkText, to, toParams }: ContentProps) {
         data: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.to
           : to,
-        params: pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.params
           : toParams,
       })
@@ -56,7 +56,7 @@ export default function Header({ linkText, to, toParams }: ContentProps) {
           data: pageParamsWhenMounted?.backLink?.to
             ? pageParamsWhenMounted?.backLink?.to
             : to,
-          params: pageParamsWhenMounted?.backLink?.params
+          params: pageParamsWhenMounted?.backLink?.to
             ? pageParamsWhenMounted?.backLink?.params
             : toParams,
         })

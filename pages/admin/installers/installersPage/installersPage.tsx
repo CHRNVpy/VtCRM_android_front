@@ -21,17 +21,12 @@ import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
 import { nameFromNameParts } from "@/helpers/strings";
-import { setInstallers } from "@/store/installers/state/state";
 
 export default function Page() {
   const dispatch = useDispatch();
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
-  );
-
-  const installersListData = useSelector(
-    (state: RootState) => state.stateInstallers.installers
   );
 
   return (
@@ -65,7 +60,6 @@ export default function Page() {
                   >
                     <MarginBottom size="medium">
                       <TwoColumns
-                        ratio="85/15"
                         leftColumn={
                           <>
                             <TextType size="big" marginBottom="small">
@@ -94,6 +88,7 @@ export default function Page() {
                     </MarginBottom>
                   </PressableArea>
                   <TwoColumns
+                    ratio="50/50"
                     gap={"medium"}
                     leftColumn={
                       <Buttons isItemButtons={true}>
@@ -104,7 +99,8 @@ export default function Page() {
                           size={"small"}
                           to={"AdminEditInstallerPasswordPage"}
                           toParams={{
-                            id: item.id,
+                            id: item?.id,
+                            draftId: item?.draftId,
                             backLink: {
                               text: "Монтажники",
                               to: "AdminInstallersPage",

@@ -153,8 +153,6 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
             !!payload?.isAuthorization
           );
 
-          console.log(response.data, response.status);
-
           if (payload.callbackAfterPost)
             await payload.callbackAfterPost(
               dispatch,

@@ -16,7 +16,6 @@ import {
 } from "@/store/navigation/state/state";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setVer, setInstallers } from "@/store/installers/state/state";
-import CryptoJS from "crypto-js";
 
 const slice = createSlice({
   name: reducerName,
@@ -44,7 +43,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     getState: Function,
     payload: { [key: string]: any }
   ) => {
-    const id = payload?.id;
+    const draftId = payload?.id;
 
     const {
       installers: { data: installers },
@@ -58,7 +57,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
       ) => {
         if (result) return result;
 
-        if (item?.draftId == id) return item;
+        if (item?.draftId == draftId) return item;
 
         return result;
       },
@@ -73,10 +72,8 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     data.phone = installer?.phone;
     data.password = installer?.password;
     data.status = "active";
+    data.hash = installer?.hash;
 
-    const dataString = JSON.stringify(data);
-
-    data.hash = CryptoJS.SHA256(dataString).toString(CryptoJS.enc.Hex);
     data.ver = ver;
 
     return data;
@@ -91,7 +88,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 
-    const id = payload?.id;
+    const draftId = payload?.id;
 
     const {
       installers: { data: installers },
@@ -101,13 +98,14 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     const entity = responseData.data.entity;
 
     const modifiedInstallers = [...installers].map((installer) => {
-      if (installer?.draftId == id) return entity;
+      //  Saving draftId in the installer to retain the ability to navigate by draftId
+      if (installer?.draftId == draftId) return { ...entity, draftId };
 
       return installer;
     });
 
     dispatch(setVer({ action: "setData", data: ver }));
-    //dispatch(setInstallers({ action: "setData", data: modifiedInstallers }));
+    dispatch(setInstallers({ action: "setData", data: modifiedInstallers }));
   },
 });
 

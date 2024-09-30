@@ -13,7 +13,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from "@/store/navigation/state/state";
-import { setVer } from "@/store/installers/state/state";
+import { setVer, setInstallers } from "@/store/installers/state/state";
 import { RootState } from "@/store/store";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 
@@ -63,10 +63,10 @@ export const getInstallersCollection =
         ver: { data: ver },
       } = (getState() as RootState)?.stateInstallers;
 
+      const modifiedLocalInstallers = [...localInstallers];
+
       //  If we have up-to-date local ver
       if (ver >= payload.ver) return;
-
-      const modifiedLocalInstallers = [...localInstallers];
 
       const remoteInstallers = payload?.entities?.length
         ? payload?.entities
@@ -88,10 +88,20 @@ export const getInstallersCollection =
           return;
         }
 
-        //  If remote and local have same hashes, do nothing
+        //  If remote and local have same fields, do nothing
         if (
-          localInstallers[localInstallerIndexWithSameId].hash ==
-          remoteInstaller.hash
+          localInstallers[localInstallerIndexWithSameId].firstname ==
+            remoteInstaller.firstname &&
+          localInstallers[localInstallerIndexWithSameId].middlename ==
+            remoteInstaller.middlename &&
+          localInstallers[localInstallerIndexWithSameId].lastname ==
+            remoteInstaller.lastname &&
+          localInstallers[localInstallerIndexWithSameId].password ==
+            remoteInstaller.password &&
+          localInstallers[localInstallerIndexWithSameId].phone ==
+            remoteInstaller.phone &&
+          localInstallers[localInstallerIndexWithSameId].status ==
+            remoteInstaller.status
         )
           return;
 
@@ -119,11 +129,18 @@ export const getInstallersCollection =
         //  If nothing with same hash found, do nothing
         if (remoteInstallerIndexWithSameHash === -1) return localInstaller;
 
-        //  If found remote with same id, set data to local
-        return remoteInstallers[remoteInstallerIndexWithSameHash];
+        //  If found remote with same hash, set remote installer data to local installer
+        //  Saving draftId in the installer to retain the ability to navigate by draftId
+        return {
+          ...remoteInstallers[remoteInstallerIndexWithSameHash],
+          draftId: localInstaller.draftId,
+        };
       });
 
       dispatch(setVer({ action: "setData", data: payload.ver }));
+      dispatch(
+        setInstallers({ action: "setData", data: modifiedLocalInstallers })
+      );
     },
     getAsyncThunk: getCollectionAsyncThunk,
   });

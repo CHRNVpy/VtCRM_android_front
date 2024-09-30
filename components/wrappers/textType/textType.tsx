@@ -71,6 +71,7 @@ export default function Component({
 const styles = StyleSheet.create({
   textType: {
     width: "100%",
+    overflow: "visible",
   },
   marginBottomSmall: {
     marginBottom: s(4),

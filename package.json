@@ -16,7 +16,6 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.7",
-    "crypto-js": "^4.2.0",
     "expo": "^49.0.23",
     "expo-app-loading": "^1.0.3",
     "expo-font": "~11.4.0",
@@ -37,7 +36,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@types/crypto-js": "^4.2.2",
     "@types/lodash.debounce": "^4.0.9",
     "@types/react": "~18.2.45",
     "babel-plugin-module-resolver": "^5.0.2",

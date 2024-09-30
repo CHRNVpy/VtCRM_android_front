@@ -38,6 +38,25 @@ const slice = createSlice({
         },
       },
     },
+    editInstallerFields: {
+      inputs: {
+        lastname: {
+          ...defaultInputState,
+        },
+        firstname: {
+          ...defaultInputState,
+        },
+        middlename: {
+          ...defaultInputState,
+        },
+        phone: {
+          ...defaultInputState,
+        },
+        password: {
+          ...defaultInputState,
+        },
+      },
+    },
   },
   reducers: {
     setVer(state, action: SetStateDefaultReducerActionType) {
@@ -51,7 +70,7 @@ const slice = createSlice({
         defaultInstallersState
       );
     },
-    setInputStateLastnameReducer(
+    setInputStateCreateLastnameReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
@@ -61,7 +80,7 @@ const slice = createSlice({
         "lastname",
       ]);
     },
-    setInputStateFirstnameReducer(
+    setInputStateCreateFirstnameReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
@@ -71,7 +90,7 @@ const slice = createSlice({
         "firstname",
       ]);
     },
-    setInputStateMiddlenameReducer(
+    setInputStateCreateMiddlenameReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
@@ -81,7 +100,7 @@ const slice = createSlice({
         "middlename",
       ]);
     },
-    setInputStatePhoneReducer(
+    setInputStateCreatePhoneReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
@@ -91,12 +110,62 @@ const slice = createSlice({
         "phone",
       ]);
     },
-    setInputStatePasswordReducer(
+    setInputStateCreatePasswordReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
         "createInstallerFields",
+        "inputs",
+        "password",
+      ]);
+    },
+    setInputStateEditLastnameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editInstallerFields",
+        "inputs",
+        "lastname",
+      ]);
+    },
+    setInputStateEditFirstnameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editInstallerFields",
+        "inputs",
+        "firstname",
+      ]);
+    },
+    setInputStateEditMiddlenameReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editInstallerFields",
+        "inputs",
+        "middlename",
+      ]);
+    },
+    setInputStateEditPhoneReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editInstallerFields",
+        "inputs",
+        "phone",
+      ]);
+    },
+    setInputStateEditPasswordReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editInstallerFields",
         "inputs",
         "password",
       ]);
@@ -107,11 +176,16 @@ const slice = createSlice({
 export const {
   setVer,
   setInstallers,
-  setInputStateLastnameReducer,
-  setInputStateFirstnameReducer,
-  setInputStateMiddlenameReducer,
-  setInputStatePhoneReducer,
-  setInputStatePasswordReducer,
+  setInputStateCreateLastnameReducer,
+  setInputStateCreateFirstnameReducer,
+  setInputStateCreateMiddlenameReducer,
+  setInputStateCreatePhoneReducer,
+  setInputStateCreatePasswordReducer,
+  setInputStateEditLastnameReducer,
+  setInputStateEditFirstnameReducer,
+  setInputStateEditMiddlenameReducer,
+  setInputStateEditPhoneReducer,
+  setInputStateEditPasswordReducer,
 } = slice.actions;
 
 export default slice.reducer;

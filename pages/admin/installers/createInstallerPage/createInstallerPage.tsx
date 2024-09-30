@@ -12,11 +12,11 @@ import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
 import SaveIcon from "@/assets/saveIcon.svg";
 import {
-  setInputStateLastnameReducer,
-  setInputStateFirstnameReducer,
-  setInputStateMiddlenameReducer,
-  setInputStatePhoneReducer,
-  setInputStatePasswordReducer,
+  setInputStateCreateLastnameReducer,
+  setInputStateCreateFirstnameReducer,
+  setInputStateCreateMiddlenameReducer,
+  setInputStateCreatePhoneReducer,
+  setInputStateCreatePasswordReducer,
   setInstallers,
 } from "@/store/installers/state/state";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
@@ -71,21 +71,25 @@ export default function Page() {
 
   const handleChangeLastnameText = useCallback(
     (text?: string) => {
-      dispatch(setInputStateLastnameReducer({ action: "setText", text }));
+      dispatch(setInputStateCreateLastnameReducer({ action: "setText", text }));
     },
     [dispatch]
   );
 
   const handleChangeFirstnameText = useCallback(
     (text?: string) => {
-      dispatch(setInputStateFirstnameReducer({ action: "setText", text }));
+      dispatch(
+        setInputStateCreateFirstnameReducer({ action: "setText", text })
+      );
     },
     [dispatch]
   );
 
   const handleChangeMiddlenameText = useCallback(
     (text?: string) => {
-      dispatch(setInputStateMiddlenameReducer({ action: "setText", text }));
+      dispatch(
+        setInputStateCreateMiddlenameReducer({ action: "setText", text })
+      );
     },
     [dispatch]
   );
@@ -93,7 +97,7 @@ export default function Page() {
   const handleChangePhoneText = useCallback(
     (text?: string) => {
       dispatch(
-        setInputStatePhoneReducer({
+        setInputStateCreatePhoneReducer({
           action: "setText",
           text,
         })
@@ -104,7 +108,7 @@ export default function Page() {
 
   const handleChangePasswordText = useCallback(
     (text?: string) => {
-      dispatch(setInputStatePasswordReducer({ action: "setText", text }));
+      dispatch(setInputStateCreatePasswordReducer({ action: "setText", text }));
     },
     [dispatch]
   );
@@ -150,6 +154,7 @@ export default function Page() {
   const handleCreateInstaller = useCallback(() => {
     if (isButtonDisabled) return;
 
+    //  Make new draftId -> biggest id plus one
     const draftId = installersData.reduce((id, installer) => {
       if (!installer?.draftId && !installer?.id) return id;
 
@@ -164,6 +169,11 @@ export default function Page() {
       return installerId + 1;
     }, 1);
 
+    //  Random hash which sets in local installer and then posts to remote installer
+    const hash = (
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
+    ).toUpperCase();
+
     const newInstaller: DefaultInstallerStateType = {
       draftId,
       lastname,
@@ -172,6 +182,7 @@ export default function Page() {
       phone,
       password,
       status: "active",
+      hash,
     };
 
     const data = [...installersData, newInstaller];
@@ -180,11 +191,11 @@ export default function Page() {
     dispatch(setInstallers({ action: "setData", data }));
 
     //  Clear all inputs and states
-    dispatch(setInputStateLastnameReducer({ action: "reset" }));
-    dispatch(setInputStateFirstnameReducer({ action: "reset" }));
-    dispatch(setInputStateMiddlenameReducer({ action: "reset" }));
-    dispatch(setInputStatePhoneReducer({ action: "reset" }));
-    dispatch(setInputStatePasswordReducer({ action: "reset" }));
+    dispatch(setInputStateCreateLastnameReducer({ action: "reset" }));
+    dispatch(setInputStateCreateFirstnameReducer({ action: "reset" }));
+    dispatch(setInputStateCreateMiddlenameReducer({ action: "reset" }));
+    dispatch(setInputStateCreatePhoneReducer({ action: "reset" }));
+    dispatch(setInputStateCreatePasswordReducer({ action: "reset" }));
 
     //  Change page to parent
     dispatch(
@@ -193,7 +204,7 @@ export default function Page() {
         data: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.to
           : "AdminInstallersPage",
-        params: pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.params
           : {},
       })
