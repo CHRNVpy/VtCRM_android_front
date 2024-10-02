@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import { useMemo, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
@@ -97,7 +96,7 @@ export default function Page() {
     if (!password) return true;
 
     return false;
-  }, [, password]);
+  }, [password]);
 
   const handleEditInstaller = useCallback(() => {
     if (isButtonDisabled) return;

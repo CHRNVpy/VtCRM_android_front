@@ -81,7 +81,16 @@ export default function Input({
     if (!inputForwardOrLocalRef.current) return;
 
     inputForwardOrLocalRef.current.focus();
-  }, [inputForwardOrLocalRef, isDisabled]);
+
+    if (!value) return;
+
+    inputForwardOrLocalRef.current.setNativeProps({
+      selection: {
+        start: value.length,
+        end: value.length,
+      },
+    });
+  }, [inputForwardOrLocalRef, value, isDisabled]);
 
   const handlePasswordIconPress = useCallback(() => {
     if (isDisabled) return;
