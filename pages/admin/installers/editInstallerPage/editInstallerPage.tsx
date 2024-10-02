@@ -168,7 +168,7 @@ export default function Page() {
     return false;
   }, [lastname, firstname, middlename, phone]);
 
-  const handleEditInstaller = useCallback(() => {
+  const handleEditInstaller = useCallback(async () => {
     if (isButtonDisabled) return;
 
     const modifiedInstallersList = [...installersList].map((installer) => {

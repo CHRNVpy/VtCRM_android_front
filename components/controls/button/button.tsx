@@ -20,7 +20,7 @@ interface ButtonProps extends ViewProps {
   isDisabled?: boolean;
   size?: "small";
   icon?: ReactNode;
-  onPress?: () => void;
+  onPress?: (params: any) => Promise<void>;
   to?: keyof RootStackParamList;
   toParams?: { [key: string]: any };
 }
@@ -38,14 +38,17 @@ export default function Component({
 }: ButtonProps) {
   const dispatch: AppDispatch = useDispatch();
 
-  const handleOnPress = useCallback(() => {
-    if (isDisabled) return;
+  const handleOnPress = useCallback(
+    async (params: any) => {
+      if (isDisabled) return;
 
-    if (to)
-      dispatch(setPage({ action: "setData", data: to, params: toParams }));
+      if (to)
+        dispatch(setPage({ action: "setData", data: to, params: toParams }));
 
-    if (onPress) onPress();
-  }, [isDisabled, onPress, to, toParams]);
+      if (onPress) onPress(params);
+    },
+    [isDisabled, onPress, to, toParams]
+  );
 
   return (
     <Pressable onPress={handleOnPress}>

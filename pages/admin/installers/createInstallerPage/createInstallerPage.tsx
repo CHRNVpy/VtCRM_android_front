@@ -151,7 +151,7 @@ export default function Page() {
     return false;
   }, [lastname, firstname, middlename, phone, password]);
 
-  const handleCreateInstaller = useCallback(() => {
+  const handleCreateInstaller = useCallback(async () => {
     if (isButtonDisabled) return;
 
     //  Make new draftId -> biggest id plus one

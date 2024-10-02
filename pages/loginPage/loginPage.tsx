@@ -63,7 +63,7 @@ export default function Page() {
     return false;
   }, [login, password]);
 
-  const handlePressButton = useCallback(() => {
+  const handlePressButton = useCallback(async () => {
     dispatch(postLogin());
   }, []);
 

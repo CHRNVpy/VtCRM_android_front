@@ -1,5 +1,5 @@
 import { FlatList } from "react-native";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -21,12 +21,47 @@ import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
 import { s } from "react-native-size-matters";
 import { nameFromNameParts } from "@/helpers/strings";
+import { DefaultInstallerStateType } from "@/store/installers/state/types";
+import { setInstallers } from "@/store/installers/state/state";
 
 export default function Page() {
   const dispatch = useDispatch();
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
+  );
+
+  const handleSwitchStatus = useCallback(
+    async (item: DefaultInstallerStateType) => {
+      const installerId = item?.id;
+      const installerDraftId = item?.draftId;
+
+      const modifiedInstallersList = [...installersList].map((installer) => {
+        if (
+          (!installer?.id || !installerId || installer.id != installerId) &&
+          (!installer?.draftId ||
+            !installerDraftId ||
+            installerDraftId != installerDraftId)
+        )
+          return installer;
+
+        const isModified = installer?.isModified
+          ? installer.isModified
+          : installer?.id
+          ? true
+          : false;
+
+        const status = installer.status == "active" ? "inactive" : "active";
+
+        return { ...installer, status, isModified };
+      });
+
+      //  Set new installer to store
+      dispatch(
+        setInstallers({ action: "setData", data: modifiedInstallersList })
+      );
+    },
+    [installersList]
   );
 
   return (
@@ -136,6 +171,7 @@ export default function Page() {
                             )
                           }
                           size={"small"}
+                          onPress={async () => handleSwitchStatus(item)}
                         >
                           {item.status == "active" ? "Выключить" : "Включить"}
                         </Button>

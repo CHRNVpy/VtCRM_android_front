@@ -22,7 +22,7 @@ import { useCallback } from "react";
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
     dispatch(setAccessToken({ action: "reset" }));
     dispatch(setRefreshToken({ action: "reset" }));
   }, []);

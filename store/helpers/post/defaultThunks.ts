@@ -38,9 +38,11 @@ export const createPostAsyncThunkWithArguments = ({
   return createAsyncThunk(
     `Post ${reducer} with wrapper`,
     async (
-      payload: {
-        id?: number;
-      },
+      payload:
+        | {
+            id?: number;
+          }
+        | undefined,
       { dispatch }
     ) => {
       await dispatch(

@@ -36,9 +36,11 @@ export const createPatchAsyncThunkWithArguments = ({
   return createAsyncThunk(
     `Patch ${reducer} with wrapper`,
     async (
-      payload: {
-        id?: number;
-      },
+      payload:
+        | {
+            id?: number;
+          }
+        | undefined,
       { dispatch }
     ) => {
       await dispatch(
