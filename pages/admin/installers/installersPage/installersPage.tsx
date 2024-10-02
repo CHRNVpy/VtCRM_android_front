@@ -1,5 +1,5 @@
-import { FlatList } from "react-native";
-import { useCallback, useEffect, useMemo } from "react";
+import { FlatList, Share } from "react-native";
+import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -25,7 +25,7 @@ import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setInstallers } from "@/store/installers/state/state";
 
 export default function Page() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
@@ -62,6 +62,19 @@ export default function Page() {
       );
     },
     [installersList]
+  );
+
+  const handleShareUserInfo = useCallback(
+    async (item: DefaultInstallerStateType) => {
+      await Share.share({
+        message: `Монтажник ${item?.lastname} ${item?.firstname.charAt(
+          0
+        )}. ${item?.middlename.charAt(0)}.\nЛогин: ${item?.login}\nПароль: ${
+          item.password
+        }`,
+      });
+    },
+    []
   );
 
   return (
@@ -175,12 +188,15 @@ export default function Page() {
                         >
                           {item.status == "active" ? "Выключить" : "Включить"}
                         </Button>
-                        <Button
-                          icon={<ShareIcon width={s(13)} height={s(14)} />}
-                          size={"small"}
-                        >
-                          Поделиться
-                        </Button>
+                        {!!item?.login && (
+                          <Button
+                            icon={<ShareIcon width={s(13)} height={s(14)} />}
+                            size={"small"}
+                            onPress={async () => handleShareUserInfo(item)}
+                          >
+                            Поделиться
+                          </Button>
+                        )}
                       </Buttons>
                     }
                   />

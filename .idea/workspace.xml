@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/SyncData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/SyncData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultExtraReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultReducer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultState.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultState.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/defaultThunks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/helpers/post/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/helpers/post/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/installers/post/post.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/installers/post/post.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
-    </list>
+    <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
