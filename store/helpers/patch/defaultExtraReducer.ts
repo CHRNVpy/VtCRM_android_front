@@ -1,7 +1,7 @@
-import { PostState } from "@/store/helpers/post/types";
-import { defaultPostState } from "@/store/helpers/post/defaultState";
+import { PatchState } from "@/store/helpers/patch/types";
+import { defaultPatchState } from "@/store/helpers/patch/defaultState";
 
-export const postDefaultExtraReducer = (
+export const patchDefaultExtraReducer = (
   builder: any,
   asyncThunk: any,
   additionalActions?: {
@@ -13,7 +13,7 @@ export const postDefaultExtraReducer = (
       const id: string = action.meta.arg?.id?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: { [key: string]: PostState } = path
+      const stateByPath: { [key: string]: PatchState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 
@@ -25,7 +25,7 @@ export const postDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      if (id && !stateByPath[id]) stateByPath[id] = { ...defaultPostState };
+      if (id && !stateByPath[id]) stateByPath[id] = { ...defaultPatchState };
 
       const stateByPathWithId = id ? stateByPath[id] : stateByPath;
 
@@ -36,7 +36,7 @@ export const postDefaultExtraReducer = (
       const id: string = action.meta.arg?.id?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: { [key: string]: PostState } = path
+      const stateByPath: { [key: string]: PatchState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 
@@ -57,7 +57,7 @@ export const postDefaultExtraReducer = (
       const id: string = action.meta.arg?.id?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: { [key: string]: PostState } = path
+      const stateByPath: { [key: string]: PatchState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 

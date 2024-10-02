@@ -4,7 +4,7 @@ import ajaxRequest, {
 } from "@/services/ajaxRequest/ajaxRequest";
 
 //  Nested asyncThunks are needed to use templates for handling various scenarios with the same pattern
-export const createPostAsyncThunkWithArguments = ({
+export const createPatchAsyncThunkWithArguments = ({
   reducer,
   path,
   reducerAction,
@@ -13,9 +13,8 @@ export const createPostAsyncThunkWithArguments = ({
   getDataFromStateFunction,
   setAccessToken,
   setRefreshToken,
-  callbackAfterPost,
-  postAsyncThunk,
-  isAuthorization,
+  callbackAfterPatch,
+  patchAsyncThunk,
 }: {
   reducer: string;
   path: string[];
@@ -23,20 +22,19 @@ export const createPostAsyncThunkWithArguments = ({
   url?: string;
   urlFromStateFunction?: Function;
   getDataFromStateFunction: Function;
-  setAccessToken?: Function;
-  setRefreshToken?: Function;
-  callbackAfterPost?: (
+  callbackAfterPatch?: (
     dispatch: any,
     getState: Function,
     responseData?: any,
     responseStatus?: any,
     payload?: any
   ) => Promise<void>;
-  postAsyncThunk: any;
-  isAuthorization?: boolean;
+  setAccessToken?: Function;
+  setRefreshToken?: Function;
+  patchAsyncThunk: any;
 }) => {
   return createAsyncThunk(
-    `Post ${reducer} with wrapper`,
+    `Patch ${reducer} with wrapper`,
     async (
       payload: {
         id?: number;
@@ -44,7 +42,7 @@ export const createPostAsyncThunkWithArguments = ({
       { dispatch }
     ) => {
       await dispatch(
-        postAsyncThunk({
+        patchAsyncThunk({
           reducer,
           path,
           reducerAction,
@@ -53,8 +51,7 @@ export const createPostAsyncThunkWithArguments = ({
           getDataFromStateFunction,
           setAccessToken,
           setRefreshToken,
-          callbackAfterPost,
-          isAuthorization,
+          callbackAfterPatch,
           id: payload?.id,
         })
       );
@@ -62,26 +59,25 @@ export const createPostAsyncThunkWithArguments = ({
   );
 };
 
-export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
+export const createPatchAsyncThunk = ({ reducer }: { reducer: string }) => {
   return createAsyncThunk(
-    `Post ${reducer}`,
+    `Patch ${reducer}`,
     async (
       payload: {
         path: string[];
         reducerAction?: any;
-        url?: string;
+        url: string;
         urlFromStateFunction?: Function;
         getDataFromStateFunction: Function;
         setAccessToken?: Function;
         setRefreshToken?: Function;
-        callbackAfterPost?: (
+        callbackAfterPatch?: (
           dispatch: any,
           getState?: Function,
           responseData?: any,
           responseStatus?: any,
           payload?: any
         ) => Promise<void>;
-        isAuthorization: boolean;
         id?: number;
       },
       { dispatch, getState, rejectWithValue }
@@ -139,27 +135,23 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
 
         //  Make a request
         try {
-          const response = await ajaxRequest(
-            {
-              method: "post",
-              url,
-              data,
-              accessToken,
-              refreshToken,
-              setAccessToken: (data) =>
-                !!payload.setAccessToken &&
-                dispatch(payload.setAccessToken(data)),
-              setRefreshToken: (data) =>
-                !!payload.setRefreshToken &&
-                dispatch(payload.setRefreshToken(data)),
-              cancelToken,
-              isAuthorization: !!payload?.isAuthorization,
-            },
-            !!payload?.isAuthorization
-          );
+          const response = await ajaxRequest({
+            method: "patch",
+            url,
+            data,
+            accessToken,
+            refreshToken,
+            setAccessToken: (data) =>
+              !!payload.setAccessToken &&
+              dispatch(payload.setAccessToken(data)),
+            setRefreshToken: (data) =>
+              !!payload.setRefreshToken &&
+              dispatch(payload.setRefreshToken(data)),
+            cancelToken,
+          });
 
-          if (payload.callbackAfterPost)
-            await payload.callbackAfterPost(
+          if (payload.callbackAfterPatch)
+            await payload.callbackAfterPatch(
               dispatch,
               getState,
               response.data,
@@ -169,7 +161,7 @@ export const createPostAsyncThunk = ({ reducer }: { reducer: string }) => {
 
           return { data: response.data, status: response.status };
         } catch (error: any) {
-          return rejectWithValue("Cancelled");
+          return rejectWithValue("Canceled");
         }
       } catch (error) {
         return rejectWithValue("Request error");

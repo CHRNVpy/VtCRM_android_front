@@ -1,8 +1,9 @@
 import { Draft } from "immer";
-import { defaultPostState } from "@/store/helpers/post/defaultState";
-import { PostState } from "@/store/helpers/post/types";
+import { PatchState } from "@/store/helpers/patch/types";
+import { defaultPatchState } from "@/store/helpers/patch/defaultState";
 
-export const postDefaultReducer = (
+//  Default patchDefaultReducer
+export const patchDefaultReducer = (
   state: Draft<any>,
   action: {
     payload: {
@@ -22,13 +23,13 @@ export const postDefaultReducer = (
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as { [key: string]: PostState })
+      }, state) as { [key: string]: PatchState })
     : undefined;
 
   if (!stateByPathWithoutId) return;
 
   if (id && !stateByPathWithoutId[id])
-    stateByPathWithoutId[id] = { ...defaultPostState };
+    stateByPathWithoutId[id] = { ...defaultPatchState };
 
   const stateByPath = id ? stateByPathWithoutId[id] : stateByPathWithoutId;
 
@@ -40,12 +41,12 @@ export const postDefaultReducer = (
     if (stateByPath.ajaxCancel && typeof stateByPath.ajaxCancel === "function")
       stateByPath.ajaxCancel();
 
-    stateByPath.ajaxCancel = defaultPostState.ajaxCancel;
-    stateByPath.isError = defaultPostState.isError;
-    stateByPath.errorFields = defaultPostState.errorFields;
-    stateByPath.errorText = defaultPostState.errorText;
-    stateByPath.isInProcess = defaultPostState.isInProcess;
-    stateByPath.isDone = defaultPostState.isDone;
-    stateByPath.responseData = defaultPostState.responseData;
+    stateByPath.ajaxCancel = defaultPatchState.ajaxCancel;
+    stateByPath.isError = defaultPatchState.isError;
+    stateByPath.errorFields = defaultPatchState.errorFields;
+    stateByPath.errorText = defaultPatchState.errorText;
+    stateByPath.isInProcess = defaultPatchState.isInProcess;
+    stateByPath.isDone = defaultPatchState.isDone;
+    stateByPath.responseData = defaultPatchState.responseData;
   }
 };

@@ -15,6 +15,7 @@ import stateNavigationReducer from "@/store/navigation/state/state";
 import getCollectionInstallersReducer from "@/store/installers/getCollection/getCollection";
 import stateInstallersReducer from "@/store/installers/state/state";
 import postInstallerReducer from "@/store/installers/post/post";
+import patchInstallerReducer from "@/store/installers/patch/patch";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -38,6 +39,11 @@ const stateInstallersPersistConfig = {
 
 const postInstallerPersistConfig = {
   key: "postInstaller",
+  storage,
+};
+
+const patchInstallerPersistConfig = {
+  key: "patchInstaller",
   storage,
 };
 
@@ -66,6 +72,11 @@ const persistedPostInstallerReducer = persistReducer(
   postInstallerReducer
 );
 
+const persistedPatchInstallerReducer = persistReducer(
+  patchInstallerPersistConfig,
+  patchInstallerReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
@@ -73,6 +84,7 @@ const store = configureStore({
     getCollectionInstallers: persistedGetCollectionInstallersReducer,
     stateInstallers: persistedStateInstallersReducer,
     postInstaller: persistedPostInstallerReducer,
+    patchInstaller: persistedPatchInstallerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -82,6 +94,7 @@ const store = configureStore({
         ignoredPaths: [
           "postLogin.postLoginState",
           "postInstaller.postInstallerState",
+          "patchInstaller.patchInstallerState",
           "getCollectionInstallers.installersGetCollectionState",
         ],
       },

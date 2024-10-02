@@ -4,10 +4,7 @@ import { RootState, AppDispatch } from "@/store/store";
 import NetInfo from "@react-native-community/netinfo";
 import debounce from "lodash.debounce";
 import { postInstaller } from "@/store/installers/post/post";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "@/store/navigation/state/state";
+import { patchInstaller } from "@/store/installers/patch/patch";
 import { getInstallersCollection } from "@/store/installers/getCollection/getCollection";
 
 interface ContentProps {
@@ -32,9 +29,20 @@ export default function SyncData({ children }: ContentProps) {
 
     //  Post all draft installers
     installersList.forEach(async (installer, index) => {
+      //  If have id, draft is for backward compatibility of navigation
+      if (installer?.id) return;
       if (!installer?.draftId) return;
 
       await dispatch(postInstaller({ id: installer?.draftId }));
+    });
+
+    //  Patch all modified installers
+    installersList.forEach(async (installer, index) => {
+      //  Should have id and be modified
+      if (!installer?.id) return;
+      if (!installer?.isModified) return;
+
+      await dispatch(patchInstaller({ id: installer?.id }));
     });
   }, [dispatch, installersList, isConnected]);
 

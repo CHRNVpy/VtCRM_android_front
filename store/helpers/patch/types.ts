@@ -1,4 +1,4 @@
-export interface PostState {
+export interface PatchState {
   ajaxCancel: Function | null;
   isError: boolean;
   errorFields: string[] | null;

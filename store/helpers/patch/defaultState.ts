@@ -1,6 +1,7 @@
-import { PostState } from "@/store/helpers/post/types";
+import { PatchState } from "@/store/helpers/patch/types";
 
-export const defaultPostState: PostState = {
+//  Default patch state
+export const defaultPatchState: PatchState = {
   ajaxCancel: null,
   isError: false,
   errorFields: null,

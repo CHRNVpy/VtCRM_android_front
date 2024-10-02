@@ -111,15 +111,11 @@ export default function Page() {
       )
         return installer;
 
-      console.log(installer);
-
       const isModified = installer?.isModified
         ? installer.isModified
         : installer?.id
         ? true
         : false;
-
-      console.log({ ...installer, password, isModified });
 
       return { ...installer, password, isModified };
     });

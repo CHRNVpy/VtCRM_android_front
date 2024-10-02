@@ -1,52 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import {
-  postDefaultReducer,
-  defaultPostState,
-  createPostAsyncThunkWithArguments,
-  postDefaultExtraReducer,
-} from "@/store/helpers/post";
+  createPatchAsyncThunkWithArguments,
+  patchDefaultReducer,
+  patchDefaultExtraReducer,
+} from "@/store/helpers/patch";
 import {
   reducerName,
-  postInstallerAsyncThunk,
-} from "@/store/installers/post/config";
-import {
-  setAccessToken,
-  setRefreshToken,
-} from "@/store/navigation/state/state";
+  patchInstallerAsyncThunk,
+} from "@/store/installers/patch/config";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setVer, setInstallers } from "@/store/installers/state/state";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    postInstallerState: {},
+    patchInstallerState: {},
   },
   reducers: {
-    setPostInstallerStateReducer(state, action) {
-      postDefaultReducer(state, action, ["postInstallerState"]);
+    setPatchInstallerStateReducer(state, action) {
+      patchDefaultReducer(state, action, ["patchInstallerState"]);
     },
   },
   extraReducers: (builder) => {
-    postDefaultExtraReducer(builder, postInstallerAsyncThunk);
+    patchDefaultExtraReducer(builder, patchInstallerAsyncThunk);
   },
 });
 
-export const { setPostInstallerStateReducer } = slice.actions;
+export const { setPatchInstallerStateReducer } = slice.actions;
 
-export const postInstaller = createPostAsyncThunkWithArguments({
+export const patchInstaller = createPatchAsyncThunkWithArguments({
   reducer: reducerName,
-  path: ["postInstallerState"],
-  reducerAction: setPostInstallerStateReducer,
+  path: ["patchInstallerState"],
+  reducerAction: setPatchInstallerStateReducer,
   url: "/installer",
-  postAsyncThunk: postInstallerAsyncThunk,
-  setAccessToken,
-  setRefreshToken,
+  patchAsyncThunk: patchInstallerAsyncThunk,
   getDataFromStateFunction: (
     getState: Function,
     payload: { [key: string]: any }
   ) => {
-    const draftId = payload?.id;
+    const id = payload?.id;
 
     const {
       installers: { data: installers },
@@ -60,7 +53,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
       ) => {
         if (result) return result;
 
-        if (item?.draftId == draftId) return item;
+        if (item?.id == id) return item;
 
         return result;
       },
@@ -69,19 +62,20 @@ export const postInstaller = createPostAsyncThunkWithArguments({
 
     const data: { [key: string]: any } = {};
 
+    data.id = installer?.id;
     data.lastname = installer?.lastname;
     data.firstname = installer?.firstname;
     data.middlename = installer?.middlename;
     data.phone = installer?.phone;
     data.password = installer?.password;
-    data.status = "active";
+    data.status = installer?.status;
     data.hash = installer?.hash;
 
     data.ver = ver;
 
     return data;
   },
-  callbackAfterPost: async (
+  callbackAfterPatch: async (
     dispatch,
     getState,
     responseData,
@@ -91,7 +85,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 
-    const draftId = payload?.id;
+    const id = payload?.id;
 
     const {
       installers: { data: installers },
@@ -102,7 +96,8 @@ export const postInstaller = createPostAsyncThunkWithArguments({
 
     const modifiedInstallers = [...installers].map((installer) => {
       //  Saving draftId in the installer to retain the ability to navigate by draftId
-      if (installer?.draftId == draftId) return { ...entity, draftId };
+      if (installer?.id == id)
+        return { ...entity, draftId: installer?.draftId };
 
       return installer;
     });
