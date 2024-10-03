@@ -199,6 +199,7 @@ export default function Page() {
       {!!equipmentsList.length && (
         <Content>
           <FlatList
+            keyboardShouldPersistTaps="always"
             data={equipmentsList}
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => {

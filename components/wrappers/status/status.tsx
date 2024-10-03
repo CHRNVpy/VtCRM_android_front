@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   statusBig: {
-    height: s(36),
+    height: s(22),
   },
   statusInnerBlock: {
     height: s(8),

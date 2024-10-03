@@ -158,6 +158,7 @@ export default function Page() {
         {poolItem.id ? <>в пул #{poolItem.id}</> : <>и нового пула</>}
       </Title>
       <FlatList
+        keyboardShouldPersistTaps="always"
         data={equipmentsList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => {

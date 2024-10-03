@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Alert, Pressable, Share } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -20,8 +20,15 @@ import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import ShareIcon from "@/assets/shareIcon.svg";
+import { setPage } from "@/store/navigation/state/state";
+import { DefaultInstallerStateType } from "@/store/installers/state/types";
+import { setInstallers } from "@/store/installers/state/state";
+import * as Clipboard from "expo-clipboard";
 
 export default function Page() {
+  const dispatch: AppDispatch = useDispatch();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
   );
@@ -31,16 +38,118 @@ export default function Page() {
     return pageParams;
   }, []);
 
+  const installerId = pageParamsWhenMounted?.id;
+  const installerDraftId = pageParamsWhenMounted?.draftId;
+
+  const installersList = useSelector(
+    (state: RootState) => state.stateInstallers.installers.data
+  );
+
   const installerData = useMemo(() => {
-    return {
-      id: "1",
-      name: "Иванов Иван Иванович",
-      phone: "+7 912 345-67-89",
-      login: "iivanov",
-      password: "adslfIYNGHlfIYNGH-454",
-      isActive: true,
-    };
-  }, []);
+    return installersList.find((installer) => {
+      if (!!installer?.id && !!installerId && installer.id == installerId)
+        return true;
+
+      if (
+        !!installer?.draftId &&
+        !!installerDraftId &&
+        installer?.draftId == installerDraftId
+      )
+        return true;
+
+      return false;
+    });
+  }, [installersList, installerId, installerDraftId]);
+
+  useEffect(() => {
+    if (installerData) return;
+
+    //  Navigate back if no installer found
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : "AdminInstallersPage",
+        params: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.params
+          : {},
+      })
+    );
+  }, [dispatch, installerData]);
+
+  const handleShowPassword = useCallback(async () => {
+    if (isPasswordVisible) {
+      setIsPasswordVisible(false);
+
+      return;
+    }
+
+    setIsPasswordVisible(true);
+  }, [isPasswordVisible, setIsPasswordVisible]);
+
+  const handleCopyUserData = useCallback(
+    async (item: DefaultInstallerStateType) => {
+      const text = `Монтажник ${item?.lastname} ${item?.firstname.charAt(
+        0
+      )}. ${item?.middlename.charAt(0)}.\nЛогин: ${item?.login}\nПароль: ${
+        item.password
+      }`;
+
+      await Clipboard.setStringAsync(text);
+
+      Alert.alert("Скопировано", text);
+    },
+    []
+  );
+
+  const handleSwitchStatus = useCallback(
+    async (item: DefaultInstallerStateType) => {
+      const installerId = item?.id;
+      const installerDraftId = item?.draftId;
+
+      const modifiedInstallersList = [...installersList].map((installer) => {
+        if (
+          (!installer?.id || !installerId || installer.id != installerId) &&
+          (!installer?.draftId ||
+            !installerDraftId ||
+            installer?.draftId != installerDraftId)
+        )
+          return installer;
+
+        const isModified = installer?.isModified
+          ? installer.isModified
+          : installer?.id
+          ? true
+          : false;
+
+        const status = installer.status == "active" ? "inactive" : "active";
+
+        return { ...installer, status, isModified };
+      });
+
+      //  Set new installer to store
+      dispatch(
+        setInstallers({ action: "setData", data: modifiedInstallersList })
+      );
+    },
+    [installersList]
+  );
+
+  const handleShareUserInfo = useCallback(
+    async (item: DefaultInstallerStateType) => {
+      await Share.share({
+        message: `Монтажник ${item?.lastname} ${item?.firstname.charAt(
+          0
+        )}. ${item?.middlename.charAt(0)}.\nЛогин: ${item?.login}\nПароль: ${
+          item.password
+        }`,
+      });
+    },
+    []
+  );
+
+  if (!installerData) return;
 
   return (
     <Wrapper>
@@ -48,65 +157,96 @@ export default function Page() {
       <Content isWithPaddings={true}>
         <MarginBottom size="biggest">
           <TwoColumns
-            ratio="85/15"
             leftColumn={
               <>
-                <Title isNoPadding={true}>{installerData.name}</Title>
+                <TextType size="big" isBold={true}>
+                  {installerData.id
+                    ? `#${installerData.id}`
+                    : installerData.draftId
+                    ? `#(${installerData.draftId})`
+                    : ""}
+                </TextType>
+                <Title isNoPadding={true}>
+                  {installerData.lastname} {installerData.firstname}{" "}
+                  {installerData.middlename}
+                </Title>
                 <TextType size="big">{installerData.phone}</TextType>
               </>
             }
             rightColumn={
               <>
-                <TextType size="biggest" align="right">
-                  #{installerData.id}
-                </TextType>
-                <Status size="big" isActive={installerData.isActive} />
+                <Status
+                  size="big"
+                  isActive={installerData.status == "active"}
+                />
               </>
             }
           />
         </MarginBottom>
-        <TwoColumns
-          ratio="85/15"
-          leftColumn={
-            <>
-              <MarginBottom>
+        {!!installerData.login && (
+          <TwoColumns
+            ratio="85/15"
+            leftColumn={
+              <>
                 <MarginBottom>
+                  <MarginBottom size="smallest">
+                    <TextType size="big" isBold={true}>
+                      {installerData.login}
+                    </TextType>
+                  </MarginBottom>
                   <TextType size="big" isBold={true}>
-                    {installerData.login}
+                    {isPasswordVisible
+                      ? installerData.password
+                      : maskString({ string: installerData.password })}
                   </TextType>
                 </MarginBottom>
-                <TextType size="big" isBold={true}>
-                  {maskString({ string: installerData.password })}
+                <TextType
+                  size="big"
+                  color={"gray"}
+                  isDashed={true}
+                  onPress={handleShowPassword}
+                >
+                  {isPasswordVisible ? `Скрыть пароль` : `Показать пароль`}
                 </TextType>
-              </MarginBottom>
-              <TextType size="big" color={"gray"} isDashed={true}>
-                Показать пароль
-              </TextType>
-            </>
-          }
-          rightColumn={<CopyIconSvg height={s(24)} width={s(21)} />}
-        />
+              </>
+            }
+            rightColumn={
+              <Pressable
+                onPress={async () => handleCopyUserData(installerData)}
+              >
+                <CopyIconSvg height={s(24)} width={s(21)} />
+              </Pressable>
+            }
+          />
+        )}
       </Content>
       <Buttons>
-        <Button icon={<ShareIcon width={s(18)} height={s(20)} />}>
-          Поделиться данными доступа
-        </Button>
+        {!!installerData?.login && (
+          <Button
+            icon={<ShareIcon width={s(18)} height={s(20)} />}
+            onPress={async () => handleShareUserInfo(installerData)}
+          >
+            Поделиться данными доступа
+          </Button>
+        )}
         <Button
           icon={
-            installerData.isActive ? (
+            installerData.status == "active" ? (
               <TurnOffIcon width={s(13)} height={s(22)} />
             ) : (
               <TurnOnIcon width={s(13)} height={s(22)} />
             )
           }
+          onPress={async () => handleSwitchStatus(installerData)}
         >
-          {installerData.isActive ? "Выключить" : "Включить"}
+          {installerData.status == "active" ? "Выключить" : "Включить"}
         </Button>
         <Button
           icon={<ChangePasswordIcon width={s(22)} height={s(20)} />}
-          to={"AdminEditPasswordInstallerPage"}
+          to={"AdminEditInstallerPasswordPage"}
           toParams={{
             id: pageParamsWhenMounted?.id,
+            draftId: pageParamsWhenMounted?.draftId,
           }}
         >
           Сменить пароль
@@ -116,6 +256,7 @@ export default function Page() {
           to={"AdminEditInstallerPage"}
           toParams={{
             id: pageParamsWhenMounted?.id,
+            draftId: pageParamsWhenMounted?.draftId,
           }}
         >
           Редактировать
@@ -124,12 +265,3 @@ export default function Page() {
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  copy: {
-    height: s(28),
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: s(4),
-  },
-});

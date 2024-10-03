@@ -47,7 +47,7 @@ export default function Page() {
       if (
         installer?.draftId &&
         installerDraftId &&
-        installerDraftId == installerDraftId
+        installer?.draftId == installerDraftId
       )
         return true;
 
@@ -160,10 +160,10 @@ export default function Page() {
   );
 
   const isButtonDisabled = useMemo(() => {
-    if (!lastname) return true;
-    if (!firstname) return true;
-    if (!middlename) return true;
-    if (!phone) return true;
+    if (!lastname.trim()) return true;
+    if (!firstname.trim()) return true;
+    if (!middlename.trim()) return true;
+    if (!phone.trim()) return true;
 
     return false;
   }, [lastname, firstname, middlename, phone]);
@@ -176,7 +176,7 @@ export default function Page() {
         (!installer?.id || !installerId || installer.id != installerId) &&
         (!installer?.draftId ||
           !installerDraftId ||
-          installerDraftId != installerDraftId)
+          installer?.draftId != installerDraftId)
       )
         return installer;
 
@@ -188,10 +188,10 @@ export default function Page() {
 
       return {
         ...installer,
-        lastname,
-        firstname,
-        middlename,
-        phone,
+        lastname: lastname.trim(),
+        firstname: firstname.trim(),
+        middlename: middlename.trim(),
+        phone: phone.trim(),
         isModified,
       };
     });

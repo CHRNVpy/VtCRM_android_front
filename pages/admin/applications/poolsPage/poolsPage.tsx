@@ -161,6 +161,7 @@ export default function Page() {
       <Content>
         {!!poolsList.length && (
           <FlatList
+            keyboardShouldPersistTaps="always"
             data={poolsList}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item, index }) => {

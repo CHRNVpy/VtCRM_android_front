@@ -81,6 +81,7 @@ export default function Page() {
       />
       <Title>Редактирование заявки</Title>
       <FlatList
+        keyboardShouldPersistTaps="always"
         data={equipmentsList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => {

@@ -1,4 +1,4 @@
-import { StyleSheet, ViewProps, Pressable } from "react-native";
+import { ViewProps, Pressable } from "react-native";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
@@ -32,5 +32,3 @@ export default function Component({
 
   return <Pressable onPress={handleOnPress}>{children}</Pressable>;
 }
-
-const styles = StyleSheet.create({});

@@ -71,7 +71,12 @@ export default function Page() {
 
   const handleChangeLastnameText = useCallback(
     (text?: string) => {
-      dispatch(setInputStateCreateLastnameReducer({ action: "setText", text }));
+      dispatch(
+        setInputStateCreateLastnameReducer({
+          action: "setText",
+          text: text?.trim(),
+        })
+      );
     },
     [dispatch]
   );
@@ -79,7 +84,10 @@ export default function Page() {
   const handleChangeFirstnameText = useCallback(
     (text?: string) => {
       dispatch(
-        setInputStateCreateFirstnameReducer({ action: "setText", text })
+        setInputStateCreateFirstnameReducer({
+          action: "setText",
+          text: text?.trim(),
+        })
       );
     },
     [dispatch]
@@ -88,7 +96,10 @@ export default function Page() {
   const handleChangeMiddlenameText = useCallback(
     (text?: string) => {
       dispatch(
-        setInputStateCreateMiddlenameReducer({ action: "setText", text })
+        setInputStateCreateMiddlenameReducer({
+          action: "setText",
+          text: text?.trim(),
+        })
       );
     },
     [dispatch]
@@ -108,7 +119,12 @@ export default function Page() {
 
   const handleChangePasswordText = useCallback(
     (text?: string) => {
-      dispatch(setInputStateCreatePasswordReducer({ action: "setText", text }));
+      dispatch(
+        setInputStateCreatePasswordReducer({
+          action: "setText",
+          text: text?.trim(),
+        })
+      );
     },
     [dispatch]
   );
@@ -142,11 +158,11 @@ export default function Page() {
   }, [passwordInputRef, phone]);
 
   const isButtonDisabled = useMemo(() => {
-    if (!lastname) return true;
-    if (!firstname) return true;
-    if (!middlename) return true;
-    if (!phone) return true;
-    if (!password) return true;
+    if (!lastname.trim()) return true;
+    if (!firstname.trim()) return true;
+    if (!middlename.trim()) return true;
+    if (!phone.trim()) return true;
+    if (!password.trim()) return true;
 
     return false;
   }, [lastname, firstname, middlename, phone, password]);
@@ -176,11 +192,11 @@ export default function Page() {
 
     const newInstaller: DefaultInstallerStateType = {
       draftId,
-      lastname,
-      firstname,
-      middlename,
-      phone,
-      password,
+      lastname: lastname.trim(),
+      firstname: firstname.trim(),
+      middlename: middlename.trim(),
+      phone: phone.trim(),
+      password: password.trim(),
       status: "active",
       hash,
     };

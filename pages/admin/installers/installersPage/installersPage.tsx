@@ -41,7 +41,7 @@ export default function Page() {
           (!installer?.id || !installerId || installer.id != installerId) &&
           (!installer?.draftId ||
             !installerDraftId ||
-            installerDraftId != installerDraftId)
+            installer?.draftId != installerDraftId)
         )
           return installer;
 
@@ -88,6 +88,7 @@ export default function Page() {
           </Content>
         ) : (
           <FlatList
+            keyboardShouldPersistTaps="always"
             data={installersList}
             keyExtractor={(item, index) =>
               item?.id
@@ -141,6 +142,21 @@ export default function Page() {
                     leftColumn={
                       <Buttons isItemButtons={true}>
                         <Button
+                          icon={<EditIcon width={s(5)} height={s(16)} />}
+                          size={"small"}
+                          to={"AdminEditInstallerPage"}
+                          toParams={{
+                            id: item.id,
+                            draftId: item?.draftId,
+                            backLink: {
+                              text: "Монтажники",
+                              to: "AdminInstallersPage",
+                            },
+                          }}
+                        >
+                          Редактировать
+                        </Button>
+                        <Button
                           icon={
                             <ChangePasswordIcon width={s(13)} height={s(12)} />
                           }
@@ -156,20 +172,6 @@ export default function Page() {
                           }}
                         >
                           Сменить пароль
-                        </Button>
-                        <Button
-                          icon={<EditIcon width={s(5)} height={s(16)} />}
-                          size={"small"}
-                          to={"AdminEditInstallerPage"}
-                          toParams={{
-                            id: item.id,
-                            backLink: {
-                              text: "Монтажники",
-                              to: "AdminInstallersPage",
-                            },
-                          }}
-                        >
-                          Редактировать
                         </Button>
                       </Buttons>
                     }

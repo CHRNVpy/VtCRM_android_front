@@ -50,6 +50,13 @@ export default function Input({
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [selection, setSelection] = useState<
+    | {
+        start: number;
+        end: number;
+      }
+    | undefined
+  >(undefined);
 
   const animationDuration = 100;
   const labelInitialHeight = styles.label.height;
@@ -84,13 +91,19 @@ export default function Input({
 
     if (!value) return;
 
-    inputForwardOrLocalRef.current.setNativeProps({
-      selection: {
+    setTimeout(() => {
+      if (!inputForwardOrLocalRef.current) return;
+
+      setSelection({
         start: value.length,
         end: value.length,
-      },
-    });
-  }, [inputForwardOrLocalRef, value, isDisabled]);
+      });
+
+      setTimeout(() => {
+        setSelection(undefined);
+      }, 0);
+    }, 0);
+  }, [inputForwardOrLocalRef, value, isDisabled, setSelection]);
 
   const handlePasswordIconPress = useCallback(() => {
     if (isDisabled) return;
@@ -186,6 +199,7 @@ export default function Input({
             value={value}
             ref={inputForwardOrLocalRef}
             editable={!isDisabled}
+            selection={selection}
           />
           <View pointerEvents={"none"} style={[styles.labelWrapper]}>
             <Animated.Text

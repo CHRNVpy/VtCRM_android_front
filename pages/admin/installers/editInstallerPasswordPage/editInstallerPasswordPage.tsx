@@ -44,7 +44,7 @@ export default function Page() {
       if (
         installer?.draftId &&
         installerDraftId &&
-        installerDraftId == installerDraftId
+        installer?.draftId == installerDraftId
       )
         return true;
 
@@ -93,7 +93,7 @@ export default function Page() {
   );
 
   const isButtonDisabled = useMemo(() => {
-    if (!password) return true;
+    if (!password.trim()) return true;
 
     return false;
   }, [password]);
@@ -106,7 +106,7 @@ export default function Page() {
         (!installer?.id || !installerId || installer.id != installerId) &&
         (!installer?.draftId ||
           !installerDraftId ||
-          installerDraftId != installerDraftId)
+          installer?.draftId != installerDraftId)
       )
         return installer;
 
@@ -116,7 +116,7 @@ export default function Page() {
         ? true
         : false;
 
-      return { ...installer, password, isModified };
+      return { ...installer, password: password.trim(), isModified };
     });
 
     //  Set new installer to store

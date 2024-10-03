@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { Pressable, View, StyleSheet, Text } from "react-native";
 import { ReactNode } from "react";
 import { s } from "react-native-size-matters";
 import colors from "@/helpers/colors";
@@ -14,6 +14,7 @@ interface TextTypeProps {
   numberOfLines?: number;
   minNumberOfLines?: number;
   ellipsizeMode?: "tail" | "clip";
+  onPress?: () => Promise<void>;
 }
 
 export default function Component({
@@ -27,7 +28,38 @@ export default function Component({
   numberOfLines,
   minNumberOfLines,
   ellipsizeMode,
+  onPress,
 }: TextTypeProps) {
+  const textBlock = (
+    <Text
+      style={[
+        styles.textTypeText,
+        align == "right" && styles.alignRightText,
+        size == "big" && minNumberOfLines == 2 && styles.big_minNumberOfLines2,
+        size == "biggest" && styles.sizeBiggest,
+        size == "biggest" &&
+          minNumberOfLines == 2 &&
+          styles.biggest_minNumberOfLines2,
+        size == "medium" && styles.sizeMedium,
+        size == "medium" &&
+          minNumberOfLines == 2 &&
+          styles.medium_minNumberOfLines2,
+        size == "small" && styles.sizeSmall,
+        size == "small" &&
+          minNumberOfLines == 2 &&
+          styles.small_minNumberOfLines2,
+        color == "gray" && styles.gray,
+        color == "red" && styles.red,
+        isDashed && styles.isDashed,
+        isBold && styles.isBold,
+      ]}
+      numberOfLines={numberOfLines}
+      ellipsizeMode={ellipsizeMode}
+    >
+      {children}
+    </Text>
+  );
+
   return (
     <View
       style={[
@@ -35,42 +67,17 @@ export default function Component({
         marginBottom == "small" && styles.marginBottomSmall,
       ]}
     >
-      <Text
-        style={[
-          styles.textTypeText,
-          align == "right" && styles.alignRightText,
-          size == "big" &&
-            minNumberOfLines == 2 &&
-            styles.big_minNumberOfLines2,
-          size == "biggest" && styles.sizeBiggest,
-          size == "biggest" &&
-            minNumberOfLines == 2 &&
-            styles.biggest_minNumberOfLines2,
-          size == "medium" && styles.sizeMedium,
-          size == "medium" &&
-            minNumberOfLines == 2 &&
-            styles.medium_minNumberOfLines2,
-          size == "small" && styles.sizeSmall,
-          size == "small" &&
-            minNumberOfLines == 2 &&
-            styles.small_minNumberOfLines2,
-          color == "gray" && styles.gray,
-          color == "red" && styles.red,
-          isDashed && styles.isDashed,
-          isBold && styles.isBold,
-        ]}
-        numberOfLines={numberOfLines}
-        ellipsizeMode={ellipsizeMode}
-      >
-        {children}
-      </Text>
+      {onPress ? (
+        <Pressable onPress={onPress}>{textBlock}</Pressable>
+      ) : (
+        textBlock
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   textType: {
-    width: "100%",
     overflow: "visible",
   },
   marginBottomSmall: {

@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
   },
-  leftColumn: {},
+  leftColumn: { maxWidth: "85%" },
   leftColumn15: {
     width: "15%",
   },
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   },
   rightColumn: {
     alignItems: "flex-end",
+    minWidth: "15%",
   },
   rightColumn15: {
     width: "15%",
