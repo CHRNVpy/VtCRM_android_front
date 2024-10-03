@@ -1,4 +1,4 @@
-import { TextInput, StyleSheet } from "react-native";
+import { TextInput } from "react-native";
 import { useMemo, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
@@ -74,7 +74,7 @@ export default function Page() {
       dispatch(
         setInputStateCreateLastnameReducer({
           action: "setText",
-          text: text?.trim(),
+          text,
         })
       );
     },
@@ -86,7 +86,7 @@ export default function Page() {
       dispatch(
         setInputStateCreateFirstnameReducer({
           action: "setText",
-          text: text?.trim(),
+          text,
         })
       );
     },
@@ -98,7 +98,7 @@ export default function Page() {
       dispatch(
         setInputStateCreateMiddlenameReducer({
           action: "setText",
-          text: text?.trim(),
+          text: text,
         })
       );
     },
@@ -122,7 +122,7 @@ export default function Page() {
       dispatch(
         setInputStateCreatePasswordReducer({
           action: "setText",
-          text: text?.trim(),
+          text: text,
         })
       );
     },
@@ -292,5 +292,3 @@ export default function Page() {
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});

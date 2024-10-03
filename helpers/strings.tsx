@@ -108,13 +108,6 @@ export function translitMap(char: string) {
   return map[char];
 }
 
-function transliterate(text: string): string {
-  return text
-    .split("")
-    .map((char) => translitMap(char))
-    .join("");
-}
-
 export function normalizePhone({ phone }: { phone?: string }) {
   if (!phone) return;
 
@@ -143,4 +136,13 @@ export function normalizePhone({ phone }: { phone?: string }) {
   }${phoneDigits[10] ? `-${phoneDigits[10]}` : ""}${
     phoneDigits[11] ? phoneDigits[11] : ""
   }`;
+}
+
+export function trimIgnoringNL(data?: { text?: string }): string {
+  if (!data?.text) return "";
+
+  return data.text
+    .split("\n")
+    .map((line) => line.trim())
+    .join("\n");
 }

@@ -159,7 +159,7 @@ export default function Page() {
           <TwoColumns
             leftColumn={
               <>
-                <TextType size="big" isBold={true}>
+                <TextType size="biggest" isBold={true}>
                   {installerData.id
                     ? `#${installerData.id}`
                     : installerData.draftId
