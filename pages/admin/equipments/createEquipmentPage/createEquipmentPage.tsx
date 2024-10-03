@@ -181,8 +181,8 @@ export default function Page() {
     <Wrapper>
       <Header linkText={`Оборудование`} to={"AdminEquipmentsPage"} />
       <Title>Добавление оборудования</Title>
-      <Content isWithPaddings={true}>
-        <Inputs>
+      <Content isWithScrollView={true}>
+        <Inputs isWithPaddings={true}>
           <Input
             label="Название"
             value={name}
@@ -199,6 +199,7 @@ export default function Page() {
             label="Примечание"
             value={comment}
             onChangeText={handleChangeCommentText}
+            isMultiline={true}
           ></Input>
         </Inputs>
       </Content>

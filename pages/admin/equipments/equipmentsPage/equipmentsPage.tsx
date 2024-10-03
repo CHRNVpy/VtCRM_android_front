@@ -1,5 +1,7 @@
 import { FlatList, StyleSheet, Text } from "react-native";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Header from "@/components/container/header/header";
 import Buttons from "@/components/wrappers/buttons/buttons";
@@ -16,199 +18,68 @@ import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import EditIcon from "@/assets/editIcon.svg";
 import AddIcon from "@/assets/addIcon.svg";
 import { s } from "react-native-size-matters";
+import { trimIgnoringNL } from "@/helpers/strings";
 
 export default function Page() {
-  const equipmentsList = useMemo(() => {
-    return [
-      {
-        id: "1",
-        name: "Fluke Networks DTX-1800",
-        serialNumber: "DTX2-342462",
-        note: "Не предназначено для работы с бетоном или каменными материалами",
-        application: {
-          id: "1",
-          installer: {
-            id: "1",
-            lastName: "Иванов",
-            firstName: "Иван",
-            patronym: "Иванович",
-          },
-          status: "done",
-        },
-      },
-      {
-        id: "2",
-        name: "Megger MIT485",
-        serialNumber: "MIT4-584390",
-        note: "Требуется калибровка каждые 6 месяцев",
-        application: {
-          id: "2",
-          installer: {
-            id: "2",
-            lastName: "Петрова",
-            firstName: "Мария",
-            patronym: "Николаевна",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "3",
-        name: "FLIR E8 Infrared Camera",
-        serialNumber: "E8-983452",
-        note: "Хранить в сухом месте, избегать ударов",
-        application: {
-          id: "3",
-          installer: {
-            id: "3",
-            lastName: "Сидоров",
-            firstName: "Алексей",
-            patronym: "Петрович",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "4",
-        name: "Extech EX330 Multimeter",
-        serialNumber: "EX33-745230",
-        note: "Использовать только для измерения переменного тока",
-        application: {
-          id: "4",
-          installer: {
-            id: "4",
-            lastName: "Кузнецова",
-            firstName: "Светлана",
-            patronym: "Васильевна",
-          },
-          status: "done",
-        },
-      },
-      {
-        id: "5",
-        name: "Bosch GLM 50 C Laser Measure",
-        serialNumber: "GLM5-672901",
-        note: "Не допускать попадания воды внутрь устройства",
-        application: {
-          id: "5",
-          installer: {
-            id: "5",
-            lastName: "Никитин",
-            firstName: "Дмитрий",
-            patronym: "Александрович",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "6",
-        name: "Klein Tools CL800 Clamp Meter",
-        serialNumber: "CL80-293874",
-        note: "Не использовать при температуре ниже -10°C",
-        application: {
-          id: "6",
-          installer: {
-            id: "6",
-            lastName: "Морозова",
-            firstName: "Ольга",
-            patronym: "Сергеевна",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "7",
-        name: "Greenlee GT-65 Electrical Tester",
-        serialNumber: "GT65-445688",
-        note: "Проверять батареи перед каждым использованием",
-        application: {
-          id: "7",
-          installer: {
-            id: "7",
-            lastName: "Кириллов",
-            firstName: "Александр",
-            patronym: "Иванович",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "8",
-        name: "Amprobe AT-6020 Advanced Wire Tracer",
-        serialNumber: "AT60-198732",
-        note: "Для использования в промышленных условиях",
-        application: {
-          id: "8",
-          installer: {
-            id: "8",
-            lastName: "Романов",
-            firstName: "Павел",
-            patronym: "Андреевич",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "9",
-        name: "DeWalt DW088K Laser Level",
-        serialNumber: "DW08-102938",
-        note: "Не подвергать воздействию прямых солнечных лучей",
-        application: {
-          id: "9",
-          installer: {
-            id: "9",
-            lastName: "Воробьева",
-            firstName: "Елена",
-            patronym: "Федоровна",
-          },
-          status: "inProcess",
-        },
-      },
-      {
-        id: "10",
-        name: "Fluke 117 Electrician's Multimeter",
-        serialNumber: "FL117-567890",
-        note: "Держать в вертикальном положении при хранении",
-        application: {
-          id: "10",
-          installer: {
-            id: "10",
-            lastName: "Михайлов",
-            firstName: "Игорь",
-            patronym: "Викторович",
-          },
-          status: "inProcess",
-        },
-      },
-    ];
-  }, []);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+
+  const equipmentsList = useSelector(
+    (state: RootState) => state.stateEquipments.equipments.data
+  );
+
+  const installersList = useSelector(
+    (state: RootState) => state.stateInstallers.installers.data
+  );
 
   return (
     <Wrapper>
       <Header linkText={"На главную"} to={"AdminMainPage"} />
-      <Title isWithSettings={true} isNoMargin={true}>
+      <Title
+        isWithSettings={true}
+        isNoMargin={isSettingsOpen}
+        isSettingsOpen={isSettingsOpen}
+        setIsSettingsOpen={async () => setIsSettingsOpen(!isSettingsOpen)}
+      >
         Оборудование
       </Title>
-      <MarginBottom>
-        <Inputs isWithPaddings={true}>
-          <Input label="Поиск по всем полям" isHasClearButton={true}></Input>
-          <Input label="Статус" isHasClearButton={true}></Input>
-          <Input label="Монтажник" isHasClearButton={true}></Input>
-        </Inputs>
-      </MarginBottom>
+      {!!isSettingsOpen && (
+        <MarginBottom>
+          <Inputs isWithPaddings={true}>
+            <Input label="Поиск по всем полям" isHasClearButton={true}></Input>
+            <Input label="Статус" isHasClearButton={true}></Input>
+            <Input label="Монтажник" isHasClearButton={true}></Input>
+          </Inputs>
+        </MarginBottom>
+      )}
       {!!equipmentsList.length && (
         <Content>
           <FlatList
             keyboardShouldPersistTaps="always"
             data={equipmentsList}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) =>
+              item?.id
+                ? `remote-${item?.id.toString()}`
+                : item?.draftId
+                ? `draft-${item?.draftId.toString()}`
+                : `noid-${index}`
+            }
             renderItem={({ item, index }) => {
+              const installerData = installersList.find((installer) => {
+                if (!installer?.id) return false;
+
+                if (installer.id == item.installerId) return true;
+
+                return false;
+              });
+
               return (
                 <ListItem isLastItem={index === equipmentsList.length - 1}>
                   <PressableArea
                     to={"AdminEquipmentPage"}
                     toParams={{
                       id: item.id,
+                      draftId: item.draftId,
                     }}
                   >
                     <MarginBottom>
@@ -223,16 +94,26 @@ export default function Page() {
                           </>
                         }
                         rightColumn={
-                          <TextType align="right">#{item.id}</TextType>
+                          <TextType align="right">
+                            {item.id
+                              ? `#${item.id}`
+                              : item.draftId
+                              ? `#(${item.draftId})`
+                              : ""}
+                          </TextType>
                         }
                       />
                     </MarginBottom>
-                    <MarginBottom>
-                      <TextType size="small">{item.note}</TextType>
-                    </MarginBottom>
+                    {!!trimIgnoringNL({ text: item.comment }) && (
+                      <MarginBottom>
+                        <TextType size="small">
+                          {trimIgnoringNL({ text: item.comment })}
+                        </TextType>
+                      </MarginBottom>
+                    )}
                   </PressableArea>
                   <MarginBottom>
-                    {!!item?.application?.id ? (
+                    {!!installerData?.id ? (
                       <>
                         <MarginBottom size="small">
                           <TwoColumns
@@ -240,7 +121,7 @@ export default function Page() {
                               <PressableArea
                                 to={"AdminInstallerPage"}
                                 toParams={{
-                                  id: item.application.installer.id,
+                                  id: installerData.id,
                                   backLink: {
                                     text: "Оборудование",
                                     to: "AdminEquipmentsPage",
@@ -255,7 +136,7 @@ export default function Page() {
                                 <PressableArea
                                   to={"AdminInstallerPage"}
                                   toParams={{
-                                    id: item.application.installer.id,
+                                    id: installerData.id,
                                     backLink: {
                                       text: "Оборудование",
                                       to: "AdminEquipmentsPage",
@@ -263,16 +144,9 @@ export default function Page() {
                                   }}
                                 >
                                   <TextType isDashed={true} align="right">
-                                    #{item.application.installer.id}{" "}
-                                    {item.application.installer.lastName}{" "}
-                                    {item.application.installer.firstName.charAt(
-                                      0
-                                    )}
-                                    .{" "}
-                                    {item.application.installer.patronym.charAt(
-                                      0
-                                    )}
-                                    .
+                                    #{installerData.id} {installerData.lastname}{" "}
+                                    {installerData.firstname.charAt(0)}.{" "}
+                                    {installerData.middlename.charAt(0)}.
                                   </TextType>
                                 </PressableArea>
                               </>
@@ -280,7 +154,7 @@ export default function Page() {
                           />
                         </MarginBottom>
                         <TextType align="right" isDashed={true}>
-                          Заявка #{item.application.id}
+                          Заявка #{item?.applicationId}
                         </TextType>
                       </>
                     ) : (

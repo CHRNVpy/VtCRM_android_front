@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { ReactNode } from "react";
 import { s } from "react-native-size-matters";
 import SettingsIcon from "@/assets/settingsIcon.svg";
@@ -8,6 +8,8 @@ interface TitleProps {
   children?: ReactNode;
   isNoPadding?: boolean;
   isWithSettings?: boolean;
+  isSettingsOpen?: boolean;
+  setIsSettingsOpen?: () => Promise<void>;
   isNoMargin?: boolean;
 }
 
@@ -15,6 +17,8 @@ export default function Component({
   children,
   isNoPadding,
   isWithSettings,
+  isSettingsOpen,
+  setIsSettingsOpen,
   isNoMargin,
 }: TitleProps) {
   return isWithSettings ? (
@@ -29,7 +33,15 @@ export default function Component({
         <Text style={styles.titleText}>{children}</Text>
       </View>
       <View style={styles.settings}>
-        <SettingsIcon height={s(24)} width={s(24)} />
+        <TouchableOpacity onPress={setIsSettingsOpen}>
+          <SettingsIcon
+            height={s(24)}
+            width={s(24)}
+            style={
+              isSettingsOpen ? styles.settingsIconOpen : styles.settingsIcon
+            }
+          />
+        </TouchableOpacity>
       </View>
     </View>
   ) : (
@@ -72,6 +84,12 @@ const styles = StyleSheet.create({
     height: s(36),
     alignItems: "flex-end",
     justifyContent: "center",
+  },
+  settingsIcon: {
+    color: colors.dark,
+  },
+  settingsIconOpen: {
+    color: colors.gray,
   },
   isNoPadding: {
     paddingLeft: s(0),

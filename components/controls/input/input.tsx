@@ -1,4 +1,5 @@
 import {
+  Text,
   TextInput,
   TextInputProps,
   StyleSheet,
@@ -33,6 +34,7 @@ interface InputProps extends TextInputProps {
   isHasClearButton?: boolean;
   isError?: boolean;
   isPhoneMask?: boolean;
+  isMultiline?: boolean;
 }
 
 export default function Input({
@@ -47,9 +49,12 @@ export default function Input({
   isHasClearButton = false,
   isError = false,
   isPhoneMask = false,
+  isMultiline = false,
 }: InputProps) {
   const inputForwardOrLocalRef = inputRef ? inputRef : useRef<TextInput>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [linesCount, setLinesCount] = useState(8);
+  const [oneLineHeight, setOneLineHeight] = useState(s(24));
   const [selection, setSelection] = useState<
     | {
         start: number;
@@ -57,6 +62,7 @@ export default function Input({
       }
     | undefined
   >(undefined);
+  const [isFocused, setInFocuses] = useState(false);
 
   const animationDuration = 100;
   const labelInitialHeight = styles.label.height;
@@ -76,12 +82,22 @@ export default function Input({
 
   const labelAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: value ? labelFinalHeight : labelHeight.value,
-      lineHeight: value ? labelFinalLineHeight : labelLineHeight.value,
-      fontSize: value ? labelFinalFontSize : labelFontSize.value,
-      top: value ? labelFinalTop : labelTop.value,
+      height: value || isFocused ? labelFinalHeight : labelHeight.value,
+      lineHeight:
+        value || isFocused ? labelFinalLineHeight : labelLineHeight.value,
+      fontSize: value || isFocused ? labelFinalFontSize : labelFontSize.value,
+      top: value || isFocused ? labelFinalTop : labelTop.value,
     };
   });
+
+  const handleChangeText = useCallback(
+    (text?: string) => {
+      if (!onChangeText) return;
+
+      onChangeText(text);
+    },
+    [onChangeText]
+  );
 
   const handlePress = useCallback(() => {
     if (isDisabled) return;
@@ -114,13 +130,13 @@ export default function Input({
   const handleRandomPasswordIconPress = useCallback(() => {
     if (isDisabled) return;
 
-    if (!onChangeText) return;
-
-    onChangeText(generateRandomPassword(12));
+    handleChangeText(generateRandomPassword(12));
   }, [onChangeText, isDisabled]);
 
   const handleTextInputFocus = useCallback(() => {
     if (isDisabled) return;
+
+    setInFocuses(true);
 
     if (!!value) return;
 
@@ -136,14 +152,15 @@ export default function Input({
     labelTop.value = withTiming(labelFinalTop, {
       duration: animationDuration,
     });
-  }, [value, isDisabled]);
+  }, [value, isDisabled, setInFocuses]);
 
   const handleTextInputBlur = useCallback(
     (event: any) => {
       if (isDisabled) return;
 
-      if (!!onChangeText && !!isPhoneMask)
-        onChangeText(normalizePhone({ phone: value }));
+      setInFocuses(false);
+
+      if (!!isPhoneMask) handleChangeText(normalizePhone({ phone: value }));
 
       if (onBlur) onBlur(event);
 
@@ -162,13 +179,12 @@ export default function Input({
         duration: animationDuration,
       });
     },
-    [value, isDisabled, onBlur, onChangeText, isPhoneMask]
+    [value, isDisabled, onBlur, onChangeText, isPhoneMask, setInFocuses]
   );
 
   const handleSubmitEditing = useCallback(
     (event: any) => {
-      if (!!onChangeText && !!isPhoneMask)
-        onChangeText(normalizePhone({ phone: value }));
+      if (!!isPhoneMask) handleChangeText(normalizePhone({ phone: value }));
 
       if (!onSubmitEditing) return;
 
@@ -179,20 +195,40 @@ export default function Input({
     [onSubmitEditing, isPhoneMask, value]
   );
 
+  const handleContentSizeChange = useCallback(
+    (contentHeight: number) => {
+      const numberOfLines = Math.round(contentHeight / oneLineHeight);
+
+      const newOneLineHeight = contentHeight / numberOfLines;
+
+      setOneLineHeight(newOneLineHeight);
+
+      setLinesCount(numberOfLines > 8 ? numberOfLines : 8);
+    },
+    [setLinesCount, setOneLineHeight, oneLineHeight]
+  );
+
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
-      <View style={[styles.touchable]}>
+      <View
+        style={[styles.touchable, isMultiline && styles.touchableIsMultiline]}
+      >
         <View
           style={[
             styles.inputWrapper,
             !!isDisabled && styles.isDisabled,
             !!isError && styles.isInputWrapperError,
+            isMultiline && styles.inputWrapperIsMultiline,
           ]}
         >
           <TextInput
-            style={[styles.textInput, !!isError && styles.isTextInputError]}
+            style={[
+              styles.textInput,
+              !!isError && styles.isTextInputError,
+              { height: linesCount * s(24) },
+            ]}
             onSubmitEditing={handleSubmitEditing}
-            onChangeText={onChangeText}
+            onChangeText={handleChangeText}
             onFocus={handleTextInputFocus}
             onBlur={handleTextInputBlur}
             secureTextEntry={type == "password" && !isPasswordVisible}
@@ -200,6 +236,12 @@ export default function Input({
             ref={inputForwardOrLocalRef}
             editable={!isDisabled}
             selection={selection}
+            multiline={isMultiline}
+            numberOfLines={isMultiline ? linesCount : 1}
+            onContentSizeChange={(e) =>
+              handleContentSizeChange(e.nativeEvent.contentSize.height)
+            }
+            scrollEnabled={false}
           />
           <View pointerEvents={"none"} style={[styles.labelWrapper]}>
             <Animated.Text
@@ -256,6 +298,9 @@ const styles = StyleSheet.create({
     paddingTop: s(8),
     paddingBottom: s(8),
   },
+  touchableIsMultiline: {
+    height: "auto",
+  },
   inputWrapper: {
     width: "100%",
     height: s(44),
@@ -263,6 +308,10 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.dark,
     borderBottomStyle: "solid",
     paddingTop: s(16),
+    alignItems: "flex-start",
+  },
+  inputWrapperIsMultiline: {
+    height: "auto",
   },
   isInputWrapperError: {
     borderBottomColor: colors.red,
@@ -273,6 +322,7 @@ const styles = StyleSheet.create({
   textInput: {
     width: "100%",
     color: colors.dark,
+    textAlignVertical: "top",
     fontSize: s(18),
     fontFamily: "Inter_400Regular",
     lineHeight: s(24),
