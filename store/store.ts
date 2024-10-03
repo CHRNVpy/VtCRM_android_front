@@ -16,6 +16,10 @@ import getCollectionInstallersReducer from "@/store/installers/getCollection/get
 import stateInstallersReducer from "@/store/installers/state/state";
 import postInstallerReducer from "@/store/installers/post/post";
 import patchInstallerReducer from "@/store/installers/patch/patch";
+import getCollectionEquipmentsReducer from "@/store/equipments/getCollection/getCollection";
+import stateEquipmentsReducer from "@/store/equipments/state/state";
+import postEquipmentReducer from "@/store/equipments/post/post";
+import patchEquipmentReducer from "@/store/equipments/patch/patch";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -44,6 +48,26 @@ const postInstallerPersistConfig = {
 
 const patchInstallerPersistConfig = {
   key: "patchInstaller",
+  storage,
+};
+
+const getCollectionEquipmentsPersistConfig = {
+  key: "getCollectionEquipments",
+  storage,
+};
+
+const stateEquipmentsPersistConfig = {
+  key: "stateEquipments",
+  storage,
+};
+
+const postEquipmentPersistConfig = {
+  key: "postEquipment",
+  storage,
+};
+
+const patchEquipmentPersistConfig = {
+  key: "patchEquipment",
   storage,
 };
 
@@ -77,6 +101,26 @@ const persistedPatchInstallerReducer = persistReducer(
   patchInstallerReducer
 );
 
+const persistedGetCollectionEquipmentsReducer = persistReducer(
+  getCollectionEquipmentsPersistConfig,
+  getCollectionEquipmentsReducer
+);
+
+const persistedStateEquipmentsReducer = persistReducer(
+  stateEquipmentsPersistConfig,
+  stateEquipmentsReducer
+);
+
+const persistedPostEquipmentReducer = persistReducer(
+  postEquipmentPersistConfig,
+  postEquipmentReducer
+);
+
+const persistedPatchEquipmentReducer = persistReducer(
+  patchEquipmentPersistConfig,
+  patchEquipmentReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
@@ -85,6 +129,10 @@ const store = configureStore({
     stateInstallers: persistedStateInstallersReducer,
     postInstaller: persistedPostInstallerReducer,
     patchInstaller: persistedPatchInstallerReducer,
+    getCollectionEquipments: persistedGetCollectionEquipmentsReducer,
+    stateEquipments: persistedStateEquipmentsReducer,
+    postEquipment: persistedPostEquipmentReducer,
+    patchEquipment: persistedPatchEquipmentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -96,6 +144,9 @@ const store = configureStore({
           "postInstaller.postInstallerState",
           "patchInstaller.patchInstallerState",
           "getCollectionInstallers.installersGetCollectionState",
+          "postEquipment.postEquipmentState",
+          "patchEquipment.patchEquipmentState",
+          "getCollectionEquipments.equipmentsGetCollectionState",
         ],
       },
     }),

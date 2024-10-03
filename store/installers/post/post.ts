@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import {
   postDefaultReducer,
-  defaultPostState,
   createPostAsyncThunkWithArguments,
   postDefaultExtraReducer,
 } from "@/store/helpers/post";
