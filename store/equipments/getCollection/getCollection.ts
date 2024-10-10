@@ -17,6 +17,7 @@ import {
   setVer,
   setPagesLoaded,
   setTotalPages,
+  setCurrentPage,
   setEquipments,
 } from "@/store/equipments/state/state";
 import { RootState } from "@/store/store";
@@ -63,8 +64,6 @@ export const getEquipmentsCollection =
 
       if (page) params.page = page;
 
-      console.log("GET THIS PAGE FROM SERVER:", page);
-
       return params;
     },
     callbackAfterGet: async (dispatch, getState, payload) => {
@@ -108,8 +107,10 @@ export const getEquipmentsCollection =
             remoteEquipment.serialNumber &&
           localEquipments[localEquipmentIndexWithSameId].comment ==
             remoteEquipment.comment &&
-          localEquipments[localEquipmentIndexWithSameId].page == page &&
-          localEquipments[localEquipmentIndexWithSameId].ver == ver
+          localEquipments[localEquipmentIndexWithSameId].page ==
+            remoteEquipment.page &&
+          localEquipments[localEquipmentIndexWithSameId].ver ==
+            remoteEquipment.ver
         )
           return;
 
@@ -178,6 +179,9 @@ export const getEquipmentsCollection =
       dispatch(
         setEquipments({ action: "setData", data: modifiedLocalEquipments })
       );
+
+      //  Set current page to update by sync
+      dispatch(setCurrentPage({ action: "setData", data: page }));
     },
     getAsyncThunk: getCollectionAsyncThunk,
   });

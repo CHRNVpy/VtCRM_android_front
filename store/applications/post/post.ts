@@ -7,39 +7,39 @@ import {
 } from "@/store/helpers/post";
 import {
   reducerName,
-  postEquipmentAsyncThunk,
-} from "@/store/equipments/post/config";
+  postApplicationAsyncThunk,
+} from "@/store/applications/post/config";
 import {
   setAccessToken,
   setRefreshToken,
 } from "@/store/navigation/state/state";
-import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
-import { setEquipments } from "@/store/equipments/state/state";
+import { DefaultApplicationStateType } from "@/store/applications/state/types";
+import { setApplications } from "@/store/applications/state/state";
 import { PostState } from "@/store/helpers/post/types";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    postEquipmentState: {} as { [key: string]: PostState },
+    postApplicationState: {} as { [key: string]: PostState },
   },
   reducers: {
-    setPostEquipmentStateReducer(state, action) {
-      postDefaultReducer(state, action, ["postEquipmentState"]);
+    setPostApplicationStateReducer(state, action) {
+      postDefaultReducer(state, action, ["postApplicationState"]);
     },
   },
   extraReducers: (builder) => {
-    postDefaultExtraReducer(builder, postEquipmentAsyncThunk);
+    postDefaultExtraReducer(builder, postApplicationAsyncThunk);
   },
 });
 
-export const { setPostEquipmentStateReducer } = slice.actions;
+export const { setPostApplicationStateReducer } = slice.actions;
 
-export const postEquipment = createPostAsyncThunkWithArguments({
+export const postApplication = createPostAsyncThunkWithArguments({
   reducer: reducerName,
-  path: ["postEquipmentState"],
-  reducerAction: setPostEquipmentStateReducer,
-  url: "/equipment",
-  postAsyncThunk: postEquipmentAsyncThunk,
+  path: ["postApplicationState"],
+  reducerAction: setPostApplicationStateReducer,
+  url: "/admin-application",
+  postAsyncThunk: postApplicationAsyncThunk,
   setAccessToken,
   setRefreshToken,
   getDataFromStateFunction: (
@@ -49,14 +49,14 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     const draftId = payload?.id;
 
     const {
-      equipments: { data: equipments },
+      applications: { data: applications },
       ver: { data: ver },
-    } = (getState() as RootState)?.stateEquipments;
+    } = (getState() as RootState)?.stateApplications;
 
-    const equipment = equipments.reduce(
+    const application = applications.reduce(
       (
-        result?: DefaultEquipmentStateType,
-        item?: DefaultEquipmentStateType
+        result?: DefaultApplicationStateType,
+        item?: DefaultApplicationStateType
       ) => {
         if (result) return result;
 
@@ -69,10 +69,14 @@ export const postEquipment = createPostAsyncThunkWithArguments({
 
     const data: { [key: string]: any } = {};
 
-    data.name = equipment?.name;
-    data.serialNumber = equipment?.serialNumber;
-    data.comment = equipment?.comment;
-    data.hash = equipment?.hash;
+    data.type = application?.type;
+    data.client = application?.client?.number;
+    data.address = application?.address;
+    data.comment = application?.comment;
+    data.status = "pending";
+    data.installDate = application?.installDate;
+    data.poolId = application?.poolId;
+    data.hash = application?.hash;
     data.ver = ver;
 
     return data;
@@ -90,23 +94,23 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     const draftId = payload?.id;
 
     const {
-      equipments: { data: equipments },
-    } = (getState() as RootState)?.stateEquipments;
+      applications: { data: applications },
+    } = (getState() as RootState)?.stateApplications;
 
     const entity = responseData.data.entity;
     const rowNum = entity.rowNum;
     const page = Math.ceil(rowNum / 10);
     const ver = responseData.data.ver;
 
-    const modifiedEquipments = [...equipments].map((equipment) => {
-      //  Saving draftId in the equipment to retain the ability to navigate by draftId
-      if (equipment?.draftId == draftId)
+    const modifiedApplications = [...applications].map((application) => {
+      //  Saving draftId in the application to retain the ability to navigate by draftId
+      if (application?.draftId == draftId)
         return { ...entity, draftId, page, ver };
 
-      return equipment;
+      return application;
     });
 
-    const modifiedUniqueEquipments = modifiedEquipments.reduce(
+    const modifiedUniqueApplications = modifiedApplications.reduce(
       (result, element) => {
         const isExists = result.find((item: any) => item?.id === element?.id);
 
@@ -128,7 +132,7 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     );
 
     dispatch(
-      setEquipments({ action: "setData", data: modifiedUniqueEquipments })
+      setApplications({ action: "setData", data: modifiedUniqueApplications })
     );
   },
 });

@@ -21,6 +21,7 @@ import {
 } from "@/store/installers/state/state";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setPage } from "@/store/navigation/state/state";
+import { postInstaller } from "@/store/installers/post/post";
 import { s } from "react-native-size-matters";
 
 export default function Page() {
@@ -225,6 +226,8 @@ export default function Page() {
           : {},
       })
     );
+
+    dispatch(postInstaller({ id: draftId }));
   }, [
     dispatch,
     isButtonDisabled,

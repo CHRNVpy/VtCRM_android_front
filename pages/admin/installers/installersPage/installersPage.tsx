@@ -1,5 +1,5 @@
 import { FlatList, Share } from "react-native";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -24,6 +24,7 @@ import { nameFromNameParts } from "@/helpers/strings";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setInstallers } from "@/store/installers/state/state";
 import { useIsInstallersSyncInProcess } from "@/components/hooks/isInstallersSyncInProcess/isInstallersSyncInProcess";
+import { getInstallersCollection } from "@/store/installers/getCollection/getCollection";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -79,6 +80,13 @@ export default function Page() {
     },
     []
   );
+
+  //  When page opened
+  useEffect(() => {
+    if (installersList?.length > 0) return;
+
+    dispatch(getInstallersCollection());
+  }, []);
 
   return (
     <Wrapper>

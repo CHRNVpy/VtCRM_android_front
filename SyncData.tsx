@@ -42,6 +42,10 @@ export default function SyncData({ children }: ContentProps) {
     (state: RootState) => state.stateEquipments.equipments.data
   );
 
+  const equipmentCurrentPage = useSelector(
+    (state: RootState) => state.stateEquipments.currentPage.data
+  );
+
   const equipmentData = useMemo(() => {
     if (!["AdminEquipmentPage"].includes(page)) return;
 
@@ -63,28 +67,53 @@ export default function SyncData({ children }: ContentProps) {
     });
   }, [equipmentsList, pageParams, page]);
 
-  //  Sync all the data with the server
+  // Use refs to hold the latest values
+  const installersListRef = useRef(installersList);
+  const equipmentsListRef = useRef(equipmentsList);
+  const isConnectedRef = useRef(isConnected);
+  const pageRef = useRef(page);
+  const equipmentDataRef = useRef(equipmentData);
+  const equipmentCurrentPageRef = useRef(equipmentCurrentPage);
+
+  useEffect(() => {
+    installersListRef.current = installersList;
+    equipmentsListRef.current = equipmentsList;
+    isConnectedRef.current = isConnected;
+    pageRef.current = page;
+    equipmentDataRef.current = equipmentData;
+    equipmentCurrentPageRef.current = equipmentCurrentPage;
+  }, [
+    installersList,
+    equipmentsList,
+    isConnected,
+    page,
+    equipmentData,
+    equipmentCurrentPage,
+  ]);
+
+  // Sync all the data with the server
   const syncData = useCallback(async () => {
-    if (!isConnected) return;
+    if (!isConnectedRef.current) return;
+    if (!pageRef.current) return;
 
-    if (!page) return;
-
-    if (["AdminInstallersPage", "AdminInstallerPage"].includes(page)) {
-      //  Get current state of installers collection
+    if (
+      ["AdminInstallersPage", "AdminInstallerPage"].includes(pageRef.current)
+    ) {
+      // Get current state of installers collection
       await dispatch(getInstallersCollection());
 
-      //  Post all draft installers
-      installersList.forEach(async (installer, index) => {
-        //  If have id, draft is for backward compatibility of navigation
+      // Post all draft installers
+      installersListRef.current.forEach(async (installer) => {
+        // If have id, draft is for backward compatibility of navigation
         if (installer?.id) return;
         if (!installer?.draftId) return;
 
         await dispatch(postInstaller({ id: installer?.draftId }));
       });
 
-      //  Patch all modified installers
-      installersList.forEach(async (installer, index) => {
-        //  Should have id and be modified
+      // Patch all modified installers
+      installersListRef.current.forEach(async (installer) => {
+        // Should have id and be modified
         if (!installer?.id) return;
         if (!installer?.isModified) return;
 
@@ -92,42 +121,40 @@ export default function SyncData({ children }: ContentProps) {
       });
     }
 
-    if (["AdminEquipmentsPage", "AdminEquipmentPage"].includes(page)) {
-      //  Set page of equipment if it is equipment page
+    if (
+      ["AdminEquipmentsPage", "AdminEquipmentPage"].includes(pageRef.current)
+    ) {
+      // Set page of equipment if it is equipment page
       const params =
-        ["AdminEquipmentPage"].includes(page) && equipmentData?.page
-          ? { page: equipmentData?.page }
+        ["AdminEquipmentPage"].includes(pageRef.current) &&
+        equipmentDataRef.current?.page
+          ? { page: equipmentDataRef.current?.page }
+          : equipmentCurrentPageRef.current
+          ? { page: equipmentCurrentPageRef.current }
           : undefined;
 
-      //  Get current state of equipments collection
+      // Get current state of equipments collection
       await dispatch(getEquipmentsCollection(params));
 
-      //  Post all draft equipments
-      equipmentsList.forEach(async (equipment, index) => {
-        //  If have id, draft is for backward compatibility of navigation
+      // Post all draft equipments
+      equipmentsListRef.current.forEach(async (equipment) => {
+        // If have id, draft is for backward compatibility of navigation
         if (equipment?.id) return;
         if (!equipment?.draftId) return;
 
         await dispatch(postEquipment({ id: equipment?.draftId }));
       });
 
-      //  Patch all modified equipments
-      equipmentsList.forEach(async (equipment, index) => {
-        //  Should have id and be modified
+      // Patch all modified equipments
+      equipmentsListRef.current.forEach(async (equipment) => {
+        // Should have id and be modified
         if (!equipment?.id) return;
         if (!equipment?.isModified) return;
 
         await dispatch(patchEquipment({ id: equipment?.id }));
       });
     }
-  }, [
-    dispatch,
-    installersList,
-    equipmentsList,
-    isConnected,
-    page,
-    equipmentData,
-  ]);
+  }, [dispatch]);
 
   // Debounce
   const handleConnectivityChange = debounce(async (state: any) => {
@@ -150,8 +177,9 @@ export default function SyncData({ children }: ContentProps) {
     };
   }, []);
 
+  // Set interval to sync data
   useEffect(() => {
-    syncData();
+    syncData(); // Initial call
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 

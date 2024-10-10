@@ -20,6 +20,10 @@ import getCollectionEquipmentsReducer from "@/store/equipments/getCollection/get
 import stateEquipmentsReducer from "@/store/equipments/state/state";
 import postEquipmentReducer from "@/store/equipments/post/post";
 import patchEquipmentReducer from "@/store/equipments/patch/patch";
+import getCollectionApplicationsReducer from "@/store/applications/getCollection/getCollection";
+import stateApplicationsReducer from "@/store/applications/state/state";
+import postApplicationReducer from "@/store/applications/post/post";
+import patchApplicationReducer from "@/store/applications/patch/patch";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -68,6 +72,26 @@ const postEquipmentPersistConfig = {
 
 const patchEquipmentPersistConfig = {
   key: "patchEquipment",
+  storage,
+};
+
+const getCollectionApplicationsPersistConfig = {
+  key: "getCollectionApplications",
+  storage,
+};
+
+const stateApplicationsPersistConfig = {
+  key: "stateApplications",
+  storage,
+};
+
+const postApplicationPersistConfig = {
+  key: "postApplication",
+  storage,
+};
+
+const patchApplicationPersistConfig = {
+  key: "patchApplication",
   storage,
 };
 
@@ -121,6 +145,26 @@ const persistedPatchEquipmentReducer = persistReducer(
   patchEquipmentReducer
 );
 
+const persistedGetCollectionApplicationsReducer = persistReducer(
+  getCollectionApplicationsPersistConfig,
+  getCollectionApplicationsReducer
+);
+
+const persistedStateApplicationsReducer = persistReducer(
+  stateApplicationsPersistConfig,
+  stateApplicationsReducer
+);
+
+const persistedPostApplicationReducer = persistReducer(
+  postApplicationPersistConfig,
+  postApplicationReducer
+);
+
+const persistedPatchApplicationReducer = persistReducer(
+  patchApplicationPersistConfig,
+  patchApplicationReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
@@ -133,6 +177,10 @@ const store = configureStore({
     stateEquipments: persistedStateEquipmentsReducer,
     postEquipment: persistedPostEquipmentReducer,
     patchEquipment: persistedPatchEquipmentReducer,
+    getCollectionApplications: persistedGetCollectionApplicationsReducer,
+    stateApplications: persistedStateApplicationsReducer,
+    postApplication: persistedPostApplicationReducer,
+    patchApplication: persistedPatchApplicationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -143,7 +191,7 @@ const store = configureStore({
 
 const persistor = persistStore(store);
 
-//\persistor.purge();
+//persistor.purge();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -9,8 +9,8 @@ import {
   defaultInputState,
   setInputStateDefaultReducer,
 } from "@/store/helpers/input";
-import { reducerName } from "@/store/equipments/state/config";
-import { defaultEquipmentsState } from "@/store/equipments/state/defaultState";
+import { reducerName } from "@/store/applications/state/config";
+import { defaultApplicationsState } from "@/store/applications/state/defaultState";
 
 const slice = createSlice({
   name: reducerName,
@@ -19,15 +19,21 @@ const slice = createSlice({
     pagesLoaded: { ...defaultState, data: 0 },
     totalPages: { ...defaultState, data: 0 },
     currentPage: { ...defaultState, data: 1 },
-    equipments: {
-      ...defaultEquipmentsState,
+    applications: {
+      ...defaultApplicationsState,
     },
-    createEquipmentFields: {
+    createApplicationFields: {
       inputs: {
-        name: {
+        type: {
           ...defaultInputState,
         },
-        serialNumber: {
+        clientNumber: {
+          ...defaultInputState,
+        },
+        address: {
+          ...defaultInputState,
+        },
+        installDate: {
           ...defaultInputState,
         },
         comment: {
@@ -35,12 +41,15 @@ const slice = createSlice({
         },
       },
     },
-    editEquipmentFields: {
+    editApplicationFields: {
       inputs: {
-        name: {
+        clientNumber: {
           ...defaultInputState,
         },
-        serialNumber: {
+        address: {
+          ...defaultInputState,
+        },
+        installDate: {
           ...defaultInputState,
         },
         comment: {
@@ -62,32 +71,52 @@ const slice = createSlice({
     setTotalPages(state, action: SetStateDefaultReducerActionType) {
       setStateDefaultReducer(state, action, ["totalPages"]);
     },
-    setEquipments(state, action: SetStateDefaultReducerActionType) {
+    setApplications(state, action: SetStateDefaultReducerActionType) {
       setStateDefaultReducer(
         state,
         action,
-        ["equipments"],
-        defaultEquipmentsState
+        ["applications"],
+        defaultApplicationsState
       );
     },
-    setInputStateCreateNameReducer(
+    setInputStateCreateTypeReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "createEquipmentFields",
+        "createApplicationFields",
         "inputs",
-        "name",
+        "type",
       ]);
     },
-    setInputStateCreateSerialNumberReducer(
+    setInputStateCreateClientNumberReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "createEquipmentFields",
+        "createApplicationFields",
         "inputs",
-        "serialNumber",
+        "clientNumber",
+      ]);
+    },
+    setInputStateCreateAddressReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "createApplicationFields",
+        "inputs",
+        "address",
+      ]);
+    },
+    setInputStateCreateInstallDateReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "createApplicationFields",
+        "inputs",
+        "installDate",
       ]);
     },
     setInputStateCreateCommentReducer(
@@ -95,29 +124,49 @@ const slice = createSlice({
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "createEquipmentFields",
+        "createApplicationFields",
         "inputs",
         "comment",
       ]);
     },
-    setInputStateEditNameReducer(
+    setInputStateEditTypeReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "editEquipmentFields",
+        "editApplicationFields",
         "inputs",
-        "name",
+        "type",
       ]);
     },
-    setInputStateEditSerialNumberReducer(
+    setInputStateEditClientNumberReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "editEquipmentFields",
+        "editApplicationFields",
         "inputs",
-        "serialNumber",
+        "clientNumber",
+      ]);
+    },
+    setInputStateEditInstallDateReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editApplicationFields",
+        "inputs",
+        "installDate",
+      ]);
+    },
+    setInputStateEditAddressReducer(
+      state,
+      action: InputStateDefaultReducerActionType
+    ) {
+      setInputStateDefaultReducer(state, action, [
+        "editApplicationFields",
+        "inputs",
+        "address",
       ]);
     },
     setInputStateEditCommentReducer(
@@ -125,7 +174,7 @@ const slice = createSlice({
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
-        "editEquipmentFields",
+        "editApplicationFields",
         "inputs",
         "comment",
       ]);
@@ -138,12 +187,16 @@ export const {
   setPagesLoaded,
   setTotalPages,
   setCurrentPage,
-  setEquipments,
-  setInputStateCreateNameReducer,
-  setInputStateCreateSerialNumberReducer,
+  setApplications,
+  setInputStateCreateTypeReducer,
+  setInputStateCreateClientNumberReducer,
+  setInputStateCreateAddressReducer,
+  setInputStateCreateInstallDateReducer,
   setInputStateCreateCommentReducer,
-  setInputStateEditNameReducer,
-  setInputStateEditSerialNumberReducer,
+  setInputStateEditTypeReducer,
+  setInputStateEditClientNumberReducer,
+  setInputStateEditInstallDateReducer,
+  setInputStateEditAddressReducer,
   setInputStateEditCommentReducer,
 } = slice.actions;
 

@@ -15,6 +15,7 @@ import ListItem from "@/components/wrappers/listItem/listItem";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import TextType from "@/components/wrappers/textType/textType";
 import PressableArea from "@/components/controls/pressableArea/pressableArea";
+import Loading from "@/components/controls/loading/loading";
 import EditIcon from "@/assets/editIcon.svg";
 import AddIcon from "@/assets/addIcon.svg";
 import { s } from "react-native-size-matters";
@@ -56,13 +57,20 @@ export default function Page() {
     dispatch(getEquipmentsCollection({ page: pagesLoaded + 1 }));
   }, [totalPages, pagesLoaded]);
 
-  const debouncedSetPage = useCallback(
+  const debouncedGetEquipmentsByPage = useCallback(
     debounce((updatePage) => {
       //  Get current state of equipments collection
       dispatch(getEquipmentsCollection({ page: updatePage }));
     }, 300),
     [dispatch]
   );
+
+  //  When page opened
+  useEffect(() => {
+    if (equipmentsList?.length > 0) return;
+
+    dispatch(getEquipmentsCollection({ page: 1 }));
+  }, []);
 
   const handleOnViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -106,12 +114,12 @@ export default function Page() {
   useEffect(() => {
     if (pageByScrollData?.page === undefined) return;
 
-    debouncedSetPage(pageByScrollData?.page);
+    debouncedGetEquipmentsByPage(pageByScrollData?.page);
 
     return () => {
-      debouncedSetPage.cancel();
+      debouncedGetEquipmentsByPage.cancel();
     };
-  }, [pageByScrollData?.page, debouncedSetPage]);
+  }, [pageByScrollData?.page, debouncedGetEquipmentsByPage]);
 
   return (
     <Wrapper>
@@ -144,18 +152,11 @@ export default function Page() {
             onEndReachedThreshold={0.5}
             onViewableItemsChanged={handleOnViewableItemsChanged}
             viewabilityConfig={{ itemVisiblePercentThreshold: 0 }}
-            ListFooterComponent={
-              <Buttons>
-                <Button
-                  icon={<AddIcon width={s(16)} height={s(16)} />}
-                  to={"AdminCreateEquipmentPage"}
-                >
-                  Загрузить еще
-                </Button>
-              </Buttons>
-            }
             keyboardShouldPersistTaps="always"
             data={equipmentsList}
+            ListFooterComponent={
+              <Loading isInProcess={totalPages > pagesLoaded} />
+            }
             keyExtractor={(item, index) =>
               item?.id
                 ? `remote-${item?.id.toString()}`
@@ -183,7 +184,6 @@ export default function Page() {
                   >
                     <MarginBottom>
                       <TwoColumns
-                        ratio="85/15"
                         leftColumn={
                           <>
                             <MarginBottom size="small">
@@ -294,5 +294,3 @@ export default function Page() {
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});

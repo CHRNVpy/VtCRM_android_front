@@ -22,6 +22,7 @@ import {
   setInputStateEditCommentReducer,
   setEquipments,
 } from "@/store/equipments/state/state";
+import { patchEquipment } from "@/store/equipments/patch/patch";
 import { trimIgnoringNL } from "@/helpers/strings";
 
 export default function Page() {
@@ -209,6 +210,10 @@ export default function Page() {
             },
       })
     );
+
+    if (!equipmentId) return;
+
+    dispatch(patchEquipment({ id: equipmentId }));
   }, [
     dispatch,
     isButtonDisabled,

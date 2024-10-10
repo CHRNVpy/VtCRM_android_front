@@ -16,6 +16,7 @@ import {
   setInputStateEditPasswordReducer,
   setInstallers,
 } from "@/store/installers/state/state";
+import { patchInstaller } from "@/store/installers/patch/patch";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -142,6 +143,10 @@ export default function Page() {
             },
       })
     );
+
+    if (!installerId) return;
+
+    dispatch(patchInstaller({ id: installerId }));
   }, [
     dispatch,
     isButtonDisabled,

@@ -21,6 +21,7 @@ import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
 import { setPage } from "@/store/navigation/state/state";
 import { s } from "react-native-size-matters";
 import { trimIgnoringNL } from "@/helpers/strings";
+import { postEquipment } from "@/store/equipments/post/post";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -166,6 +167,8 @@ export default function Page() {
           : {},
       })
     );
+
+    dispatch(postEquipment({ id: draftId }));
   }, [
     dispatch,
     isButtonDisabled,
