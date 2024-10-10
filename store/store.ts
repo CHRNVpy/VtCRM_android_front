@@ -136,25 +136,14 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        ignoredActionPaths: ["payload", "meta.arg"],
-        ignoredPaths: [
-          "postLogin.postLoginState",
-          "postInstaller.postInstallerState",
-          "patchInstaller.patchInstallerState",
-          "getCollectionInstallers.installersGetCollectionState",
-          "postEquipment.postEquipmentState",
-          "patchEquipment.patchEquipmentState",
-          "getCollectionEquipments.equipmentsGetCollectionState",
-        ],
-      },
+      immutableCheck: false,
+      serializableCheck: false,
     }),
 });
 
 const persistor = persistStore(store);
 
-//persistor.purge();
+//\persistor.purge();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -1,4 +1,11 @@
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { useCallback, useMemo, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import LogoSvg from "@/assets/logo.svg";
@@ -7,15 +14,22 @@ import { RootStackParamList } from "@/NavigationContext";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setPage } from "@/store/navigation/state/state";
+import colors from "@/helpers/colors";
 import { s } from "react-native-size-matters";
 
 interface ContentProps {
   linkText?: string;
   to?: keyof RootStackParamList;
   toParams?: { [key: string]: any };
+  isSyncInProcess?: boolean;
 }
 
-export default function Header({ linkText, to, toParams }: ContentProps) {
+export default function Header({
+  linkText,
+  to,
+  toParams,
+  isSyncInProcess,
+}: ContentProps) {
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -69,22 +83,29 @@ export default function Header({ linkText, to, toParams }: ContentProps) {
   return (
     <Pressable onPress={handleOnPress}>
       <View style={[styles.header, !!linkText && styles.isWithLink]}>
-        {linkText || pageParamsWhenMounted?.backLink?.text ? (
-          <View style={styles.backLink}>
-            <BackLinkIconSvg width={s(31)} height={s(26)} />
-            <Text
-              style={styles.backLinkText}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {pageParamsWhenMounted?.backLink?.text
-                ? pageParamsWhenMounted?.backLink?.text
-                : linkText}
-            </Text>
+        <View style={styles.content}>
+          {linkText || pageParamsWhenMounted?.backLink?.text ? (
+            <View style={styles.backLink}>
+              <BackLinkIconSvg width={s(31)} height={s(26)} />
+              <Text
+                style={styles.backLinkText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {pageParamsWhenMounted?.backLink?.text
+                  ? pageParamsWhenMounted?.backLink?.text
+                  : linkText}
+              </Text>
+            </View>
+          ) : (
+            <LogoSvg style={styles.logo} width={s(253)} height={s(31)} />
+          )}
+          <View style={styles.sync}>
+            {!!isSyncInProcess && (
+              <ActivityIndicator size={s(20)} color={colors.dark} />
+            )}
           </View>
-        ) : (
-          <LogoSvg style={styles.logo} width={s(253)} height={s(31)} />
-        )}
+        </View>
       </View>
     </Pressable>
   );
@@ -102,13 +123,18 @@ const styles = StyleSheet.create({
   isWithLink: {
     marginBottom: s(0),
   },
+  content: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   logo: {
     height: s(31),
     width: s(253),
   },
   backLink: {
     flexDirection: "row",
-    width: "100%",
+    width: Dimensions.get("window").width - s(15 + 15 + 26),
   },
   backLinkText: {
     fontSize: s(18),
@@ -121,5 +147,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     textAlign: "left",
     flexGrow: 1,
+  },
+  sync: {
+    width: s(26),
+    height: s(26),
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

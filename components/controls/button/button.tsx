@@ -62,7 +62,7 @@ export default function Component({
       >
         {isInProcess ? (
           <ActivityIndicator
-            size={size == "small" ? 12 : 26}
+            size={size == "small" ? s(12) : s(26)}
             color={colors.dark}
           />
         ) : (

@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet, Text } from "react-native";
-import { useMemo, useState } from "react";
+import { FlatList, StyleSheet, ViewToken } from "react-native";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -19,10 +19,19 @@ import EditIcon from "@/assets/editIcon.svg";
 import AddIcon from "@/assets/addIcon.svg";
 import { s } from "react-native-size-matters";
 import { trimIgnoringNL } from "@/helpers/strings";
+import { debounce } from "lodash";
+import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
+import { useIsEquipmentsSyncInProcess } from "@/components/hooks/isEquipmentsSyncInProcess/isEquipmentsSyncInProcess";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [pageByScrollData, setPageByScrollData] = useState<{
+    firstIndex: number | null;
+    page?: number;
+  }>();
   const dispatch: AppDispatch = useDispatch();
+
+  const isEquipmentsSyncInProcess = useIsEquipmentsSyncInProcess();
 
   const equipmentsList = useSelector(
     (state: RootState) => state.stateEquipments.equipments.data
@@ -32,9 +41,85 @@ export default function Page() {
     (state: RootState) => state.stateInstallers.installers.data
   );
 
+  const totalPages = useSelector(
+    (state: RootState) => state.stateEquipments.totalPages.data
+  );
+
+  const pagesLoaded = useSelector(
+    (state: RootState) => state.stateEquipments.pagesLoaded.data
+  );
+
+  const handleOnEndReached = useCallback(() => {
+    if (totalPages <= pagesLoaded) return;
+
+    //  Get current state of equipments collection
+    dispatch(getEquipmentsCollection({ page: pagesLoaded + 1 }));
+  }, [totalPages, pagesLoaded]);
+
+  const debouncedSetPage = useCallback(
+    debounce((updatePage) => {
+      //  Get current state of equipments collection
+      dispatch(getEquipmentsCollection({ page: updatePage }));
+    }, 300),
+    [dispatch]
+  );
+
+  const handleOnViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (!viewableItems.length) return;
+      if (!viewableItems?.[0]) return;
+
+      setPageByScrollData((prevPageByScrollData) => {
+        if (!viewableItems[0]?.item?.page) return prevPageByScrollData;
+
+        //  Just to filter nulls
+        if (prevPageByScrollData?.firstIndex === null)
+          return prevPageByScrollData;
+        if (viewableItems[0].index === null) return prevPageByScrollData;
+
+        //  If not set, set first
+        if (!prevPageByScrollData)
+          return {
+            firstIndex: viewableItems[0].index,
+            page: viewableItems[0]?.item?.page,
+          };
+
+        //  If same first index
+        if (prevPageByScrollData?.firstIndex == viewableItems[0].index)
+          return prevPageByScrollData;
+
+        if (prevPageByScrollData?.firstIndex > viewableItems[0].index) {
+          return {
+            firstIndex: viewableItems[0].index,
+            page: viewableItems[0]?.item?.page,
+          };
+        }
+
+        return {
+          firstIndex: viewableItems[0].index,
+          page: viewableItems[viewableItems?.length - 1]?.item?.page,
+        };
+      });
+    }
+  ).current;
+
+  useEffect(() => {
+    if (pageByScrollData?.page === undefined) return;
+
+    debouncedSetPage(pageByScrollData?.page);
+
+    return () => {
+      debouncedSetPage.cancel();
+    };
+  }, [pageByScrollData?.page, debouncedSetPage]);
+
   return (
     <Wrapper>
-      <Header linkText={"На главную"} to={"AdminMainPage"} />
+      <Header
+        linkText={"На главную"}
+        to={"AdminMainPage"}
+        isSyncInProcess={isEquipmentsSyncInProcess}
+      />
       <Title
         isWithSettings={true}
         isNoMargin={isSettingsOpen}
@@ -55,6 +140,20 @@ export default function Page() {
       {!!equipmentsList.length && (
         <Content>
           <FlatList
+            onEndReached={handleOnEndReached}
+            onEndReachedThreshold={0.5}
+            onViewableItemsChanged={handleOnViewableItemsChanged}
+            viewabilityConfig={{ itemVisiblePercentThreshold: 0 }}
+            ListFooterComponent={
+              <Buttons>
+                <Button
+                  icon={<AddIcon width={s(16)} height={s(16)} />}
+                  to={"AdminCreateEquipmentPage"}
+                >
+                  Загрузить еще
+                </Button>
+              </Buttons>
+            }
             keyboardShouldPersistTaps="always"
             data={equipmentsList}
             keyExtractor={(item, index) =>
@@ -168,6 +267,7 @@ export default function Page() {
                       to={"AdminEditEquipmentPage"}
                       toParams={{
                         id: item.id,
+                        draftId: item.draftId,
                         backLink: {
                           text: "Оборудование",
                           to: "AdminEquipmentsPage",

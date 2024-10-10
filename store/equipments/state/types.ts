@@ -3,10 +3,11 @@ import { DefaultStateType } from "@/store/helpers/state";
 export interface DefaultEquipmentStateType {
   id?: number;
   draftId?: number;
+  page?: number;
+  ver?: number;
   name?: string;
   serialNumber: string;
   comment: string;
-  status: "active" | "inactive";
   installerId?: number;
   applicationId?: number;
   hash?: string;

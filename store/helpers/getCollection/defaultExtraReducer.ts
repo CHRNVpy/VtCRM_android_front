@@ -7,9 +7,10 @@ export const getCollectionDefaultExtraReducer = (
 ) => {
   builder
     .addCase(asyncThunk.pending, (state: any, action: any) => {
+      const page: string = action.meta.arg?.page?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: GetCollectionState = path
+      const stateByPath: { [key: string]: GetCollectionState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 
@@ -21,13 +22,19 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      stateByPath.isLoaded = false;
-      stateByPath.isInProcess = true;
+      if (page && !stateByPath[page])
+        stateByPath[page] = { ...defaultGetCollectionState };
+
+      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+
+      stateByPathWithId.isLoaded = false;
+      stateByPathWithId.isInProcess = true;
     })
     .addCase(asyncThunk.rejected, (state: any, action: any) => {
+      const page: string = action.meta.arg?.page?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: GetCollectionState = path
+      const stateByPath: { [key: string]: GetCollectionState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 
@@ -39,13 +46,19 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      stateByPath.isLoaded = false;
-      stateByPath.isInProcess = false;
+      if (page && !stateByPath[page])
+        stateByPath[page] = { ...defaultGetCollectionState };
+
+      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+
+      stateByPathWithId.isLoaded = false;
+      stateByPathWithId.isInProcess = false;
     })
     .addCase(asyncThunk.fulfilled, (state: any, action: any) => {
+      const page: string = action.meta.arg?.page?.toString();
       const path: Array<string> = action.meta.arg.path;
 
-      const stateByPath: GetCollectionState = path
+      const stateByPath: { [key: string]: GetCollectionState } = path
         ? path.reduce((result, item) => {
             if (!result) return undefined;
 
@@ -57,20 +70,16 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      stateByPath.isLoaded = true;
-      stateByPath.isInProcess = false;
+      if (page && !stateByPath[page])
+        stateByPath[page] = { ...defaultGetCollectionState };
 
-      stateByPath.data = action.payload?.entities
+      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+
+      stateByPathWithId.isLoaded = true;
+      stateByPathWithId.isInProcess = false;
+
+      stateByPathWithId.data = action.payload?.entities
         ? action.payload.entities
         : defaultGetCollectionState.data;
-      stateByPath.variables = action.payload?.variables
-        ? action.payload.variables
-        : defaultGetCollectionState.variables;
-      stateByPath.ver = action.payload?.ver
-        ? action.payload.ver
-        : defaultGetCollectionState.ver;
-      stateByPath.totalRows = action.payload?.totalRows
-        ? action.payload.totalRows
-        : defaultGetCollectionState.totalRows;
     });
 };

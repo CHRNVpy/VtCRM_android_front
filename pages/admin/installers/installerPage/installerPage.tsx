@@ -23,11 +23,14 @@ import ShareIcon from "@/assets/shareIcon.svg";
 import { setPage } from "@/store/navigation/state/state";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setInstallers } from "@/store/installers/state/state";
+import { useIsInstallersSyncInProcess } from "@/components/hooks/isInstallersSyncInProcess/isInstallersSyncInProcess";
 import * as Clipboard from "expo-clipboard";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const isInstallersSyncInProcess = useIsInstallersSyncInProcess();
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -153,7 +156,11 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"Монтажники"} to={"AdminInstallersPage"} />
+      <Header
+        linkText={"Монтажники"}
+        to={"AdminInstallersPage"}
+        isSyncInProcess={isInstallersSyncInProcess}
+      />
       <Content isWithPaddings={true}>
         <MarginBottom size="biggest">
           <TwoColumns

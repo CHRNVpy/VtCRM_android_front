@@ -36,7 +36,14 @@ export const createGetCollectionAsyncThunkWithArguments = ({
 }) => {
   return createAsyncThunk(
     `Get ${reducer} collection with wrapper`,
-    async (payload, { dispatch }) => {
+    async (
+      payload:
+        | {
+            page?: number;
+          }
+        | undefined,
+      { dispatch }
+    ) => {
       await dispatch(
         getAsyncThunk({
           reducer,
@@ -48,6 +55,7 @@ export const createGetCollectionAsyncThunkWithArguments = ({
           urlFromStateFunction,
           getParamsFromStateFunction,
           callbackAfterGet,
+          page: payload?.page,
         })
       );
     }
@@ -79,6 +87,7 @@ export const createGetCollectionAsyncThunk = ({
           getState: Function,
           payload: any
         ) => Promise<void>;
+        page: number;
       },
       { dispatch, getState, rejectWithValue }
     ) => {
@@ -88,7 +97,10 @@ export const createGetCollectionAsyncThunk = ({
         const refreshToken = (getState() as { [name: string]: any })
           ?.stateNavigation?.refreshToken?.data;
 
-        const path = payload.path;
+        const path = payload.page
+          ? [...payload.path, payload.page.toString()]
+          : payload.path;
+
         const reducerAction = payload.reducerAction;
 
         const stateByPath = path.reduce((result, item) => {
@@ -119,7 +131,7 @@ export const createGetCollectionAsyncThunk = ({
 
         const params: { [key: string]: any } =
           payload.getParamsFromStateFunction
-            ? payload.getParamsFromStateFunction(getState)
+            ? payload.getParamsFromStateFunction(getState, payload)
             : {};
 
         const url: string = payload.urlFromStateFunction
@@ -145,10 +157,8 @@ export const createGetCollectionAsyncThunk = ({
           if (response.status == 200 && response.data.status == "ok") {
             const entities: Array<any> = response.data.data.entities;
             const totalRows: number = response.data.data.totalRows;
-            const variables: { [key: string]: any } = response.data.data
-              ?.variables
-              ? response.data.data.variables
-              : undefined;
+            const page: number = response.data.data.page;
+            const pages: number = response.data.data.pages;
             const ver: { [key: string]: any } = response.data.data?.ver
               ? response.data.data.ver
               : undefined;
@@ -157,15 +167,17 @@ export const createGetCollectionAsyncThunk = ({
               await payload.callbackAfterGet(dispatch, getState, {
                 entities,
                 totalRows,
-                variables,
+                page,
+                pages,
                 ver,
               });
 
             return {
               entities,
-              variables,
-              ver,
               totalRows,
+              page,
+              pages,
+              ver,
             };
           }
 

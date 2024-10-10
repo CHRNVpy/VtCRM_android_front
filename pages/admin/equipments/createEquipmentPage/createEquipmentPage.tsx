@@ -141,7 +141,6 @@ export default function Page() {
       name: name.trim(),
       serialNumber: serialNumber.trim(),
       comment: trimIgnoringNL({ text: comment }),
-      status: "active",
       hash,
     };
 

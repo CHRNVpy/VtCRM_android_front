@@ -10,12 +10,13 @@ import {
   patchEquipmentAsyncThunk,
 } from "@/store/equipments/patch/config";
 import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
-import { setVer, setEquipments } from "@/store/equipments/state/state";
+import { setEquipments } from "@/store/equipments/state/state";
+import { PatchState } from "@/store/helpers/patch/types";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    patchEquipmentState: {},
+    patchEquipmentState: {} as { [key: string]: PatchState },
   },
   reducers: {
     setPatchEquipmentStateReducer(state, action) {
@@ -33,18 +34,25 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
   reducer: reducerName,
   path: ["patchEquipmentState"],
   reducerAction: setPatchEquipmentStateReducer,
-  url: "/equipment",
-  patchAsyncThunk: patchEquipmentAsyncThunk,
-  getDataFromStateFunction: (
+  urlFromStateFunction: (
     getState: Function,
     payload: { [key: string]: any }
   ) => {
     const id = payload?.id;
 
+    return `/equipment/${id}`;
+  },
+  patchAsyncThunk: patchEquipmentAsyncThunk,
+  getDataFromStateFunction: (
+    getState: Function,
+    payload: { [key: string]: any }
+  ) => {
     const {
       equipments: { data: equipments },
       ver: { data: ver },
     } = (getState() as RootState)?.stateEquipments;
+
+    const id = payload?.id;
 
     const equipment = equipments.reduce(
       (
@@ -66,9 +74,7 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
     data.name = equipment?.name;
     data.serialNumber = equipment?.serialNumber;
     data.comment = equipment?.comment;
-    data.status = equipment?.status;
     data.hash = equipment?.hash;
-
     data.ver = ver;
 
     return data;
@@ -89,7 +95,6 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
       equipments: { data: equipments },
     } = (getState() as RootState)?.stateEquipments;
 
-    const ver = responseData.data.ver;
     const entity = responseData.data.entity;
 
     const modifiedEquipments = [...equipments].map((equipment) => {
@@ -100,7 +105,6 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
       return equipment;
     });
 
-    dispatch(setVer({ action: "setData", data: ver }));
     dispatch(setEquipments({ action: "setData", data: modifiedEquipments }));
   },
 });

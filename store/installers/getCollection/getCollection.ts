@@ -72,8 +72,6 @@ export const getInstallersCollection =
         ? payload?.entities
         : [];
 
-      if (!remoteInstallers.length) return;
-
       remoteInstallers.forEach((remoteInstaller: DefaultInstallerStateType) => {
         const localInstallerIndexWithSameId = localInstallers.findIndex(
           (localInstaller) => {
@@ -138,6 +136,9 @@ export const getInstallersCollection =
       });
 
       dispatch(setVer({ action: "setData", data: payload.ver }));
+
+      if (!modifiedLocalInstallers?.length) return;
+
       dispatch(
         setInstallers({ action: "setData", data: modifiedLocalInstallers })
       );

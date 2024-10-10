@@ -9,13 +9,14 @@ import {
   reducerName,
   patchInstallerAsyncThunk,
 } from "@/store/installers/patch/config";
+import { PatchState } from "@/store/helpers/patch/types";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setVer, setInstallers } from "@/store/installers/state/state";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    patchInstallerState: {},
+    patchInstallerState: {} as { [key: string]: PatchState },
   },
   reducers: {
     setPatchInstallerStateReducer(state, action) {

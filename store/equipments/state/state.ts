@@ -16,6 +16,8 @@ const slice = createSlice({
   name: reducerName,
   initialState: {
     ver: { ...defaultState, data: 0 },
+    pagesLoaded: { ...defaultState, data: 0 },
+    totalPages: { ...defaultState, data: 0 },
     equipments: {
       ...defaultEquipmentsState,
     },
@@ -49,6 +51,12 @@ const slice = createSlice({
   reducers: {
     setVer(state, action: SetStateDefaultReducerActionType) {
       setStateDefaultReducer(state, action, ["ver"]);
+    },
+    setPagesLoaded(state, action: SetStateDefaultReducerActionType) {
+      setStateDefaultReducer(state, action, ["pagesLoaded"]);
+    },
+    setTotalPages(state, action: SetStateDefaultReducerActionType) {
+      setStateDefaultReducer(state, action, ["totalPages"]);
     },
     setEquipments(state, action: SetStateDefaultReducerActionType) {
       setStateDefaultReducer(
@@ -123,6 +131,8 @@ const slice = createSlice({
 
 export const {
   setVer,
+  setPagesLoaded,
+  setTotalPages,
   setEquipments,
   setInputStateCreateNameReducer,
   setInputStateCreateSerialNumberReducer,

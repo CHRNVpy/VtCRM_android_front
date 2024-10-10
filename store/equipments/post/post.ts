@@ -14,12 +14,13 @@ import {
   setRefreshToken,
 } from "@/store/navigation/state/state";
 import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
-import { setVer, setEquipments } from "@/store/equipments/state/state";
+import { setEquipments } from "@/store/equipments/state/state";
+import { PostState } from "@/store/helpers/post/types";
 
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    postEquipmentState: {},
+    postEquipmentState: {} as { [key: string]: PostState },
   },
   reducers: {
     setPostEquipmentStateReducer(state, action) {
@@ -71,9 +72,7 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     data.name = equipment?.name;
     data.serialNumber = equipment?.serialNumber;
     data.comment = equipment?.comment;
-    data.status = "active";
     data.hash = equipment?.hash;
-
     data.ver = ver;
 
     return data;
@@ -94,17 +93,19 @@ export const postEquipment = createPostAsyncThunkWithArguments({
       equipments: { data: equipments },
     } = (getState() as RootState)?.stateEquipments;
 
-    const ver = responseData.data.ver;
     const entity = responseData.data.entity;
+    const rowNum = entity.rowNum;
+    const page = Math.ceil(rowNum / 10);
+    const ver = responseData.data.ver;
 
     const modifiedEquipments = [...equipments].map((equipment) => {
       //  Saving draftId in the equipment to retain the ability to navigate by draftId
-      if (equipment?.draftId == draftId) return { ...entity, draftId };
+      if (equipment?.draftId == draftId)
+        return { ...entity, draftId, page, ver };
 
       return equipment;
     });
 
-    dispatch(setVer({ action: "setData", data: ver }));
     dispatch(setEquipments({ action: "setData", data: modifiedEquipments }));
   },
 });

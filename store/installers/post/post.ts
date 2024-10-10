@@ -9,6 +9,7 @@ import {
   reducerName,
   postInstallerAsyncThunk,
 } from "@/store/installers/post/config";
+import { PostState } from "@/store/helpers/post/types";
 import {
   setAccessToken,
   setRefreshToken,
@@ -19,7 +20,7 @@ import { setVer, setInstallers } from "@/store/installers/state/state";
 const slice = createSlice({
   name: reducerName,
   initialState: {
-    postInstallerState: {},
+    postInstallerState: {} as { [key: string]: PostState },
   },
   reducers: {
     setPostInstallerStateReducer(state, action) {

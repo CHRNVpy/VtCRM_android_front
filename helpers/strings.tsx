@@ -141,8 +141,15 @@ export function normalizePhone({ phone }: { phone?: string }) {
 export function trimIgnoringNL(data?: { text?: string }): string {
   if (!data?.text) return "";
 
-  return data.text
-    .split("\n")
-    .map((line) => line.trim())
-    .join("\n");
+  const result = data.text.split("\n").reduce((result, line) => {
+    const trimmedLine = line.trim();
+
+    if (!trimmedLine) return result;
+
+    result += (result ? "\n" : "") + trimmedLine;
+
+    return result;
+  }, "");
+
+  return result;
 }

@@ -1,5 +1,5 @@
 import { FlatList, Share } from "react-native";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -23,6 +23,7 @@ import { s } from "react-native-size-matters";
 import { nameFromNameParts } from "@/helpers/strings";
 import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setInstallers } from "@/store/installers/state/state";
+import { useIsInstallersSyncInProcess } from "@/components/hooks/isInstallersSyncInProcess/isInstallersSyncInProcess";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -30,6 +31,8 @@ export default function Page() {
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
   );
+
+  const isInstallersSyncInProcess = useIsInstallersSyncInProcess();
 
   const handleSwitchStatus = useCallback(
     async (item: DefaultInstallerStateType) => {
@@ -79,7 +82,11 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={"На главную"} to={"AdminMainPage"} />
+      <Header
+        linkText={"На главную"}
+        to={"AdminMainPage"}
+        isSyncInProcess={isInstallersSyncInProcess}
+      />
       <Title>Монтажники</Title>
       <Content>
         {!installersList?.length ? (

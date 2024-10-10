@@ -1,4 +1,11 @@
-import { ReactNode, useCallback, useEffect, useState, useRef } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import NetInfo from "@react-native-community/netinfo";
@@ -6,6 +13,9 @@ import debounce from "lodash.debounce";
 import { postInstaller } from "@/store/installers/post/post";
 import { patchInstaller } from "@/store/installers/patch/patch";
 import { getInstallersCollection } from "@/store/installers/getCollection/getCollection";
+import { postEquipment } from "@/store/equipments/post/post";
+import { patchEquipment } from "@/store/equipments/patch/patch";
+import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
 
 interface ContentProps {
   children?: ReactNode;
@@ -16,35 +26,108 @@ export default function SyncData({ children }: ContentProps) {
   const [isConnected, setIsConnected] = useState(false);
   const dispatch: AppDispatch = useDispatch();
 
+  const page = useSelector(
+    (state: RootState) => state.stateNavigation.page.data
+  );
+
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
   );
+
+  const equipmentsList = useSelector(
+    (state: RootState) => state.stateEquipments.equipments.data
+  );
+
+  const equipmentData = useMemo(() => {
+    if (!["AdminEquipmentPage"].includes(page)) return;
+
+    const equipmentId = pageParams?.id;
+    const equipmentDraftId = pageParams?.draftId;
+
+    return equipmentsList.find((equipment) => {
+      if (!!equipment?.id && !!equipmentId && equipment.id == equipmentId)
+        return true;
+
+      if (
+        !!equipment?.draftId &&
+        !!equipmentDraftId &&
+        equipment?.draftId == equipmentDraftId
+      )
+        return true;
+
+      return false;
+    });
+  }, [equipmentsList, pageParams, page]);
 
   //  Sync all the data with the server
   const syncData = useCallback(async () => {
     if (!isConnected) return;
 
-    //  Get current state of installers collection
-    await dispatch(getInstallersCollection());
+    if (!page) return;
 
-    //  Post all draft installers
-    installersList.forEach(async (installer, index) => {
-      //  If have id, draft is for backward compatibility of navigation
-      if (installer?.id) return;
-      if (!installer?.draftId) return;
+    if (["AdminInstallersPage", "AdminInstallerPage"].includes(page)) {
+      //  Get current state of installers collection
+      await dispatch(getInstallersCollection());
 
-      await dispatch(postInstaller({ id: installer?.draftId }));
-    });
+      //  Post all draft installers
+      installersList.forEach(async (installer, index) => {
+        //  If have id, draft is for backward compatibility of navigation
+        if (installer?.id) return;
+        if (!installer?.draftId) return;
 
-    //  Patch all modified installers
-    installersList.forEach(async (installer, index) => {
-      //  Should have id and be modified
-      if (!installer?.id) return;
-      if (!installer?.isModified) return;
+        await dispatch(postInstaller({ id: installer?.draftId }));
+      });
 
-      await dispatch(patchInstaller({ id: installer?.id }));
-    });
-  }, [dispatch, installersList, isConnected]);
+      //  Patch all modified installers
+      installersList.forEach(async (installer, index) => {
+        //  Should have id and be modified
+        if (!installer?.id) return;
+        if (!installer?.isModified) return;
+
+        await dispatch(patchInstaller({ id: installer?.id }));
+      });
+    }
+
+    if (["AdminEquipmentsPage", "AdminEquipmentPage"].includes(page)) {
+      //  Set page of equipment if it is equipment page
+      const params =
+        ["AdminEquipmentPage"].includes(page) && equipmentData?.page
+          ? { page: equipmentData?.page }
+          : undefined;
+
+      //  Get current state of equipments collection
+      await dispatch(getEquipmentsCollection(params));
+
+      //  Post all draft equipments
+      equipmentsList.forEach(async (equipment, index) => {
+        //  If have id, draft is for backward compatibility of navigation
+        if (equipment?.id) return;
+        if (!equipment?.draftId) return;
+
+        await dispatch(postEquipment({ id: equipment?.draftId }));
+      });
+
+      //  Patch all modified equipments
+      equipmentsList.forEach(async (equipment, index) => {
+        //  Should have id and be modified
+        if (!equipment?.id) return;
+        if (!equipment?.isModified) return;
+
+        await dispatch(patchEquipment({ id: equipment?.id }));
+      });
+    }
+  }, [
+    dispatch,
+    installersList,
+    equipmentsList,
+    isConnected,
+    page,
+    equipmentData,
+  ]);
 
   // Debounce
   const handleConnectivityChange = debounce(async (state: any) => {
@@ -74,7 +157,7 @@ export default function SyncData({ children }: ContentProps) {
 
     intervalRef.current = setInterval(() => {
       syncData();
-    }, 10000);
+    }, 60 * 1000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

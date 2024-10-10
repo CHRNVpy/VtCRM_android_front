@@ -28,23 +28,10 @@ export const setGetCollectionStateDefaultReducer = (
     stateByPath.ajaxCancel = payload?.data;
   }
 
-  if (payload.action == "setPage") {
-    stateByPath.page = payload?.data;
-  }
-
-  if (payload.action == "setFilters") {
-    stateByPath.filters = payload?.data;
-  }
-
   if (payload.action == "reset") {
     if (stateByPath?.ajaxCancel) stateByPath?.ajaxCancel();
 
     stateByPath.data = defaultGetCollectionState.data;
-    stateByPath.variables = defaultGetCollectionState.variables;
-    stateByPath.ver = defaultGetCollectionState.ver;
-    stateByPath.totalRows = defaultGetCollectionState.totalRows;
-    stateByPath.page = defaultGetCollectionState.page;
-    stateByPath.perPage = defaultGetCollectionState.perPage;
     stateByPath.ajaxCancel = defaultGetCollectionState.ajaxCancel;
     stateByPath.isInProcess = defaultGetCollectionState.isInProcess;
     stateByPath.isLoaded = defaultGetCollectionState.isLoaded;

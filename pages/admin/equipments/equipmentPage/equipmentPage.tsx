@@ -1,5 +1,4 @@
-import { StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -10,14 +9,19 @@ import Content from "@/components/wrappers/content/content";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import Title from "@/components/wrappers/title/title";
 import TextType from "@/components/wrappers/textType/textType";
-import Status from "@/components/wrappers/status/status";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import PressableArea from "@/components/controls/pressableArea/pressableArea";
+import { setPage } from "@/store/navigation/state/state";
 import { s } from "react-native-size-matters";
 import EditIcon from "@/assets/editIcon.svg";
-import ShareIcon from "@/assets/shareIcon.svg";
+import { trimIgnoringNL } from "@/helpers/strings";
+import { useIsEquipmentsSyncInProcess } from "@/components/hooks/isEquipmentsSyncInProcess/isEquipmentsSyncInProcess";
 
 export default function Page() {
+  const dispatch: AppDispatch = useDispatch();
+
+  const isEquipmentsSyncInProcess = useIsEquipmentsSyncInProcess();
+
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
   );
@@ -27,62 +31,104 @@ export default function Page() {
     return pageParams;
   }, []);
 
+  const equipmentId = pageParamsWhenMounted?.id;
+  const equipmentDraftId = pageParamsWhenMounted?.draftId;
+
+  const equipmentsList = useSelector(
+    (state: RootState) => state.stateEquipments.equipments.data
+  );
+
+  const installersList = useSelector(
+    (state: RootState) => state.stateInstallers.installers.data
+  );
+
   const equipmentData = useMemo(() => {
-    return {
-      id: "1",
-      name: "Fluke Networks DTX-1800",
-      serialNumber: "DTX2-342462",
-      note: "Не предназначено для работы с бетоном или каменными материалами",
-      isActive: true,
-      application: {
-        id: "1",
-        installer: {
-          id: "1",
-          lastName: "Иванов",
-          firstName: "Иван",
-          patronym: "Иванович",
-        },
-        status: "done",
-      },
-    };
-  }, []);
+    return equipmentsList.find((equipment) => {
+      if (!!equipment?.id && !!equipmentId && equipment.id == equipmentId)
+        return true;
+
+      if (
+        !!equipment?.draftId &&
+        !!equipmentDraftId &&
+        equipment?.draftId == equipmentDraftId
+      )
+        return true;
+
+      return false;
+    });
+  }, [equipmentsList, equipmentId, equipmentDraftId]);
+
+  useEffect(() => {
+    if (equipmentData) return;
+
+    //  Navigate back if no equipment found
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : "AdminEquipmentsPage",
+        params: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.params
+          : {},
+      })
+    );
+  }, [dispatch, equipmentData]);
+
+  const installerData = useMemo(() => {
+    if (!equipmentData) return;
+
+    return installersList.find((installer) => {
+      if (!installer?.id) return false;
+
+      if (installer.id == equipmentData.installerId) return true;
+
+      return false;
+    });
+  }, [equipmentData]);
+
+  if (!equipmentData) return;
 
   return (
     <Wrapper>
-      <Header linkText={"Оборудование"} to={"AdminEquipmentsPage"} />
+      <Header
+        linkText={"Оборудование"}
+        to={"AdminEquipmentsPage"}
+        isSyncInProcess={isEquipmentsSyncInProcess}
+      />
       <Content isWithPaddings={true}>
         <MarginBottom>
-          <TwoColumns
-            ratio="85/15"
-            leftColumn={
-              <>
-                <Title isNoPadding={true}>{equipmentData.name}</Title>
-                <TextType>{equipmentData.serialNumber}</TextType>
-              </>
-            }
-            rightColumn={
-              <>
-                <TextType size="biggest" align="right">
-                  #{equipmentData.id}
-                </TextType>
-                <Status size="big" isActive={equipmentData.isActive} />
-              </>
-            }
-          />
+          <TextType size="biggest" isBold={true}>
+            {equipmentData.id
+              ? `#${equipmentData.id}`
+              : equipmentData.draftId
+              ? `#(${equipmentData.draftId})`
+              : ""}
+          </TextType>
+          <Title isNoPadding={true}>{equipmentData.name}</Title>
+          <TextType>{equipmentData.serialNumber}</TextType>
         </MarginBottom>
-        <MarginBottom>
-          <TextType size="small">{equipmentData.note}</TextType>
-        </MarginBottom>
-        {!!equipmentData?.application?.id ? (
+        {!!trimIgnoringNL({ text: equipmentData.comment }) && (
+          <MarginBottom>
+            <TextType size="small">
+              {trimIgnoringNL({ text: equipmentData.comment })}
+            </TextType>
+          </MarginBottom>
+        )}
+        {!!equipmentData?.applicationId && !!installerData?.id ? (
           <>
             <TwoColumns
               leftColumn={
                 <PressableArea
                   to={"AdminInstallerPage"}
                   toParams={{
-                    id: equipmentData.application.installer.id,
+                    id: equipmentData.installerId,
                     backLink: {
-                      text: `#${equipmentData.id} ${equipmentData.name}`,
+                      text: `#${
+                        equipmentData.id
+                          ? equipmentData.id
+                          : `(${equipmentData.draftId})`
+                      } ${equipmentData.name}`,
                       to: "AdminEquipmentPage",
                       params: { id: equipmentData.id },
                     },
@@ -96,9 +142,13 @@ export default function Page() {
                   <PressableArea
                     to={"AdminInstallerPage"}
                     toParams={{
-                      id: equipmentData.application.installer.id,
+                      id: equipmentData.installerId,
                       backLink: {
-                        text: `#${equipmentData.id} ${equipmentData.name}`,
+                        text: `#${
+                          equipmentData.id
+                            ? equipmentData.id
+                            : `(${equipmentData.draftId})`
+                        } ${equipmentData.name}`,
                         to: "AdminEquipmentPage",
                         params: { id: equipmentData.id },
                       },
@@ -110,14 +160,13 @@ export default function Page() {
                       isDashed={true}
                       align="right"
                     >
-                      #{equipmentData.application.installer.id}{" "}
-                      {equipmentData.application.installer.lastName}{" "}
-                      {equipmentData.application.installer.firstName.charAt(0)}.{" "}
-                      {equipmentData.application.installer.patronym.charAt(0)}.
+                      #{equipmentData.installerId} {installerData.lastname}{" "}
+                      {installerData.firstname.charAt(0)}.{" "}
+                      {installerData.middlename.charAt(0)}.
                     </TextType>
                   </PressableArea>
                   <TextType isDashed={true} align="right">
-                    Заявка #{equipmentData.application.id}
+                    Заявка #{equipmentData.applicationId}
                   </TextType>
                 </>
               }
@@ -128,14 +177,12 @@ export default function Page() {
         )}
       </Content>
       <Buttons>
-        <Button icon={<ShareIcon width={s(18)} height={s(20)} />}>
-          Поделиться
-        </Button>
         <Button
           icon={<EditIcon width={s(7)} height={s(22)} />}
           to={"AdminEditEquipmentPage"}
           toParams={{
-            id: pageParamsWhenMounted.id,
+            id: equipmentId,
+            draftId: equipmentDraftId,
           }}
         >
           Редактировать
@@ -144,5 +191,3 @@ export default function Page() {
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});
