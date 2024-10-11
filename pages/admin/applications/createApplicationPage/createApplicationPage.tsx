@@ -1,4 +1,4 @@
-import { TextInput, FlatList, StyleSheet } from "react-native";
+import { TextInput, FlatList } from "react-native";
 import { useMemo, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
@@ -278,10 +278,35 @@ export default function Page() {
           <Content isWithPaddings={true}>
             <MarginBottom size="biggest">
               <Inputs>
-                <Input label="Тип заявки" value={"Подключение"}></Input>
-                <Input label="Адрес" value={""}></Input>
-                <Input label="Дата и время" value={""}></Input>
-                <Input label="Примечание" value={""}></Input>
+                <Input
+                  label="Тип заявки"
+                  value={type}
+                  onChangeText={handleChangeTypeText}
+                  onSubmitEditing={handleSubmitTypeEditing}
+                ></Input>
+                <Input
+                  label="Номер клиента"
+                  value={clientNumber}
+                  onChangeText={handleChangeClientNumberText}
+                  onSubmitEditing={handleSubmitClientNumberEditing}
+                ></Input>
+                <Input
+                  label="Адрес"
+                  value={address}
+                  onChangeText={handleChangeAddressText}
+                  onSubmitEditing={handleSubmitAddressEditing}
+                ></Input>
+                <Input
+                  label="Дата и время"
+                  value={installDate}
+                  onChangeText={handleChangeInstallDateText}
+                  onSubmitEditing={handleSubmitInstallDateEditing}
+                ></Input>
+                <Input
+                  label="Примечание"
+                  value={comment}
+                  onChangeText={handleChangeCommentText}
+                ></Input>
               </Inputs>
             </MarginBottom>
           </Content>
@@ -291,12 +316,14 @@ export default function Page() {
         <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
           Изменить оборудование
         </Button>
-        <Button icon={<SaveIcon width={s(20)} height={s(20)} />}>
+        <Button
+          icon={<SaveIcon width={s(20)} height={s(20)} />}
+          isDisabled={isButtonDisabled}
+          onPress={handleCreateApplication}
+        >
           Сохранить
         </Button>
       </Buttons>
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});
