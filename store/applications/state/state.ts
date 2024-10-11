@@ -11,6 +11,7 @@ import {
 } from "@/store/helpers/input";
 import { reducerName } from "@/store/applications/state/config";
 import { defaultApplicationsState } from "@/store/applications/state/defaultState";
+import { Equipment } from "@/store/applications/state/types";
 
 const slice = createSlice({
   name: reducerName,
@@ -40,6 +41,7 @@ const slice = createSlice({
           ...defaultInputState,
         },
       },
+      equipmentsList: [] as Equipment[],
     },
     editApplicationFields: {
       inputs: {

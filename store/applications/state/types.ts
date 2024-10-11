@@ -1,5 +1,16 @@
 import { DefaultStateType } from "@/store/helpers/state";
 
+export interface Equipment {
+  id: number;
+  rowNum: number;
+  name: string;
+  serialNumber: string;
+  comment?: string;
+  applicationId?: number;
+  installerId?: number;
+  hash: string;
+}
+
 export interface Image {
   id?: number;
   name?: number;
@@ -29,7 +40,8 @@ export interface DefaultApplicationStateType {
   status?: "active" | "pending" | "finished" | "cancelled";
   installDate: string;
   poolId?: number;
-  images: Image[];
+  images?: Image[];
+  equipment?: Equipment[];
   page?: number;
   ver?: number;
   hash?: string;

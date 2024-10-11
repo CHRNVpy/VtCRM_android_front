@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd64da7a-6c47-4837-ab29-aa91d163a9dd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SyncData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/SyncData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helpers/strings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/helpers/strings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/createEquipmentPage/createEquipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/editEquipmentPage/editEquipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentPage/equipmentPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/equipments/equipmentsPage/equipmentsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/equipments/getCollection/getCollection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/equipments/getCollection/getCollection.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/equipments/patch/patch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/equipments/patch/patch.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/equipments/post/post.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/equipments/post/post.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/equipments/state/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/equipments/state/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/store/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/admin/applications/createApplicationPage/createApplicationPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/admin/applications/createApplicationPage/createApplicationPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/store/applications/getCollection/getCollection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/store/applications/getCollection/getCollection.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,5 +1,7 @@
-import { FlatList, StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { TextInput, FlatList, StyleSheet } from "react-native";
+import { useMemo, useRef, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
@@ -12,150 +14,251 @@ import TextType from "@/components/wrappers/textType/textType";
 import ListItem from "@/components/wrappers/listItem/listItem";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import EditIcon from "@/assets/editIcon.svg";
+import {
+  setInputStateCreateTypeReducer,
+  setInputStateCreateClientNumberReducer,
+  setInputStateCreateAddressReducer,
+  setInputStateCreateInstallDateReducer,
+  setInputStateCreateCommentReducer,
+  setApplications,
+} from "@/store/applications/state/state";
+import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { s } from "react-native-size-matters";
+import { trimIgnoringNL } from "@/helpers/strings";
+import { setPage } from "@/store/navigation/state/state";
 import SaveIcon from "@/assets/saveIcon.svg";
+import { postApplication } from "@/store/applications/post/post";
 
 export default function Page() {
-  const poolItem = useMemo(() => {
-    return {
-      id: 1,
-      applicationsCount: 3,
-      applications: [
-        {
-          id: 1,
-          client: {
-            name: "Арефьев Т.С.",
-          },
-          type: "connection",
-          datetime: "2024-08-16T16:30:00Z",
-          note: "Подключение нового абонента",
-          equipments: [
-            {
-              id: "1",
-              name: "Fluke Networks DTX-1800",
-              serialNumber: "DTX2-342462",
-              note: "Не предназначено для работы с бетоном или каменными материалами",
-            },
-            {
-              id: "2",
-              name: "Megger MIT485",
-              serialNumber: "MIT4-584390",
-              note: "Требуется калибровка каждые 6 месяцев",
-            },
-          ],
-          isActive: true,
-        },
-        {
-          id: 2,
-          client: {
-            name: "Иванов И.И.",
-          },
-          type: "repair",
-          datetime: "2024-08-17T10:00:00Z",
-          note: "Ремонт повреждённого кабеля",
-          equipments: [
-            {
-              id: "3",
-              name: "FLIR E8 Infrared Camera",
-              serialNumber: "E8-983452",
-              note: "Хранить в сухом месте, избегать ударов",
-            },
-            {
-              id: "4",
-              name: "Extech EX330 Multimeter",
-              serialNumber: "EX33-745230",
-              note: "Использовать только для измерения переменного тока",
-            },
-          ],
-          isActive: false,
-        },
-        {
-          id: 3,
-          client: {
-            name: "Петрова М.Н.",
-          },
-          type: "lineInstallation",
-          datetime: "2024-08-18T14:45:00Z",
-          note: "Монтаж новой линии для офиса",
-          equipments: [
-            {
-              id: "5",
-              name: "Bosch GLM 50 C Laser Measure",
-              serialNumber: "GLM5-672901",
-              note: "Не допускать попадания воды внутрь устройства",
-            },
-            {
-              id: "6",
-              name: "Klein Tools CL800 Clamp Meter",
-              serialNumber: "CL80-293874",
-              note: "Не использовать при температуре ниже -10°C",
-            },
-          ],
-          isActive: false,
-        },
-      ],
-      installer: {
-        id: "1",
-        lastName: "Иванов",
-        firstName: "Иван",
-        patronym: "Иванович",
-        phone: "+7 912 345-67-89",
-        login: "iivanov",
-        password: "adslfIYNGHlfIYNGH-454",
-        isActive: true,
-      },
+  const dispatch: AppDispatch = useDispatch();
+
+  const addressInputRef = useRef<TextInput>(null);
+  const installDateInputRef = useRef<TextInput>(null);
+  const commentInputRef = useRef<TextInput>(null);
+
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
+  }, []);
+
+  const poolId = pageParamsWhenMounted?.poolId;
+
+  const type = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.inputs.type.text
+  );
+
+  const clientNumber = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.inputs.clientNumber.text
+  );
+
+  const address = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.inputs.address.text
+  );
+
+  const installDate = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.inputs.installDate.text
+  );
+
+  const comment = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.inputs.comment.text
+  );
+
+  const equipmentsList = useSelector(
+    (state: RootState) =>
+      state.stateApplications.createApplicationFields.equipmentsList
+  );
+
+  const applicationsData = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const handleChangeTypeText = useCallback(
+    (text?: string) => {
+      dispatch(
+        setInputStateCreateTypeReducer({
+          action: "setText",
+          text,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleChangeClientNumberText = useCallback(
+    (text?: string) => {
+      dispatch(
+        setInputStateCreateClientNumberReducer({
+          action: "setText",
+          text,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleChangeAddressText = useCallback(
+    (text?: string) => {
+      dispatch(
+        setInputStateCreateAddressReducer({
+          action: "setText",
+          text,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleChangeInstallDateText = useCallback(
+    (text?: string) => {
+      dispatch(
+        setInputStateCreateInstallDateReducer({
+          action: "setText",
+          text,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleChangeCommentText = useCallback(
+    (text?: string) => {
+      dispatch(
+        setInputStateCreateCommentReducer({
+          action: "setText",
+          text,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const handleSubmitTypeEditing = useCallback(() => {
+    if (!type) return;
+    if (!addressInputRef.current) return;
+
+    addressInputRef.current.focus();
+  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
+
+  const handleSubmitClientNumberEditing = useCallback(() => {
+    if (!clientNumber) return;
+    if (!addressInputRef.current) return;
+
+    addressInputRef.current.focus();
+  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
+
+  const handleSubmitAddressEditing = useCallback(() => {
+    if (!address) return;
+    if (!installDateInputRef.current) return;
+
+    installDateInputRef.current.focus();
+  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
+
+  const handleSubmitInstallDateEditing = useCallback(() => {
+    if (!installDate) return;
+    if (!commentInputRef.current) return;
+
+    commentInputRef.current.focus();
+  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
+
+  const isButtonDisabled = useMemo(() => {
+    if (!type) return true;
+    if (!clientNumber.trim() && !address.trim()) return true;
+    if (!installDate) return true;
+
+    return false;
+  }, [type, clientNumber, address, installDate]);
+
+  const handleCreateApplication = useCallback(async () => {
+    if (isButtonDisabled) return;
+
+    //  Make new draftId -> biggest id plus one
+    const draftId = applicationsData.reduce((id, application) => {
+      if (!application?.draftId && !application?.id) return id;
+
+      const applicationId = application?.id
+        ? application.id
+        : application?.draftId
+        ? application.draftId
+        : 0;
+
+      if (id >= applicationId + 1) return id;
+
+      return applicationId + 1;
+    }, 1);
+
+    //  Random hash which sets in local application and then posts to remote application
+    const hash = (
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
+    ).toUpperCase();
+
+    const newApplication: DefaultApplicationStateType = {
+      draftId,
+      type:
+        "connection" == type || "repair" == type || "line setup" == type
+          ? type
+          : "connection",
+      client: clientNumber.trim() ? { number: clientNumber.trim() } : undefined,
+      address: address.trim(),
+      comment: trimIgnoringNL({ text: comment }),
+      status: "pending",
+      installDate: installDate,
+      poolId: poolId,
+      hash,
     };
-  }, []);
 
-  const equipmentsList = useMemo(() => {
-    return [
-      {
-        id: "1",
-        name: "Fluke Networks DTX-1800",
-        serialNumber: "DTX2-342462",
-        note: "Не предназначено для работы с бетоном или каменными материалами",
-      },
-      {
-        id: "2",
-        name: "Megger MIT485",
-        serialNumber: "MIT4-584390",
-        note: "Требуется калибровка каждые 6 месяцев",
-      },
-      {
-        id: "3",
-        name: "Megger MIT485",
-        serialNumber: "MIT4-584390",
-        note: "Требуется калибровка каждые 6 месяцев",
-      },
-      {
-        id: "4",
-        name: "Megger MIT485",
-        serialNumber: "MIT4-584390",
-        note: "Требуется калибровка каждые 6 месяцев",
-      },
-      {
-        id: "5",
-        name: "Megger MIT485",
-        serialNumber: "MIT4-584390",
-        note: "Требуется калибровка каждые 6 месяцев",
-      },
-    ];
-  }, []);
+    const data = [...applicationsData, newApplication];
 
-  /*
-"connection"
-? "Подключение"
-: "repair"
-? "Ремонт"
-: "Монтаж ВОЛС"
-  */
+    //  Set new application to store
+    dispatch(setApplications({ action: "setData", data }));
+
+    //  Clear all inputs and states
+    dispatch(setInputStateCreateTypeReducer({ action: "reset" }));
+    dispatch(setInputStateCreateClientNumberReducer({ action: "reset" }));
+    dispatch(setInputStateCreateAddressReducer({ action: "reset" }));
+    dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));
+    dispatch(setInputStateCreateCommentReducer({ action: "reset" }));
+
+    //  Change page to parent
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : "AdminApplicationsPage",
+        params: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.params
+          : {},
+      })
+    );
+
+    dispatch(postApplication({ id: draftId }));
+  }, [
+    dispatch,
+    isButtonDisabled,
+    type,
+    clientNumber,
+    address,
+    installDate,
+    comment,
+    applicationsData,
+    pageParamsWhenMounted,
+    poolId,
+  ]);
 
   return (
     <Wrapper>
       <Header linkText={`Список пулов`} to={"AdminApplicationsPoolsPage"} />
       <Title>
-        Добавление заявки{" "}
-        {poolItem.id ? <>в пул #{poolItem.id}</> : <>и нового пула</>}
+        Добавление заявки {poolId ? <>в пул #{poolId}</> : <>и нового пула</>}
       </Title>
       <FlatList
         keyboardShouldPersistTaps="always"

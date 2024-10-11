@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  defaultGetCollectionState,
   createGetCollectionAsyncThunkWithArguments,
   setGetCollectionStateDefaultReducer,
   getCollectionDefaultExtraReducer,
@@ -28,9 +27,15 @@ import {
 import { GetCollectionState } from "@/store/helpers/getCollection/types";
 
 const isImagesEqual = (
-  localImages: Image[],
-  remoteImages: Image[]
+  localImages?: Image[],
+  remoteImages?: Image[]
 ): boolean => {
+  if (!localImages && !remoteImages) return true;
+
+  if (!localImages) return false;
+
+  if (!remoteImages) return false;
+
   // Compare length
   if (localImages.length !== remoteImages.length) return false;
 
@@ -116,10 +121,6 @@ export const getApplicationsCollection =
             return;
           }
 
-          /*
-  images: Image[];
-          */
-
           //  If remote and local have same fields, do nothing
           if (
             localApplications[localApplicationIndexWithSameId].type ==
@@ -153,7 +154,7 @@ export const getApplicationsCollection =
                   .email === remoteApplication.client.email)) &&
             // Compare images
             isImagesEqual(
-              localApplications[localApplicationIndexWithSameId].images,
+              localApplications[localApplicationIndexWithSameId]?.images,
               remoteApplication.images
             )
           )
