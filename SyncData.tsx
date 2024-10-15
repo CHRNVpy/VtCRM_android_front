@@ -16,6 +16,9 @@ import { getInstallersCollection } from "@/store/installers/getCollection/getCol
 import { postEquipment } from "@/store/equipments/post/post";
 import { patchEquipment } from "@/store/equipments/patch/patch";
 import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
+import { postApplication } from "@/store/applications/post/post";
+import { patchApplication } from "@/store/applications/patch/patch";
+import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 
 interface ContentProps {
   children?: ReactNode;
@@ -67,28 +70,70 @@ export default function SyncData({ children }: ContentProps) {
     });
   }, [equipmentsList, pageParams, page]);
 
+  const applicationsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const applicationCurrentPage = useSelector(
+    (state: RootState) => state.stateApplications.currentPage.data
+  );
+
+  const applicationData = useMemo(() => {
+    if (!["AdminApplicationPage"].includes(page)) return;
+
+    const applicationId = pageParams?.id;
+    const applicationDraftId = pageParams?.draftId;
+
+    return applicationsList.find((application) => {
+      if (
+        !!application?.id &&
+        !!applicationId &&
+        application.id == applicationId
+      )
+        return true;
+
+      if (
+        !!application?.draftId &&
+        !!applicationDraftId &&
+        application?.draftId == applicationDraftId
+      )
+        return true;
+
+      return false;
+    });
+  }, [applicationsList, pageParams, page]);
+
   // Use refs to hold the latest values
   const installersListRef = useRef(installersList);
   const equipmentsListRef = useRef(equipmentsList);
+  const applicationsListRef = useRef(applicationsList);
   const isConnectedRef = useRef(isConnected);
   const pageRef = useRef(page);
   const equipmentDataRef = useRef(equipmentData);
   const equipmentCurrentPageRef = useRef(equipmentCurrentPage);
+  const applicationDataRef = useRef(applicationData);
+  const applicationCurrentPageRef = useRef(applicationCurrentPage);
 
   useEffect(() => {
     installersListRef.current = installersList;
     equipmentsListRef.current = equipmentsList;
+    applicationsListRef.current = applicationsList;
     isConnectedRef.current = isConnected;
     pageRef.current = page;
     equipmentDataRef.current = equipmentData;
     equipmentCurrentPageRef.current = equipmentCurrentPage;
+    applicationDataRef.current = applicationData;
+    applicationCurrentPageRef.current = applicationCurrentPage;
   }, [
     installersList,
     equipmentsList,
+    applicationsList,
     isConnected,
     page,
     equipmentData,
     equipmentCurrentPage,
+    applicationData,
+    applicationCurrentPage,
   ]);
 
   // Sync all the data with the server
@@ -152,6 +197,44 @@ export default function SyncData({ children }: ContentProps) {
         if (!equipment?.isModified) return;
 
         await dispatch(patchEquipment({ id: equipment?.id }));
+      });
+    }
+
+    if (
+      [
+        "AdminApplicationsPoolsPage",
+        "AdminApplicationsPoolPage",
+        "AdminApplicationPage",
+      ].includes(pageRef.current)
+    ) {
+      // Set page of application if it is application page
+      const params =
+        ["AdminApplicationPage"].includes(pageRef.current) &&
+        applicationDataRef.current?.page
+          ? { page: applicationDataRef.current?.page }
+          : applicationCurrentPageRef.current
+          ? { page: applicationCurrentPageRef.current }
+          : undefined;
+
+      // Get current state of applications collection
+      await dispatch(getApplicationsCollection(params));
+
+      // Post all draft applications
+      applicationsListRef.current.forEach(async (application) => {
+        // If have id, draft is for backward compatibility of navigation
+        if (application?.id) return;
+        if (!application?.draftId) return;
+
+        await dispatch(postApplication({ id: application?.draftId }));
+      });
+
+      // Patch all modified applications
+      applicationsListRef.current.forEach(async (application) => {
+        // Should have id and be modified
+        if (!application?.id) return;
+        if (!application?.isModified) return;
+
+        await dispatch(patchApplication({ id: application?.id }));
       });
     }
   }, [dispatch]);

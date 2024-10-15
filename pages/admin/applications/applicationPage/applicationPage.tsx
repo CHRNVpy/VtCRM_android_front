@@ -1,5 +1,7 @@
 import { ScrollView, Image, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
@@ -14,69 +16,63 @@ import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
+import { ApplicationImageType } from "@/store/applications/state/types";
+import { setPage } from "@/store/navigation/state/state";
+import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
 
 export default function Page() {
-  const applicationItem = useMemo(() => {
-    return {
-      id: 1,
-      client: {
-        name: "Арефьев Т.С.",
-      },
-      type: "connection",
-      datetime: "2024-08-16T16:30:00Z",
-      note: "Подключение нового абонента",
-      equipments: [
-        {
-          id: "1",
-          name: "Fluke Networks DTX-1800",
-          serialNumber: "DTX2-342462",
-          note: "Не предназначено для работы с бетоном или каменными материалами",
-        },
-        {
-          id: "2",
-          name: "Megger MIT485",
-          serialNumber: "MIT4-584390",
-          note: "Требуется калибровка каждые 6 месяцев",
-        },
-      ],
-      isActive: true,
-      pool: {
-        id: 1,
-      },
-      installer: {
-        id: "1",
-        lastName: "Иванов",
-        firstName: "Иван",
-        patronym: "Иванович",
-        phone: "+7 912 345-67-89",
-        login: "iivanov",
-        password: "adslfIYNGHlfIYNGH-454",
-        isActive: true,
-      },
-      images: [
-        {
-          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-        },
-        {
-          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-        },
-        {
-          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-        },
-        {
-          url: "https://avatars.mds.yandex.net/i?id=10152ebea69f69ddc2f4ea52edccbb34_l-10471913-images-thumbs&n=13",
-        },
-      ],
-    };
+  const dispatch: AppDispatch = useDispatch();
+
+  const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
+
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
   }, []);
 
+  const applicationId = pageParamsWhenMounted?.id;
+  const applicationDraftId = pageParamsWhenMounted?.draftId;
+
+  const applicationsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const installersList = useSelector(
+    (state: RootState) => state.stateInstallers.installers.data
+  );
+
+  const applicationData = useMemo(() => {
+    return applicationsList.find((application) => {
+      if (
+        !!application?.id &&
+        !!applicationId &&
+        application.id == applicationId
+      )
+        return true;
+
+      if (
+        !!application?.draftId &&
+        !!applicationDraftId &&
+        application?.draftId == applicationDraftId
+      )
+        return true;
+
+      return false;
+    });
+  }, [applicationsList, applicationId, applicationDraftId]);
+
   const leftColumnImages = useMemo(() => {
-    if (!applicationItem.images) return [];
+    if (!applicationData) return [];
+    if (!applicationData.images) return [];
 
-    if (!applicationItem.images?.length) return [];
+    if (!applicationData.images?.length) return [];
 
-    const images = applicationItem.images.reduce<{ url: string }[]>(
+    const images = applicationData.images.reduce<ApplicationImageType[]>(
       (result, item, index) => {
         if (index % 2 == 0) result.push(item);
 
@@ -86,14 +82,14 @@ export default function Page() {
     );
 
     return images;
-  }, [applicationItem]);
+  }, [applicationData]);
 
   const rightColumnImages = useMemo(() => {
-    if (!applicationItem.images) return [];
+    if (!applicationData) return [];
+    if (!applicationData.images) return [];
+    if (!applicationData.images?.length) return [];
 
-    if (!applicationItem.images?.length) return [];
-
-    const images = applicationItem.images.reduce<{ url: string }[]>(
+    const images = applicationData.images.reduce<ApplicationImageType[]>(
       (result, item, index) => {
         if (index % 2 == 1) result.push(item);
 
@@ -103,87 +99,151 @@ export default function Page() {
     );
 
     return images;
-  }, [applicationItem]);
+  }, [applicationData]);
+
+  useEffect(() => {
+    if (applicationData) return;
+
+    //  Navigate back if no equipment found
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : "AdminEquipmentsPage",
+        params: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.params
+          : {},
+      })
+    );
+  }, [dispatch, applicationData]);
+
+  const installerData = useMemo(() => {
+    if (!applicationData) return;
+
+    return installersList.find((installer) => {
+      if (!installer?.id) return false;
+
+      if (installer.id == applicationData.installerId) return true;
+
+      return false;
+    });
+  }, [applicationData]);
+
+  if (!applicationData) return;
 
   return (
     <Wrapper>
       <Header
-        linkText={`Пул #${applicationItem.pool.id}`}
-        to={"AdminApplicationsPoolPage"}
-        toParams={{ id: applicationItem.pool.id }}
+        linkText={
+          applicationData.poolId
+            ? `Пул #${applicationData.poolId}`
+            : `Пулы заявок`
+        }
+        to={
+          applicationData.poolId
+            ? "AdminApplicationsPoolPage"
+            : "AdminApplicationsPoolsPage"
+        }
+        toParams={applicationData.poolId ? { id: applicationData.poolId } : {}}
+        isSyncInProcess={isApplicationsSyncInProcess}
       />
       <ScrollView>
-        <MarginBottom>
-          <TwoColumns
-            ratio="85/15"
-            leftColumn={
-              <Title isNoMargin={true}>{applicationItem.client.name}</Title>
-            }
-            rightColumn={
-              <TextType size="biggest">#{applicationItem.id}</TextType>
-            }
-          />
-        </MarginBottom>
         <Content isWithPaddings={true}>
-          <MarginBottom size="big">
-            <TextType isDashed={true}>
-              Монтажник #{applicationItem.installer.id}{" "}
-              {applicationItem.installer.lastName}{" "}
-              {applicationItem.installer.firstName.charAt(0)}.
-              {applicationItem.installer.patronym.charAt(0)}.
-            </TextType>
+          <MarginBottom>
+            <TwoColumns
+              leftColumn={
+                <Title isNoMargin={true} isNoPadding={true}>
+                  {["connection", "repair"].includes(applicationData.type)
+                    ? applicationData?.client?.fullName
+                      ? applicationData.client.fullName
+                      : "Клиент не указан"
+                    : applicationData.address}
+                </Title>
+              }
+              rightColumn={
+                <TextType size="biggest">
+                  {applicationData.id
+                    ? `#${applicationData.id}`
+                    : applicationData.draftId
+                    ? `#(${applicationData.draftId})`
+                    : ""}
+                </TextType>
+              }
+            />
           </MarginBottom>
-          <MarginBottom size="big">
-            <TextType size="small">{applicationItem.note}</TextType>
-          </MarginBottom>
-          {applicationItem.equipments.length > 0 && (
-            <MarginBottom>
-              {applicationItem.equipments.map((equipment, equipmentIndex) => {
-                const isLastItem =
-                  equipmentIndex === applicationItem.equipments.length - 1;
-
-                const equipmentItem = (
-                  <>
-                    <TextType isBold={true}>
-                      #{equipment.id} {equipment.name}
-                    </TextType>
-                    <TextType>{equipment.serialNumber}</TextType>
-                  </>
-                );
-
-                return (
-                  <React.Fragment key={equipmentIndex}>
-                    {isLastItem ? (
-                      equipmentItem
-                    ) : (
-                      <MarginBottom>{equipmentItem}</MarginBottom>
-                    )}
-                  </React.Fragment>
-                );
-              })}
+          {!!applicationData.installerId && !!installerData && (
+            <MarginBottom size="big">
+              <TextType isDashed={true}>
+                Монтажник #{applicationData.installerId}{" "}
+                {installerData.lastname} {installerData.firstname.charAt(0)}.
+                {installerData.middlename.charAt(0)}.
+              </TextType>
             </MarginBottom>
           )}
+          {!!applicationData.comment && (
+            <MarginBottom size="big">
+              <TextType size="small">{applicationData.comment}</TextType>
+            </MarginBottom>
+          )}
+          {!!applicationData.equipment &&
+            !!applicationData?.equipment?.length && (
+              <MarginBottom>
+                {applicationData.equipment.map((equipment, equipmentIndex) => {
+                  if (!applicationData.equipment) return null;
+
+                  const isLastItem =
+                    equipmentIndex === applicationData.equipment.length - 1;
+
+                  const equipmentItem = (
+                    <>
+                      <TextType isBold={true}>
+                        #{equipment.id} {equipment.name}
+                      </TextType>
+                      <TextType>{equipment.serialNumber}</TextType>
+                    </>
+                  );
+
+                  return (
+                    <React.Fragment key={equipmentIndex}>
+                      {isLastItem ? (
+                        equipmentItem
+                      ) : (
+                        <MarginBottom>{equipmentItem}</MarginBottom>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </MarginBottom>
+            )}
           <MarginBottom>
             <TextType isBold={true}>
-              {applicationItem.type == "connection"
+              {applicationData.type == "connection"
                 ? "Подключение"
-                : applicationItem.type == "repair"
+                : applicationData.type == "repair"
                 ? "Ремонт"
                 : "Монтаж ВОЛС"}
             </TextType>
             <TextType>
               {formatDateString({
-                dateString: applicationItem.datetime,
+                dateString: applicationData.installDate,
               })}
             </TextType>
           </MarginBottom>
           <MarginBottom>
             <TextType isBold={true}>
-              {applicationItem.isActive ? "В работе" : "Отменена"}
+              {applicationData.status == "active"
+                ? "В работе"
+                : applicationData.status == "pending"
+                ? "Собирается"
+                : applicationData.status == "finished"
+                ? "Завершена"
+                : "Отменена"}
             </TextType>
           </MarginBottom>
           <TwoColumns
             gap="medium"
+            ratio="50/50"
             leftColumn={
               <>
                 <Content>
@@ -195,7 +255,7 @@ export default function Page() {
                       const image = (
                         <Image
                           source={{
-                            uri: imageObject.url,
+                            uri: imageObject.path,
                           }}
                           style={styles.images}
                           resizeMode={"contain"}
@@ -226,7 +286,7 @@ export default function Page() {
                       const image = (
                         <Image
                           source={{
-                            uri: imageObject.url,
+                            uri: imageObject.path,
                           }}
                           style={styles.images}
                           resizeMode={"contain"}
@@ -250,26 +310,54 @@ export default function Page() {
         </Content>
       </ScrollView>
       <Buttons>
-        <Button
-          icon={<EditIcon width={s(7)} height={s(22)} />}
-          to={"AdminEditApplicationPage"}
-          toParams={{
-            id: applicationItem.id,
-          }}
-        >
-          Редактировать
-        </Button>
-        <Button
-          icon={
-            applicationItem.isActive ? (
-              <TurnOffIcon width={s(13)} height={s(22)} />
-            ) : (
-              <TurnOnIcon width={s(13)} height={s(22)} />
-            )
-          }
-        >
-          {applicationItem.isActive ? "Отменить" : "Возобновить"}
-        </Button>
+        {!!applicationData.status &&
+          ["active", "pending", "cancelled"].includes(
+            applicationData.status
+          ) && (
+            <Button
+              icon={<EditIcon width={s(7)} height={s(22)} />}
+              to={"AdminEditApplicationPage"}
+              toParams={{
+                id: applicationData.id,
+                draftId: applicationData.draftId,
+              }}
+            >
+              Редактировать
+            </Button>
+          )}
+        {!!applicationData.status &&
+          ["active", "pending", "cancelled"].includes(
+            applicationData.status
+          ) && (
+            <Button
+              icon={
+                ["active", "pending"].includes(applicationData.status) ? (
+                  <TurnOffIcon width={s(13)} height={s(22)} />
+                ) : (
+                  <TurnOnIcon width={s(13)} height={s(22)} />
+                )
+              }
+            >
+              {["active", "pending"].includes(applicationData.status)
+                ? "Отменить"
+                : "Возобновить"}
+            </Button>
+          )}
+        {!!applicationData.status &&
+          ["finished"].includes(applicationData.status) && (
+            <>
+              <Button
+                icon={<EditIcon width={s(7)} height={s(22)} />}
+                to={"AdminEditApplicationPage"}
+                toParams={{
+                  id: applicationData.id,
+                  draftId: applicationData.draftId,
+                }}
+              >
+                Завершить
+              </Button>
+            </>
+          )}
       </Buttons>
     </Wrapper>
   );

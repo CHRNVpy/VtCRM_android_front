@@ -223,10 +223,10 @@ export default function Page() {
         action: "setData",
         data: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.to
-          : "AdminApplicationsPage",
+          : "AdminApplicationPage",
         params: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.params
-          : {},
+          : { draftId: draftId },
       })
     );
 
@@ -274,18 +274,22 @@ export default function Page() {
                   items={items}
                   onValueChange={handleChangeTypeValue}
                 ></Select>
-                <Input
-                  label="Номер клиента"
-                  value={clientNumber}
-                  onChangeText={handleChangeClientNumberText}
-                  onSubmitEditing={handleSubmitClientNumberEditing}
-                ></Input>
-                <Input
-                  label="Адрес"
-                  value={address}
-                  onChangeText={handleChangeAddressText}
-                  inputRef={addressInputRef}
-                ></Input>
+                {!!["connection", "repair"].includes(type) && (
+                  <Input
+                    label="Номер клиента"
+                    value={clientNumber}
+                    onChangeText={handleChangeClientNumberText}
+                    onSubmitEditing={handleSubmitClientNumberEditing}
+                  ></Input>
+                )}
+                {!!["line setup"].includes(type) && (
+                  <Input
+                    label="Адрес"
+                    value={address}
+                    onChangeText={handleChangeAddressText}
+                    inputRef={addressInputRef}
+                  ></Input>
+                )}
                 <DateTime
                   label="Дата и время"
                   value={installDate}
@@ -295,6 +299,7 @@ export default function Page() {
                   label="Примечание"
                   value={comment}
                   onChangeText={handleChangeCommentText}
+                  isMultiline={true}
                 ></Input>
               </Inputs>
             </MarginBottom>

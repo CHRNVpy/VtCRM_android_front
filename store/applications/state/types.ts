@@ -11,7 +11,7 @@ export interface Equipment {
   hash: string;
 }
 
-export interface Image {
+export interface ApplicationImageType {
   id?: number;
   name?: number;
   mimeType: string;
@@ -26,7 +26,7 @@ export interface Image {
 export interface DefaultApplicationStateType {
   id?: number;
   draftId?: number;
-  type?: "connection" | "repair" | "line setup";
+  type: "connection" | "repair" | "line setup";
   client?: {
     number?: string;
     fullName?: string;
@@ -37,10 +37,10 @@ export interface DefaultApplicationStateType {
   address?: string;
   installerId?: number;
   comment: string;
-  status?: "active" | "pending" | "finished" | "cancelled";
+  status: "active" | "pending" | "finished" | "approved" | "cancelled";
   installDate: string;
   poolId?: number;
-  images?: Image[];
+  images?: ApplicationImageType[];
   equipment?: Equipment[];
   page?: number;
   ver?: number;

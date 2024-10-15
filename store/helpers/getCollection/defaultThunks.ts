@@ -154,6 +154,8 @@ export const createGetCollectionAsyncThunk = ({
             cancelToken,
           });
 
+          console.log(response.data);
+
           if (response.status == 200 && response.data.status == "ok") {
             const entities: Array<any> = response.data.data.entities;
             const totalRows: number = response.data.data.totalRows;
@@ -161,6 +163,13 @@ export const createGetCollectionAsyncThunk = ({
             const pages: number = response.data.data.pages;
             const ver: { [key: string]: any } = response.data.data?.ver
               ? response.data.data.ver
+              : undefined;
+            const appVer: { [key: string]: any } = response.data.data?.appVer
+              ? response.data.data.appVer
+              : undefined;
+            const imageVer: { [key: string]: any } = response.data.data
+              ?.imageVer
+              ? response.data.data.imageVer
               : undefined;
 
             if (payload.callbackAfterGet)
@@ -170,6 +179,8 @@ export const createGetCollectionAsyncThunk = ({
                 page,
                 pages,
                 ver,
+                appVer,
+                imageVer,
               });
 
             return {
@@ -178,6 +189,8 @@ export const createGetCollectionAsyncThunk = ({
               page,
               pages,
               ver,
+              appVer,
+              imageVer,
             };
           }
 

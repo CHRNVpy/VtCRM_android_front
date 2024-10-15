@@ -22,13 +22,13 @@ import {
 import { RootState } from "@/store/store";
 import {
   DefaultApplicationStateType,
-  Image,
+  ApplicationImageType,
 } from "@/store/applications/state/types";
 import { GetCollectionState } from "@/store/helpers/getCollection/types";
 
 const isImagesEqual = (
-  localImages?: Image[],
-  remoteImages?: Image[]
+  localImages?: ApplicationImageType[],
+  remoteImages?: ApplicationImageType[]
 ): boolean => {
   if (!localImages && !remoteImages) return true;
 
@@ -74,7 +74,7 @@ export const getApplicationsCollection =
     reducerAction: setApplicationsGetCollectionStateReducer,
     setAccessToken,
     setRefreshToken,
-    url: "/admin-applications-collection",
+    url: "/admin-application-collection",
     getParamsFromStateFunction: (
       getState: Function,
       payload: { [key: string]: any }
@@ -95,7 +95,7 @@ export const getApplicationsCollection =
 
       const pages = payload.pages;
       const page = payload.page;
-      const ver = payload.ver;
+      const ver = payload.appVer;
 
       let isChanged = false;
 
