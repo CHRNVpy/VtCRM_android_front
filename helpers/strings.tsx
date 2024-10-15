@@ -43,14 +43,22 @@ export function ruApplicationsByCount({ count }: { count: number }) {
 }
 
 export function formatDateString({ dateString }: { dateString: string }) {
+  // Создаем объект Date из строки
   const date = new Date(dateString);
 
-  const day = String(date.getUTCDate()).padStart(2, "0"); // Получаем день
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Получаем месяц (нужно добавить 1, так как getUTCMonth() возвращает индекс месяца от 0 до 11)
-  const year = date.getUTCFullYear(); // Получаем год
-  const hours = String(date.getUTCHours()).padStart(2, "0"); // Получаем часы
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0"); // Получаем минуты
+  // Часовой пояс для Europe/Moscow (UTC+3)
+  const utcOffset = 3;
+  const localTimeInMillis = date.getTime() + utcOffset * 60 * 60 * 1000; // Применяем смещение
+  const localDate = new Date(localTimeInMillis); // Новый объект Date с учетом смещения
 
+  // Получаем компоненты даты и времени
+  const day = String(localDate.getUTCDate()).padStart(2, "0"); // Получаем день
+  const month = String(localDate.getUTCMonth() + 1).padStart(2, "0"); // Получаем месяц
+  const year = localDate.getUTCFullYear(); // Получаем год
+  const hours = String(localDate.getUTCHours()).padStart(2, "0"); // Получаем часы
+  const minutes = String(localDate.getUTCMinutes()).padStart(2, "0"); // Получаем минуты
+
+  // Возвращаем отформатированную строку
   return `${day}.${month}.${year} в ${hours}:${minutes}`;
 }
 

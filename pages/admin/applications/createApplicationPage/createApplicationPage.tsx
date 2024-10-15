@@ -5,6 +5,7 @@ import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
+import DateTime from "@/components/controls/dateTime/dateTime";
 import Select from "@/components/controls/select/select";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
@@ -34,8 +35,6 @@ export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const addressInputRef = useRef<TextInput>(null);
-  const installDateInputRef = useRef<TextInput>(null);
-  const commentInputRef = useRef<TextInput>(null);
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -132,7 +131,7 @@ export default function Page() {
     [dispatch]
   );
 
-  const handleChangeInstallDateText = useCallback(
+  const handleChangeInstallDateDate = useCallback(
     (text?: string) => {
       dispatch(
         setInputStateCreateInstallDateReducer({
@@ -161,20 +160,6 @@ export default function Page() {
     if (!addressInputRef.current) return;
 
     addressInputRef.current.focus();
-  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
-
-  const handleSubmitAddressEditing = useCallback(() => {
-    if (!address) return;
-    if (!installDateInputRef.current) return;
-
-    installDateInputRef.current.focus();
-  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
-
-  const handleSubmitInstallDateEditing = useCallback(() => {
-    if (!installDate) return;
-    if (!commentInputRef.current) return;
-
-    commentInputRef.current.focus();
   }, [addressInputRef, type, clientNumber, address, installDate, comment]);
 
   const isButtonDisabled = useMemo(() => {
@@ -299,14 +284,13 @@ export default function Page() {
                   label="Адрес"
                   value={address}
                   onChangeText={handleChangeAddressText}
-                  onSubmitEditing={handleSubmitAddressEditing}
+                  inputRef={addressInputRef}
                 ></Input>
-                <Input
+                <DateTime
                   label="Дата и время"
                   value={installDate}
-                  onChangeText={handleChangeInstallDateText}
-                  onSubmitEditing={handleSubmitInstallDateEditing}
-                ></Input>
+                  onChangeDate={handleChangeInstallDateDate}
+                ></DateTime>
                 <Input
                   label="Примечание"
                   value={comment}
