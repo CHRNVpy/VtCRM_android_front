@@ -225,7 +225,7 @@ export default function Input({
             style={[
               styles.textInput,
               !!isError && styles.isTextInputError,
-              { height: linesCount * s(24) },
+              { height: isMultiline ? linesCount * s(24) : s(24) },
             ]}
             onSubmitEditing={handleSubmitEditing}
             onChangeText={handleChangeText}

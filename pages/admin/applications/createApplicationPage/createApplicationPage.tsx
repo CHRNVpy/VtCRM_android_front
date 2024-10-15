@@ -5,6 +5,7 @@ import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Inputs from "@/components/wrappers/inputs/inputs";
 import Input from "@/components/controls/input/input";
+import Select from "@/components/controls/select/select";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -81,7 +82,21 @@ export default function Page() {
     (state: RootState) => state.stateApplications.applications.data
   );
 
-  const handleChangeTypeText = useCallback(
+  const items = [
+    {
+      label: "Подключение",
+      value: "connection",
+      key: "connection",
+    },
+    { label: "Ремонт", value: "repair", key: "repair" },
+    {
+      label: "Монтаж ВОЛС",
+      value: "line setup",
+      key: "line setup",
+    },
+  ];
+
+  const handleChangeTypeValue = useCallback(
     (text?: string) => {
       dispatch(
         setInputStateCreateTypeReducer({
@@ -141,13 +156,6 @@ export default function Page() {
     [dispatch]
   );
 
-  const handleSubmitTypeEditing = useCallback(() => {
-    if (!type) return;
-    if (!addressInputRef.current) return;
-
-    addressInputRef.current.focus();
-  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
-
   const handleSubmitClientNumberEditing = useCallback(() => {
     if (!clientNumber) return;
     if (!addressInputRef.current) return;
@@ -202,10 +210,7 @@ export default function Page() {
 
     const newApplication: DefaultApplicationStateType = {
       draftId,
-      type:
-        "connection" == type || "repair" == type || "line setup" == type
-          ? type
-          : "connection",
+      type: type,
       client: clientNumber.trim() ? { number: clientNumber.trim() } : undefined,
       address: address.trim(),
       comment: trimIgnoringNL({ text: comment }),
@@ -278,12 +283,12 @@ export default function Page() {
           <Content isWithPaddings={true}>
             <MarginBottom size="biggest">
               <Inputs>
-                <Input
+                <Select
                   label="Тип заявки"
-                  value={type}
-                  onChangeText={handleChangeTypeText}
-                  onSubmitEditing={handleSubmitTypeEditing}
-                ></Input>
+                  itemKey={type}
+                  items={items}
+                  onValueChange={handleChangeTypeValue}
+                ></Select>
                 <Input
                   label="Номер клиента"
                   value={clientNumber}
@@ -313,7 +318,10 @@ export default function Page() {
         }
       />
       <Buttons>
-        <Button icon={<EditIcon width={s(7)} height={s(22)} />}>
+        <Button
+          icon={<EditIcon width={s(7)} height={s(22)} />}
+          to={"AdminEditEquipmentsListInApplicationPage"}
+        >
           Изменить оборудование
         </Button>
         <Button

@@ -27,7 +27,8 @@ const slice = createSlice({
       inputs: {
         type: {
           ...defaultInputState,
-        },
+          text: "connection",
+        } as { text: "connection" | "repair" | "line setup" },
         clientNumber: {
           ...defaultInputState,
         },
