@@ -188,11 +188,13 @@ export default function Page() {
   );
 
   const isButtonDisabled = useMemo(() => {
-    if (!clientNumber.trim() && !address.trim()) return true;
+    if (!applicationData?.type) return true;
+    if (!!["line setup"].includes(applicationData.type) && !address.trim())
+      return true;
     if (!installDate) return true;
 
     return false;
-  }, [clientNumber, address, installDate]);
+  }, [applicationData, clientNumber, address, installDate]);
 
   const handleEditApplication = useCallback(async () => {
     if (isButtonDisabled) return;
@@ -217,9 +219,11 @@ export default function Page() {
 
         return {
           ...application,
-          client: {
-            number: clientNumber,
-          },
+          client: clientNumber
+            ? {
+                number: clientNumber,
+              }
+            : application.client,
           address: address,
           installDate: installDate,
           comment: trimIgnoringNL({ text: comment }),
@@ -329,6 +333,28 @@ export default function Page() {
                   : "Монтаж ВОЛС"}
               </TextType>
             </MarginBottom>
+            {!!applicationData.client && (
+              <>
+                <MarginBottom size="smallest">
+                  <TextType>Клиент: {applicationData.client.fullName}</TextType>
+                </MarginBottom>
+                {!!applicationData.client.phone && (
+                  <MarginBottom size="smallest">
+                    <TextType>{applicationData.client.phone}</TextType>
+                  </MarginBottom>
+                )}
+                {!!applicationData.client.email && (
+                  <MarginBottom size="smallest">
+                    <TextType>{applicationData.client.email}</TextType>
+                  </MarginBottom>
+                )}
+                {!!applicationData.client.address && (
+                  <MarginBottom size="smallest">
+                    <TextType>{applicationData.client.address}</TextType>
+                  </MarginBottom>
+                )}
+              </>
+            )}
             <MarginBottom size="biggest">
               <Inputs>
                 {!!["connection", "repair"].includes(applicationData.type) && (

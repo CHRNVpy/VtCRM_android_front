@@ -15,6 +15,7 @@ import {
 } from "@/store/navigation/state/state";
 import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
 import { setEquipments } from "@/store/equipments/state/state";
+import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
 import { PostState } from "@/store/helpers/post/types";
 
 const slice = createSlice({
@@ -130,6 +131,7 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     dispatch(
       setEquipments({ action: "setData", data: modifiedUniqueEquipments })
     );
+    dispatch(getEquipmentsCollection({ page: page }));
   },
 });
 

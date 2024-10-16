@@ -11,6 +11,7 @@ import {
 } from "@/store/equipments/patch/config";
 import { DefaultEquipmentStateType } from "@/store/equipments/state/types";
 import { setEquipments } from "@/store/equipments/state/state";
+import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
 import { PatchState } from "@/store/helpers/patch/types";
 
 const slice = createSlice({
@@ -97,15 +98,26 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
 
     const entity = responseData.data.entity;
 
+    let page = 1;
+
     const modifiedEquipments = [...equipments].map((equipment) => {
       //  Saving draftId in the equipment to retain the ability to navigate by draftId
-      if (equipment?.id == id)
-        return { ...entity, draftId: equipment?.draftId };
+      if (equipment?.id == id) {
+        page = equipment?.page ? equipment.page : page;
+
+        return {
+          ...entity,
+          draftId: equipment?.draftId,
+          page: equipment?.page,
+          ver: equipment?.ver,
+        };
+      }
 
       return equipment;
     });
 
     dispatch(setEquipments({ action: "setData", data: modifiedEquipments }));
+    dispatch(getEquipmentsCollection({ page: page }));
   },
 });
 

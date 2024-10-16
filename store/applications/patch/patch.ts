@@ -11,6 +11,7 @@ import {
 } from "@/store/applications/patch/config";
 import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { setApplications } from "@/store/applications/state/state";
+import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 import { PatchState } from "@/store/helpers/patch/types";
 
 const slice = createSlice({
@@ -97,10 +98,20 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
 
     const entity = responseData.data.entity;
 
+    let page = 1;
+
     const modifiedApplications = [...applications].map((application) => {
       //  Saving draftId in the application to retain the ability to navigate by draftId
-      if (application?.id == id)
-        return { ...entity, draftId: application?.draftId };
+      if (application?.id == id) {
+        page = application?.page ? application?.page : page;
+
+        return {
+          ...entity,
+          draftId: application?.draftId,
+          page: application?.page,
+          ver: application?.ver,
+        };
+      }
 
       return application;
     });
@@ -108,6 +119,8 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
     dispatch(
       setApplications({ action: "setData", data: modifiedApplications })
     );
+
+    dispatch(getApplicationsCollection({ page: page }));
   },
 });
 

@@ -206,6 +206,25 @@ export default function Page() {
               }
             />
           </MarginBottom>
+          {!!applicationData.client && (
+            <MarginBottom>
+              {!!applicationData.client.phone && (
+                <MarginBottom size="smallest">
+                  <TextType>{applicationData.client.phone}</TextType>
+                </MarginBottom>
+              )}
+              {!!applicationData.client.email && (
+                <MarginBottom size="smallest">
+                  <TextType>{applicationData.client.email}</TextType>
+                </MarginBottom>
+              )}
+              {!!applicationData.client.address && (
+                <MarginBottom size="smallest">
+                  <TextType>{applicationData.client.address}</TextType>
+                </MarginBottom>
+              )}
+            </MarginBottom>
+          )}
           {!!applicationData?.installer?.id && (
             <MarginBottom size="big">
               <TextType isDashed={true}>

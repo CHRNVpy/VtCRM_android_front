@@ -155,7 +155,9 @@ export default function Page() {
 
   const isButtonDisabled = useMemo(() => {
     if (!type) return true;
-    if (!clientNumber.trim() && !address.trim()) return true;
+    if (!!["connection", "repair"].includes(type) && !clientNumber.trim())
+      return true;
+    if (!!["line setup"].includes(type) && !address.trim()) return true;
     if (!installDate) return true;
 
     return false;

@@ -15,6 +15,7 @@ import {
 } from "@/store/navigation/state/state";
 import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { setApplications } from "@/store/applications/state/state";
+import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 import { PostState } from "@/store/helpers/post/types";
 
 const slice = createSlice({
@@ -134,6 +135,8 @@ export const postApplication = createPostAsyncThunkWithArguments({
     dispatch(
       setApplications({ action: "setData", data: modifiedUniqueApplications })
     );
+
+    dispatch(getApplicationsCollection({ page: page }));
   },
 });
 
