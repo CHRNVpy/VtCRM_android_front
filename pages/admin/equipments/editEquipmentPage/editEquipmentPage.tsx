@@ -1,5 +1,5 @@
-import { StyleSheet, Text } from "react-native";
-import { useMemo, useEffect, useCallback } from "react";
+import { TextInput } from "react-native";
+import { useMemo, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -27,6 +27,9 @@ import { trimIgnoringNL } from "@/helpers/strings";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
+
+  const serialNumberInputRef = useRef<TextInput>(null);
+  const commentInputRef = useRef<TextInput>(null);
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -150,6 +153,20 @@ export default function Page() {
     },
     [dispatch]
   );
+
+  const handleSubmitNameEditing = useCallback(() => {
+    if (!name) return;
+    if (!serialNumberInputRef.current) return;
+
+    serialNumberInputRef.current.focus();
+  }, [serialNumberInputRef, name, serialNumber, comment]);
+
+  const handleSubmitSerialNumberEditing = useCallback(() => {
+    if (!serialNumber) return;
+    if (!commentInputRef.current) return;
+
+    commentInputRef.current.focus();
+  }, [commentInputRef, name, serialNumber, comment]);
 
   const isButtonDisabled = useMemo(() => {
     if (!name.trim()) return true;
@@ -318,17 +335,21 @@ export default function Page() {
             label="Название"
             value={name}
             onChangeText={handleChangeNameText}
+            onSubmitEditing={handleSubmitNameEditing}
           ></Input>
           <Input
             label="Серийный номер"
             value={serialNumber}
             onChangeText={handleChangeSerialNumberText}
+            onSubmitEditing={handleSubmitSerialNumberEditing}
+            inputRef={serialNumberInputRef}
           ></Input>
           <Input
             label="Примечание"
             value={comment}
             onChangeText={handleChangeCommentText}
             isMultiline={true}
+            inputRef={commentInputRef}
           ></Input>
         </Inputs>
       </Content>

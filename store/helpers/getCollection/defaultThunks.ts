@@ -154,8 +154,6 @@ export const createGetCollectionAsyncThunk = ({
             cancelToken,
           });
 
-          console.log(url, response.status, response.data);
-
           if (response.status == 200 && response.data.status == "ok") {
             const entities: Array<any> = response.data.data.entities;
             const totalRows: number = response.data.data.totalRows;

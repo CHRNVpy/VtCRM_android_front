@@ -232,14 +232,14 @@ export default function Page() {
               <TextType size="small">{applicationData.comment}</TextType>
             </MarginBottom>
           )}
-          {!!applicationData.equipment &&
-            !!applicationData?.equipment?.length && (
+          {!!applicationData.equipments &&
+            !!applicationData?.equipments?.length && (
               <MarginBottom>
-                {applicationData.equipment.map((equipment, equipmentIndex) => {
-                  if (!applicationData.equipment) return null;
+                {applicationData.equipments.map((equipment, equipmentIndex) => {
+                  if (!applicationData.equipments) return null;
 
                   const isLastItem =
-                    equipmentIndex === applicationData.equipment.length - 1;
+                    equipmentIndex === applicationData.equipments.length - 1;
 
                   const equipmentItem = (
                     <>

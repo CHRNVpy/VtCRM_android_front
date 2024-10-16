@@ -1,5 +1,5 @@
-import { TextInput, FlatList } from "react-native";
-import { useMemo, useRef, useCallback } from "react";
+import { FlatList } from "react-native";
+import { useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -34,8 +34,6 @@ import { postApplication } from "@/store/applications/post/post";
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
-  const addressInputRef = useRef<TextInput>(null);
-
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
   );
@@ -51,8 +49,6 @@ export default function Page() {
     (state: RootState) =>
       state.stateApplications.createApplicationFields.inputs.type.text
   );
-
-  console.log("TYPE", type);
 
   const clientNumber = useSelector(
     (state: RootState) =>
@@ -79,7 +75,7 @@ export default function Page() {
       state.stateApplications.createApplicationFields.equipmentsList
   );
 
-  const applicationsData = useSelector(
+  const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
   );
 
@@ -157,13 +153,6 @@ export default function Page() {
     [dispatch]
   );
 
-  const handleSubmitClientNumberEditing = useCallback(() => {
-    if (!clientNumber) return;
-    if (!addressInputRef.current) return;
-
-    addressInputRef.current.focus();
-  }, [addressInputRef, type, clientNumber, address, installDate, comment]);
-
   const isButtonDisabled = useMemo(() => {
     if (!type) return true;
     if (!clientNumber.trim() && !address.trim()) return true;
@@ -176,7 +165,7 @@ export default function Page() {
     if (isButtonDisabled) return;
 
     //  Make new draftId -> biggest id plus one
-    const draftId = applicationsData.reduce((id, application) => {
+    const draftId = applicationsList.reduce((id, application) => {
       if (!application?.draftId && !application?.id) return id;
 
       const applicationId = application?.id
@@ -207,7 +196,7 @@ export default function Page() {
       hash,
     };
 
-    const data = [...applicationsData, newApplication];
+    const data = [...applicationsList, newApplication];
 
     //  Set new application to store
     dispatch(setApplications({ action: "setData", data }));
@@ -243,7 +232,7 @@ export default function Page() {
     address,
     installDate,
     comment,
-    applicationsData,
+    applicationsList,
     pageParamsWhenMounted,
     poolId,
   ]);
@@ -283,7 +272,6 @@ export default function Page() {
                     label="Номер клиента"
                     value={clientNumber}
                     onChangeText={handleChangeClientNumberText}
-                    onSubmitEditing={handleSubmitClientNumberEditing}
                   ></Input>
                 )}
                 {!!["line setup"].includes(type) && (
@@ -291,7 +279,6 @@ export default function Page() {
                     label="Адрес"
                     value={address}
                     onChangeText={handleChangeAddressText}
-                    inputRef={addressInputRef}
                   ></Input>
                 )}
                 <DateTime

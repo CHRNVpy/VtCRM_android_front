@@ -132,16 +132,6 @@ const slice = createSlice({
         "comment",
       ]);
     },
-    setInputStateEditTypeReducer(
-      state,
-      action: InputStateDefaultReducerActionType
-    ) {
-      setInputStateDefaultReducer(state, action, [
-        "editApplicationFields",
-        "inputs",
-        "type",
-      ]);
-    },
     setInputStateEditClientNumberReducer(
       state,
       action: InputStateDefaultReducerActionType
@@ -196,7 +186,6 @@ export const {
   setInputStateCreateAddressReducer,
   setInputStateCreateInstallDateReducer,
   setInputStateCreateCommentReducer,
-  setInputStateEditTypeReducer,
   setInputStateEditClientNumberReducer,
   setInputStateEditInstallDateReducer,
   setInputStateEditAddressReducer,

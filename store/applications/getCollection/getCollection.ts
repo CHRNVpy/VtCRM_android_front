@@ -104,8 +104,6 @@ export const getApplicationsCollection =
         ? payload?.entities
         : [];
 
-      console.log(payload?.entities);
-
       remoteApplications.forEach(
         (remoteApplication: DefaultApplicationStateType) => {
           const localApplicationIndexWithSameId = localApplications.findIndex(

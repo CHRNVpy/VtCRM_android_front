@@ -88,8 +88,6 @@ export const postApplication = createPostAsyncThunkWithArguments({
     responseStatus,
     payload
   ) => {
-    console.log(responseStatus, responseData);
-
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 
@@ -132,8 +130,6 @@ export const postApplication = createPostAsyncThunkWithArguments({
       },
       []
     );
-
-    console.log(modifiedUniqueApplications);
 
     dispatch(
       setApplications({ action: "setData", data: modifiedUniqueApplications })

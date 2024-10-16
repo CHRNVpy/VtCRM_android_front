@@ -1,4 +1,5 @@
-import { useMemo, useEffect, useCallback } from "react";
+import { TextInput } from "react-native";
+import { useMemo, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Wrapper from "@/components/wrappers/wrapper/wrapper";
@@ -23,6 +24,10 @@ import { patchInstaller } from "@/store/installers/patch/patch";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
+
+  const firstnameInputRef = useRef<TextInput>(null);
+  const middlenameInputRef = useRef<TextInput>(null);
+  const phoneInputRef = useRef<TextInput>(null);
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -160,6 +165,27 @@ export default function Page() {
     [dispatch]
   );
 
+  const handleSubmitLastnameEditing = useCallback(() => {
+    if (!lastname) return;
+    if (!firstnameInputRef.current) return;
+
+    firstnameInputRef.current.focus();
+  }, [firstnameInputRef, lastname, firstname, middlename]);
+
+  const handleSubmitFirstnameEditing = useCallback(() => {
+    if (!firstname) return;
+    if (!middlenameInputRef.current) return;
+
+    middlenameInputRef.current.focus();
+  }, [middlenameInputRef, lastname, firstname, middlename]);
+
+  const handleSubmitMiddlenameEditing = useCallback(() => {
+    if (!middlename) return;
+    if (!phoneInputRef.current) return;
+
+    phoneInputRef.current.focus();
+  }, [phoneInputRef, lastname, firstname, middlename]);
+
   const isButtonDisabled = useMemo(() => {
     if (!lastname.trim()) return true;
     if (!firstname.trim()) return true;
@@ -256,21 +282,27 @@ export default function Page() {
             label="Фамилия"
             value={lastname}
             onChangeText={handleChangeLastnameText}
+            onSubmitEditing={handleSubmitLastnameEditing}
           ></Input>
           <Input
             label="Имя"
             value={firstname}
             onChangeText={handleChangeFirstnameText}
+            inputRef={firstnameInputRef}
+            onSubmitEditing={handleSubmitFirstnameEditing}
           ></Input>
           <Input
             label="Отчество"
             value={middlename}
             onChangeText={handleChangeMiddlenameText}
+            inputRef={middlenameInputRef}
+            onSubmitEditing={handleSubmitMiddlenameEditing}
           ></Input>
           <Input
             label="Телефон"
             value={phone}
             onChangeText={handleChangePhoneText}
+            inputRef={phoneInputRef}
           ></Input>
         </Inputs>
       </Content>

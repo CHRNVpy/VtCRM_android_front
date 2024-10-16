@@ -196,12 +196,14 @@ export default function Page() {
             value={serialNumber}
             onChangeText={handleChangeSerialNumberText}
             onSubmitEditing={handleSubmitSerialNumberEditing}
+            inputRef={serialNumberInputRef}
           ></Input>
           <Input
             label="Примечание"
             value={comment}
             onChangeText={handleChangeCommentText}
             isMultiline={true}
+            inputRef={commentInputRef}
           ></Input>
         </Inputs>
       </Content>
