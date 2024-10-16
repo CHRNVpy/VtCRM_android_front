@@ -73,7 +73,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
     data.client = application?.client?.number;
     data.address = application?.address;
     data.comment = application?.comment;
-    data.status = "pending";
+    data.status = application?.status;
     data.installDate = application?.installDate;
     data.poolId = application?.poolId;
     data.hash = application?.hash;
@@ -132,6 +132,8 @@ export const postApplication = createPostAsyncThunkWithArguments({
       },
       []
     );
+
+    console.log(modifiedUniqueApplications);
 
     dispatch(
       setApplications({ action: "setData", data: modifiedUniqueApplications })

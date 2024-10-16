@@ -1,5 +1,5 @@
 import { ScrollView, Image, StyleSheet } from "react-native";
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -13,10 +13,16 @@ import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
+import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
-import { ApplicationImageType } from "@/store/applications/state/types";
+import { setApplications } from "@/store/applications/state/state";
+import { patchApplication } from "@/store/applications/patch/patch";
+import {
+  ApplicationImageType,
+  DefaultApplicationStateType,
+} from "@/store/applications/state/types";
 import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
@@ -104,13 +110,13 @@ export default function Page() {
   useEffect(() => {
     if (applicationData) return;
 
-    //  Navigate back if no equipment found
+    //  Navigate back if no application found
     dispatch(
       setPage({
         action: "setData",
         data: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.to
-          : "AdminEquipmentsPage",
+          : "AdminApplicationsPoolsPage",
         params: pageParamsWhenMounted?.backLink?.to
           ? pageParamsWhenMounted?.backLink?.params
           : {},
@@ -129,6 +135,46 @@ export default function Page() {
       return false;
     });
   }, [applicationData]);
+
+  const handleChangeStatusPress = useCallback(
+    async (status: DefaultApplicationStateType["status"]) => {
+      const modifiedApplicationsList = [...applicationsList].map(
+        (application) => {
+          if (
+            (!application?.id ||
+              !applicationId ||
+              application.id != applicationId) &&
+            (!application?.draftId ||
+              !applicationDraftId ||
+              application?.draftId != applicationDraftId)
+          )
+            return application;
+
+          const isModified = application?.isModified
+            ? application.isModified
+            : application?.id
+            ? true
+            : false;
+
+          return {
+            ...application,
+            status: status,
+            isModified,
+          };
+        }
+      );
+
+      //  Set applications to store
+      dispatch(
+        setApplications({ action: "setData", data: modifiedApplicationsList })
+      );
+
+      if (!applicationId) return;
+
+      dispatch(patchApplication({ id: applicationId }));
+    },
+    [dispatch, applicationsList, applicationId, applicationDraftId]
+  );
 
   if (!applicationData) return;
 
@@ -326,21 +372,35 @@ export default function Page() {
             </Button>
           )}
         {!!applicationData.status &&
-          ["active", "pending", "cancelled"].includes(
-            applicationData.status
-          ) && (
+          ["pending", "cancelled"].includes(applicationData.status) && (
             <Button
               icon={
-                ["active", "pending"].includes(applicationData.status) ? (
+                ["pending"].includes(applicationData.status) ? (
                   <TurnOffIcon width={s(13)} height={s(22)} />
                 ) : (
                   <TurnOnIcon width={s(13)} height={s(22)} />
                 )
               }
+              onPress={() =>
+                handleChangeStatusPress(
+                  ["pending"].includes(applicationData.status)
+                    ? "cancelled"
+                    : "pending"
+                )
+              }
             >
-              {["active", "pending"].includes(applicationData.status)
+              {["pending"].includes(applicationData.status)
                 ? "Отменить"
                 : "Возобновить"}
+            </Button>
+          )}
+        {!!applicationData.status &&
+          ["pending"].includes(applicationData.status) && (
+            <Button
+              icon={<StartIcon width={s(13)} height={s(13)} />}
+              onPress={() => handleChangeStatusPress("active")}
+            >
+              Отправить в работу
             </Button>
           )}
         {!!applicationData.status &&
@@ -348,11 +408,7 @@ export default function Page() {
             <>
               <Button
                 icon={<EditIcon width={s(7)} height={s(22)} />}
-                to={"AdminEditApplicationPage"}
-                toParams={{
-                  id: applicationData.id,
-                  draftId: applicationData.draftId,
-                }}
+                onPress={() => handleChangeStatusPress("approved")}
               >
                 Завершить
               </Button>

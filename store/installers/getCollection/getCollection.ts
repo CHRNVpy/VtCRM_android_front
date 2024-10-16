@@ -46,16 +46,7 @@ export const getInstallersCollection =
     setRefreshToken,
     url: "/installer-collection",
     getParamsFromStateFunction: (getState: Function) => {
-      const {
-        installersGetCollectionState: { variables, filters, page, perPage },
-      } = (getState() as RootState)?.getCollectionInstallers;
-
-      const params: { [key: string]: any } = {};
-
-      if (page) params.page = page;
-      if (perPage) params.perPage = perPage;
-
-      return params;
+      return {};
     },
     callbackAfterGet: async (dispatch, getState, payload) => {
       const {
@@ -109,6 +100,7 @@ export const getInstallersCollection =
         //  If it was modified remotely, replace local installer with remote copy
         modifiedLocalInstallers.splice(localInstallerIndexWithSameId, 1, {
           ...remoteInstaller,
+          draftId: localInstallers[localInstallerIndexWithSameId].draftId,
         });
       });
 

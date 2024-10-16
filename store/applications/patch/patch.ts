@@ -94,6 +94,8 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 
+    console.log(responseData);
+
     const id = payload?.id;
 
     const {

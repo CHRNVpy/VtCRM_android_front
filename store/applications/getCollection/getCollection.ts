@@ -104,6 +104,8 @@ export const getApplicationsCollection =
         ? payload?.entities
         : [];
 
+      console.log(payload?.entities);
+
       remoteApplications.forEach(
         (remoteApplication: DefaultApplicationStateType) => {
           const localApplicationIndexWithSameId = localApplications.findIndex(
@@ -135,10 +137,6 @@ export const getApplicationsCollection =
               remoteApplication.installDate &&
             localApplications[localApplicationIndexWithSameId].poolId ==
               remoteApplication.poolId &&
-            localApplications[localApplicationIndexWithSameId].page ==
-              remoteApplication.page &&
-            localApplications[localApplicationIndexWithSameId].ver ==
-              remoteApplication.ver &&
             //  Compare clients
             ((!localApplications[localApplicationIndexWithSameId].client &&
               !remoteApplication.client) ||
@@ -156,7 +154,11 @@ export const getApplicationsCollection =
             isImagesEqual(
               localApplications[localApplicationIndexWithSameId]?.images,
               remoteApplication.images
-            )
+            ) &&
+            localApplications[localApplicationIndexWithSameId].page ==
+              remoteApplication.page &&
+            localApplications[localApplicationIndexWithSameId].ver ==
+              remoteApplication.ver
           )
             return;
 
@@ -169,6 +171,7 @@ export const getApplicationsCollection =
             ...remoteApplication,
             page,
             ver,
+            draftId: localApplications[localApplicationIndexWithSameId].draftId,
           });
 
           isChanged = true;

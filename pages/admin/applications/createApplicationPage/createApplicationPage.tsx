@@ -52,6 +52,8 @@ export default function Page() {
       state.stateApplications.createApplicationFields.inputs.type.text
   );
 
+  console.log("TYPE", type);
+
   const clientNumber = useSelector(
     (state: RootState) =>
       state.stateApplications.createApplicationFields.inputs.clientNumber.text
@@ -211,7 +213,9 @@ export default function Page() {
     dispatch(setApplications({ action: "setData", data }));
 
     //  Clear all inputs and states
-    dispatch(setInputStateCreateTypeReducer({ action: "reset" }));
+    dispatch(
+      setInputStateCreateTypeReducer({ action: "setText", text: "connection" })
+    );
     dispatch(setInputStateCreateClientNumberReducer({ action: "reset" }));
     dispatch(setInputStateCreateAddressReducer({ action: "reset" }));
     dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));

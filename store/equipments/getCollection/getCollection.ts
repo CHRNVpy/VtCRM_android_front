@@ -122,6 +122,7 @@ export const getEquipmentsCollection =
           ...remoteEquipment,
           page,
           ver,
+          draftId: localEquipments[localEquipmentIndexWithSameId].draftId,
         });
 
         isChanged = true;
