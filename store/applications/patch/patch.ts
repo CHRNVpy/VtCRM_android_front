@@ -70,16 +70,11 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
 
     const data: { [key: string]: any } = {};
 
-    data.id = application?.id;
-    data.type = application?.type;
     data.client = application?.client?.number;
     data.address = application?.address;
     data.comment = application?.comment;
-    data.installerId = application?.installerId;
     data.status = application?.status;
     data.installDate = application?.installDate;
-    data.poolId = application?.poolId;
-    data.hash = application?.hash;
     data.ver = ver;
 
     return data;

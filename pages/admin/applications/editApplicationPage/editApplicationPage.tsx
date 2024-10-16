@@ -13,6 +13,7 @@ import Content from "@/components/wrappers/content/content";
 import Title from "@/components/wrappers/title/title";
 import TextType from "@/components/wrappers/textType/textType";
 import ListItem from "@/components/wrappers/listItem/listItem";
+import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import EditIcon from "@/assets/editIcon.svg";
 import SaveIcon from "@/assets/saveIcon.svg";
@@ -113,19 +114,19 @@ export default function Page() {
     dispatch(
       setInputStateEditInstallDateReducer({
         action: "setText",
-        text: applicationData?.installDate,
+        text: applicationData?.installDate ? applicationData.installDate : "",
       })
     );
     dispatch(
       setInputStateEditAddressReducer({
         action: "setText",
-        text: applicationData?.address,
+        text: applicationData?.address ? applicationData.address : "",
       })
     );
     dispatch(
       setInputStateEditCommentReducer({
         action: "setText",
-        text: applicationData?.comment,
+        text: applicationData?.comment ? applicationData.comment : "",
       })
     );
 
@@ -303,12 +304,20 @@ export default function Page() {
           <Content isWithPaddings={true}>
             {applicationData.installer && (
               <MarginBottom>
-                <TextType isDashed={true}>
-                  Монтажник #{applicationData.installer.id}{" "}
-                  {applicationData.installer.lastname}{" "}
-                  {applicationData.installer.firstname.charAt(0)}.
-                  {applicationData.installer.middlename.charAt(0)}.
-                </TextType>
+                <PressableArea
+                  to={"AdminInstallerPage"}
+                  toParams={{
+                    id: applicationData.installer.id,
+                    draftId: applicationData.installer.draftId,
+                  }}
+                >
+                  <TextType isDashed={true}>
+                    Монтажник #{applicationData.installer.id}{" "}
+                    {applicationData.installer.lastname}{" "}
+                    {applicationData.installer.firstname.charAt(0)}.
+                    {applicationData.installer.middlename.charAt(0)}.
+                  </TextType>
+                </PressableArea>
               </MarginBottom>
             )}
             <MarginBottom>

@@ -124,18 +124,6 @@ export default function Page() {
     );
   }, [dispatch, applicationData]);
 
-  const installerData = useMemo(() => {
-    if (!applicationData) return;
-
-    return installersList.find((installer) => {
-      if (!installer?.id) return false;
-
-      if (installer.id == applicationData.installerId) return true;
-
-      return false;
-    });
-  }, [applicationData]);
-
   const handleChangeStatusPress = useCallback(
     async (status: DefaultApplicationStateType["status"]) => {
       const modifiedApplicationsList = [...applicationsList].map(
@@ -218,12 +206,13 @@ export default function Page() {
               }
             />
           </MarginBottom>
-          {!!applicationData.installerId && !!installerData && (
+          {!!applicationData?.installer?.id && (
             <MarginBottom size="big">
               <TextType isDashed={true}>
-                Монтажник #{applicationData.installerId}{" "}
-                {installerData.lastname} {installerData.firstname.charAt(0)}.
-                {installerData.middlename.charAt(0)}.
+                Монтажник #{applicationData?.installer?.id}{" "}
+                {applicationData?.installer?.lastname}{" "}
+                {applicationData?.installer?.firstname?.charAt(0)}.
+                {applicationData?.installer?.middlename?.charAt(0)}.
               </TextType>
             </MarginBottom>
           )}

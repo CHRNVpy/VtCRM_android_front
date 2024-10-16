@@ -125,8 +125,8 @@ export const getApplicationsCollection =
           if (
             localApplications[localApplicationIndexWithSameId].type ==
               remoteApplication.type &&
-            localApplications[localApplicationIndexWithSameId].installerId ==
-              remoteApplication.installerId &&
+            localApplications[localApplicationIndexWithSameId].installer?.id ==
+              remoteApplication.installer?.id &&
             localApplications[localApplicationIndexWithSameId].comment ==
               remoteApplication.comment &&
             localApplications[localApplicationIndexWithSameId].status ==

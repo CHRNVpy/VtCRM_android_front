@@ -2,6 +2,7 @@ import { DefaultStateType } from "@/store/helpers/state";
 
 export interface ApplicationInstallerType {
   id?: number;
+  draftId?: number;
   login?: string;
   password: string;
   firstname: string;
