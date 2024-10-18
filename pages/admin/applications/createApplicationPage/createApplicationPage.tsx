@@ -18,7 +18,7 @@ import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import EditIcon from "@/assets/editIcon.svg";
 import {
   setInputStateCreateTypeReducer,
-  setInputStateCreateClientNumberReducer,
+  setInputStateCreateClientAccountReducer,
   setInputStateCreateAddressReducer,
   setInputStateCreateInstallDateReducer,
   setInputStateCreateCommentReducer,
@@ -43,16 +43,16 @@ export default function Page() {
     return pageParams;
   }, []);
 
-  const poolId = pageParamsWhenMounted?.poolId;
+  const poolId = pageParamsWhenMounted?.id;
 
   const type = useSelector(
     (state: RootState) =>
       state.stateApplications.createApplicationFields.inputs.type.text
   );
 
-  const clientNumber = useSelector(
+  const clientAccount = useSelector(
     (state: RootState) =>
-      state.stateApplications.createApplicationFields.inputs.clientNumber.text
+      state.stateApplications.createApplicationFields.inputs.clientAccount.text
   );
 
   const address = useSelector(
@@ -105,10 +105,10 @@ export default function Page() {
     [dispatch]
   );
 
-  const handleChangeClientNumberText = useCallback(
+  const handleChangeClientAccountText = useCallback(
     (text?: string) => {
       dispatch(
-        setInputStateCreateClientNumberReducer({
+        setInputStateCreateClientAccountReducer({
           action: "setText",
           text,
         })
@@ -155,13 +155,13 @@ export default function Page() {
 
   const isButtonDisabled = useMemo(() => {
     if (!type) return true;
-    if (!!["connection", "repair"].includes(type) && !clientNumber.trim())
+    if (!!["connection", "repair"].includes(type) && !clientAccount.trim())
       return true;
     if (!!["line setup"].includes(type) && !address.trim()) return true;
     if (!installDate) return true;
 
     return false;
-  }, [type, clientNumber, address, installDate]);
+  }, [type, clientAccount, address, installDate]);
 
   const handleCreateApplication = useCallback(async () => {
     if (isButtonDisabled) return;
@@ -170,11 +170,22 @@ export default function Page() {
     const draftId = applicationsList.reduce((id, application) => {
       if (!application?.draftId && !application?.id) return id;
 
-      const applicationId = application?.id
-        ? application.id
-        : application?.draftId
-        ? application.draftId
-        : 0;
+      const applicationId = (() => {
+        if (!application?.id && !application?.draftId) return 0;
+
+        if (!application?.id && application?.draftId)
+          return application.draftId;
+
+        if (application?.id && !application?.draftId) return application.id;
+
+        if (application?.id && application?.draftId) {
+          return application.id > application.draftId
+            ? application.id
+            : application.draftId;
+        }
+
+        return 0;
+      })();
 
       if (id >= applicationId + 1) return id;
 
@@ -189,8 +200,11 @@ export default function Page() {
     const newApplication: DefaultApplicationStateType = {
       draftId,
       type: type,
-      client: clientNumber.trim() ? { number: clientNumber.trim() } : undefined,
-      address: address.trim(),
+      client:
+        !!["connection", "repair"].includes(type) && clientAccount.trim()
+          ? { account: clientAccount.trim() }
+          : undefined,
+      address: ["line setup"].includes(type) ? address.trim() : "",
       comment: trimIgnoringNL({ text: comment }),
       status: "pending",
       installDate: installDate,
@@ -207,7 +221,7 @@ export default function Page() {
     dispatch(
       setInputStateCreateTypeReducer({ action: "setText", text: "connection" })
     );
-    dispatch(setInputStateCreateClientNumberReducer({ action: "reset" }));
+    dispatch(setInputStateCreateClientAccountReducer({ action: "reset" }));
     dispatch(setInputStateCreateAddressReducer({ action: "reset" }));
     dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));
     dispatch(setInputStateCreateCommentReducer({ action: "reset" }));
@@ -230,7 +244,7 @@ export default function Page() {
     dispatch,
     isButtonDisabled,
     type,
-    clientNumber,
+    clientAccount,
     address,
     installDate,
     comment,
@@ -272,8 +286,8 @@ export default function Page() {
                 {!!["connection", "repair"].includes(type) && (
                   <Input
                     label="Номер клиента"
-                    value={clientNumber}
-                    onChangeText={handleChangeClientNumberText}
+                    value={clientAccount}
+                    onChangeText={handleChangeClientAccountText}
                   ></Input>
                 )}
                 {!!["line setup"].includes(type) && (

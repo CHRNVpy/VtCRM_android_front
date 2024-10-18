@@ -71,7 +71,7 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
 
     const data: { [key: string]: any } = {};
 
-    data.client = application?.client?.number;
+    data.client = application?.client?.account;
     data.address = application?.address;
     data.comment = application?.comment;
     data.status = application?.status;

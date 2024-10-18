@@ -175,11 +175,21 @@ export default function Page() {
     const draftId = installersData.reduce((id, installer) => {
       if (!installer?.draftId && !installer?.id) return id;
 
-      const installerId = installer?.id
-        ? installer.id
-        : installer?.draftId
-        ? installer.draftId
-        : 0;
+      const installerId = (() => {
+        if (!installer?.id && !installer?.draftId) return 0;
+
+        if (!installer?.id && installer?.draftId) return installer.draftId;
+
+        if (installer?.id && !installer?.draftId) return installer.id;
+
+        if (installer?.id && installer?.draftId) {
+          return installer.id > installer.draftId
+            ? installer.id
+            : installer.draftId;
+        }
+
+        return 0;
+      })();
 
       if (id >= installerId + 1) return id;
 

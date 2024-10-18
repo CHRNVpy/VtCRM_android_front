@@ -71,7 +71,7 @@ export default function Page() {
             },
       })
     );
-  }, [dispatch, installerData]);
+  }, [dispatch, installerData, pageParamsWhenMounted]);
 
   useEffect(() => {
     //  Clear password field on unmount

@@ -85,7 +85,7 @@ export default function Page() {
             },
       })
     );
-  }, [dispatch, equipmentData]);
+  }, [dispatch, equipmentData, pageParamsWhenMounted]);
 
   useEffect(() => {
     //  Set fields on mount

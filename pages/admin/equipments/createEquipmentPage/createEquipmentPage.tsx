@@ -121,11 +121,21 @@ export default function Page() {
     const draftId = equipmentsData.reduce((id, equipment) => {
       if (!equipment?.draftId && !equipment?.id) return id;
 
-      const equipmentId = equipment?.id
-        ? equipment.id
-        : equipment?.draftId
-        ? equipment.draftId
-        : 0;
+      const equipmentId = (() => {
+        if (!equipment?.id && !equipment?.draftId) return 0;
+
+        if (!equipment?.id && equipment?.draftId) return equipment.draftId;
+
+        if (equipment?.id && !equipment?.draftId) return equipment.id;
+
+        if (equipment?.id && equipment?.draftId) {
+          return equipment.id > equipment.draftId
+            ? equipment.id
+            : equipment.draftId;
+        }
+
+        return 0;
+      })();
 
       if (id >= equipmentId + 1) return id;
 

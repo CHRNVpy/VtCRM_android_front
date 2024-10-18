@@ -13,7 +13,6 @@ import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
-import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
@@ -46,10 +45,6 @@ export default function Page() {
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
-  );
-
-  const installersList = useSelector(
-    (state: RootState) => state.stateInstallers.installers.data
   );
 
   const applicationData = useMemo(() => {
@@ -122,7 +117,7 @@ export default function Page() {
           : {},
       })
     );
-  }, [dispatch, applicationData]);
+  }, [dispatch, applicationData, pageParamsWhenMounted]);
 
   const handleChangeStatusPress = useCallback(
     async (status: DefaultApplicationStateType["status"]) => {
@@ -400,15 +395,6 @@ export default function Page() {
               {["pending"].includes(applicationData.status)
                 ? "Отменить"
                 : "Возобновить"}
-            </Button>
-          )}
-        {!!applicationData.status &&
-          ["pending"].includes(applicationData.status) && (
-            <Button
-              icon={<StartIcon width={s(13)} height={s(13)} />}
-              onPress={() => handleChangeStatusPress("active")}
-            >
-              Отправить в работу
             </Button>
           )}
         {!!applicationData.status &&

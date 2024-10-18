@@ -71,7 +71,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
     const data: { [key: string]: any } = {};
 
     data.type = application?.type;
-    data.client = application?.client?.number;
+    data.client = application?.client?.account;
     data.address = application?.address;
     data.comment = application?.comment;
     data.status = application?.status;

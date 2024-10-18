@@ -20,7 +20,7 @@ import SaveIcon from "@/assets/saveIcon.svg";
 import { setPage } from "@/store/navigation/state/state";
 import { trimIgnoringNL } from "@/helpers/strings";
 import {
-  setInputStateEditClientNumberReducer,
+  setInputStateEditClientAccountReducer,
   setInputStateEditInstallDateReducer,
   setInputStateEditAddressReducer,
   setInputStateEditCommentReducer,
@@ -44,9 +44,9 @@ export default function Page() {
   const applicationId = pageParamsWhenMounted?.id;
   const applicationDraftId = pageParamsWhenMounted?.draftId;
 
-  const clientNumber = useSelector(
+  const clientAccount = useSelector(
     (state: RootState) =>
-      state.stateApplications.editApplicationFields.inputs.clientNumber.text
+      state.stateApplications.editApplicationFields.inputs.clientAccount.text
   );
 
   const address = useSelector(
@@ -102,12 +102,12 @@ export default function Page() {
             },
       })
     );
-  }, [dispatch, applicationData]);
+  }, [dispatch, applicationData, pageParamsWhenMounted]);
 
   useEffect(() => {
     //  Set fields on mount
     dispatch(
-      setInputStateEditClientNumberReducer({
+      setInputStateEditClientAccountReducer({
         action: "reset",
       })
     );
@@ -132,17 +132,17 @@ export default function Page() {
 
     //  Clear fields on unmount
     return () => {
-      dispatch(setInputStateEditClientNumberReducer({ action: "reset" }));
+      dispatch(setInputStateEditClientAccountReducer({ action: "reset" }));
       dispatch(setInputStateEditInstallDateReducer({ action: "reset" }));
       dispatch(setInputStateEditAddressReducer({ action: "reset" }));
       dispatch(setInputStateEditCommentReducer({ action: "reset" }));
     };
   }, [applicationData]);
 
-  const handleChangeClientNumberText = useCallback(
+  const handleChangeClientAccountText = useCallback(
     (text?: string) => {
       dispatch(
-        setInputStateEditClientNumberReducer({
+        setInputStateEditClientAccountReducer({
           action: "setText",
           text,
         })
@@ -194,7 +194,7 @@ export default function Page() {
     if (!installDate) return true;
 
     return false;
-  }, [applicationData, clientNumber, address, installDate]);
+  }, [applicationData, clientAccount, address, installDate]);
 
   const handleEditApplication = useCallback(async () => {
     if (isButtonDisabled) return;
@@ -219,9 +219,9 @@ export default function Page() {
 
         return {
           ...application,
-          client: clientNumber
+          client: clientAccount
             ? {
-                number: clientNumber,
+                account: clientAccount,
               }
             : application.client,
           address: address,
@@ -238,7 +238,7 @@ export default function Page() {
     );
 
     //  Clear all inputs and states
-    dispatch(setInputStateEditClientNumberReducer({ action: "reset" }));
+    dispatch(setInputStateEditClientAccountReducer({ action: "reset" }));
     dispatch(setInputStateEditInstallDateReducer({ action: "reset" }));
     dispatch(setInputStateEditAddressReducer({ action: "reset" }));
     dispatch(setInputStateEditCommentReducer({ action: "reset" }));
@@ -265,7 +265,7 @@ export default function Page() {
   }, [
     dispatch,
     isButtonDisabled,
-    clientNumber,
+    clientAccount,
     address,
     installDate,
     comment,
@@ -360,8 +360,8 @@ export default function Page() {
                 {!!["connection", "repair"].includes(applicationData.type) && (
                   <Input
                     label="Номер клиента"
-                    value={clientNumber}
-                    onChangeText={handleChangeClientNumberText}
+                    value={clientAccount}
+                    onChangeText={handleChangeClientAccountText}
                   ></Input>
                 )}
                 {!!["line setup"].includes(applicationData.type) && (

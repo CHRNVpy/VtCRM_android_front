@@ -1,5 +1,7 @@
-import { FlatList, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
+import { FlatList } from "react-native";
+import React, { useMemo, useEffect, useCallback, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
 import Buttons from "@/components/wrappers/buttons/buttons";
 import Button from "@/components/controls/button/button";
@@ -18,273 +20,382 @@ import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
 import { s } from "react-native-size-matters";
+import { DefaultApplicationStateType } from "@/store/applications/state/types";
+import { setApplications } from "@/store/applications/state/state";
+import { patchApplication } from "@/store/applications/patch/patch";
 import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
+import { setPage } from "@/store/navigation/state/state";
 
 export default function Page() {
-  const poolItem = useMemo(() => {
-    return {
-      id: 1,
-      applicationsCount: 3,
-      applications: [
-        {
-          id: 1,
-          client: {
-            name: "Арефьев Т.С.",
-          },
-          type: "connection",
-          datetime: "2024-08-16T16:30:00Z",
-          note: "Подключение нового абонента",
-          equipments: [
-            {
-              id: "1",
-              name: "Fluke Networks DTX-1800",
-              serialNumber: "DTX2-342462",
-              note: "Не предназначено для работы с бетоном или каменными материалами",
-            },
-            {
-              id: "2",
-              name: "Megger MIT485",
-              serialNumber: "MIT4-584390",
-              note: "Требуется калибровка каждые 6 месяцев",
-            },
-          ],
-          isActive: true,
-        },
-        {
-          id: 2,
-          client: {
-            name: "Иванов И.И.",
-          },
-          type: "repair",
-          datetime: "2024-08-17T10:00:00Z",
-          note: "Ремонт повреждённого кабеля",
-          equipments: [
-            {
-              id: "3",
-              name: "FLIR E8 Infrared Camera",
-              serialNumber: "E8-983452",
-              note: "Хранить в сухом месте, избегать ударов",
-            },
-            {
-              id: "4",
-              name: "Extech EX330 Multimeter",
-              serialNumber: "EX33-745230",
-              note: "Использовать только для измерения переменного тока",
-            },
-          ],
-          isActive: false,
-        },
-        {
-          id: 3,
-          client: {
-            name: "Петрова М.Н.",
-          },
-          type: "lineInstallation",
-          datetime: "2024-08-18T14:45:00Z",
-          note: "Монтаж новой линии для офиса",
-          equipments: [
-            {
-              id: "5",
-              name: "Bosch GLM 50 C Laser Measure",
-              serialNumber: "GLM5-672901",
-              note: "Не допускать попадания воды внутрь устройства",
-            },
-            {
-              id: "6",
-              name: "Klein Tools CL800 Clamp Meter",
-              serialNumber: "CL80-293874",
-              note: "Не использовать при температуре ниже -10°C",
-            },
-          ],
-          isActive: false,
-        },
-      ],
-      installer: {
-        id: "1",
-        lastName: "Иванов",
-        firstName: "Иван",
-        patronym: "Иванович",
-        phone: "+7 912 345-67-89",
-        login: "iivanov",
-        password: "adslfIYNGHlfIYNGH-454",
-        isActive: true,
-      },
-    };
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const pageParams = useSelector(
+    (state: RootState) => state.stateNavigation.page.params
+  );
+
+  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
+  const pageParamsWhenMounted = useMemo(() => {
+    return pageParams;
   }, []);
+
+  const poolId: number | undefined = pageParamsWhenMounted?.id;
+
+  const applicationsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const poolApplicationsList = useMemo(() => {
+    return applicationsList.filter((application) => {
+      if (!application?.poolId) return false;
+
+      if (application.poolId !== poolId) return false;
+
+      return true;
+    });
+  }, [applicationsList, poolId]);
+
+  const isPoolStatusIsPending = useMemo(() => {
+    return poolApplicationsList.some((application) => {
+      return application.status == "pending";
+    });
+  }, [poolApplicationsList]);
+
+  const applicationsCount = useMemo(() => {
+    return poolApplicationsList ? poolApplicationsList.length : 0;
+  }, [poolApplicationsList]);
+
+  useEffect(() => {
+    if (applicationsCount) return;
+
+    //  Navigate back if no application found
+    dispatch(
+      setPage({
+        action: "setData",
+        data: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.to
+          : "AdminApplicationsPoolsPage",
+        params: pageParamsWhenMounted?.backLink?.to
+          ? pageParamsWhenMounted?.backLink?.params
+          : {},
+      })
+    );
+  }, [dispatch, applicationsCount, pageParamsWhenMounted]);
+
+  const handleChangeStatusPress = useCallback(
+    async (
+      status: DefaultApplicationStateType["status"],
+      applicationId?: number,
+      applicationDraftId?: number
+    ) => {
+      const modifiedApplicationsList = [...applicationsList].map(
+        (application) => {
+          if (
+            (!application?.id ||
+              !applicationId ||
+              application.id != applicationId) &&
+            (!application?.draftId ||
+              !applicationDraftId ||
+              application?.draftId != applicationDraftId)
+          )
+            return application;
+
+          const isModified = application?.isModified
+            ? application.isModified
+            : application?.id
+            ? true
+            : false;
+
+          return {
+            ...application,
+            status: status,
+            isModified,
+          };
+        }
+      );
+
+      //  Set applications to store
+      dispatch(
+        setApplications({ action: "setData", data: modifiedApplicationsList })
+      );
+
+      if (!applicationId) return;
+
+      dispatch(patchApplication({ id: applicationId }));
+    },
+    [dispatch, applicationsList]
+  );
+
+  const handleChangePoolStatusToActivePress = useCallback(async () => {
+    const modifiedApplicationsList = [...applicationsList].map(
+      (application) => {
+        if (!application?.poolId) return application;
+        if (application.poolId !== poolId) return application;
+
+        const isModified = application?.isModified
+          ? application.isModified
+          : application?.id
+          ? true
+          : false;
+
+        return {
+          ...application,
+          status: "active",
+          isModified,
+        };
+      }
+    );
+
+    //  Set applications to store
+    dispatch(
+      setApplications({ action: "setData", data: modifiedApplicationsList })
+    );
+
+    modifiedApplicationsList.forEach((application) => {
+      if (!application?.id) return;
+
+      if (!application?.isModified) return;
+
+      dispatch(patchApplication({ id: application.id }));
+    });
+  }, [dispatch, poolId]);
+
+  if (!applicationsCount) return;
 
   return (
     <Wrapper>
       <Header linkText={"Пулы заявок"} to={"AdminApplicationsPoolsPage"} />
-      <Title isWithSettings={true} isNoMargin={true}>
-        Пул #{poolItem.id}
+      <Title
+        isWithSettings={true}
+        isNoMargin={isSettingsOpen}
+        isSettingsOpen={isSettingsOpen}
+        setIsSettingsOpen={async () => setIsSettingsOpen(!isSettingsOpen)}
+      >
+        Пул #{poolId}
       </Title>
-      <MarginBottom>
-        <Inputs isWithPaddings={true}>
-          <Input label="Поиск по заявкам" isHasClearButton={true}></Input>
-        </Inputs>
-      </MarginBottom>
+      {!!isSettingsOpen && (
+        <MarginBottom>
+          <Inputs isWithPaddings={true}>
+            <Input label="Поиск по заявкам" isHasClearButton={true}></Input>
+          </Inputs>
+        </MarginBottom>
+      )}
       <Content>
-        {!!poolItem.applications.length && (
-          <FlatList
-            keyboardShouldPersistTaps="always"
-            data={poolItem.applications}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => {
-              return (
-                <ListItem
-                  key={item.id}
-                  isLastItem={index === poolItem.applications.length - 1}
-                >
-                  <MarginBottom size="small">
-                    <PressableArea
-                      to={"AdminApplicationPage"}
-                      toParams={{ id: item.id }}
-                    >
-                      <TwoColumns
-                        leftColumn={
-                          <TextType isBold={true}>{item.client.name}</TextType>
-                        }
-                        rightColumn={
-                          <TextType isBold={true} align="right">
-                            #{item.id}
-                          </TextType>
-                        }
-                      />
-                    </PressableArea>
-                  </MarginBottom>
-                  <MarginBottom>
-                    <PressableArea
-                      to={"AdminInstallerPage"}
-                      toParams={{
-                        id: poolItem.installer.id,
-                        backLink: {
-                          text: `Пул #${poolItem.id}`,
-                          to: "AdminApplicationsPoolPage",
-                          params: { id: poolItem.id },
-                        },
-                      }}
-                    >
-                      {!!poolItem?.installer && (
-                        <TextType size="medium" isDashed={true}>
-                          Монтажник #{poolItem.installer.id}{" "}
-                          {poolItem.installer.lastName}{" "}
-                          {poolItem.installer.firstName.charAt(0)}.
-                          {poolItem.installer.patronym.charAt(0)}.
-                        </TextType>
-                      )}
-                    </PressableArea>
-                  </MarginBottom>
+        <FlatList
+          keyboardShouldPersistTaps="always"
+          data={poolApplicationsList}
+          keyExtractor={(item, index) =>
+            item?.id
+              ? `remote-${item?.id.toString()}`
+              : item?.draftId
+              ? `draft-${item?.draftId.toString()}`
+              : `noid-${index}`
+          }
+          renderItem={({ item, index }) => {
+            return (
+              <ListItem
+                key={item.id}
+                isLastItem={index === applicationsCount - 1}
+              >
+                <MarginBottom size="small">
                   <PressableArea
                     to={"AdminApplicationPage"}
                     toParams={{ id: item.id }}
                   >
-                    <MarginBottom>
-                      <TextType size="small">{item.note}</TextType>
-                    </MarginBottom>
-                    {item.equipments.length > 0 && (
-                      <MarginBottom>
-                        {item.equipments.map((equipment, equipmentIndex) => {
-                          const isLastItem =
-                            equipmentIndex === item.equipments.length - 1;
-
-                          const equipmentItem = (
-                            <>
-                              <TextType isBold={true}>
-                                #{equipment.id} {equipment.name}
-                              </TextType>
-                              <TextType>{equipment.serialNumber}</TextType>
-                            </>
-                          );
-
-                          return (
-                            <React.Fragment key={equipmentIndex}>
-                              {isLastItem ? (
-                                equipmentItem
-                              ) : (
-                                <MarginBottom>{equipmentItem}</MarginBottom>
-                              )}
-                            </React.Fragment>
-                          );
-                        })}
-                      </MarginBottom>
-                    )}
-                    <MarginBottom>
-                      <TextType isBold={true}>
-                        {item.type == "connection"
-                          ? "Подключение"
-                          : item.type == "repair"
-                          ? "Ремонт"
-                          : "Монтаж ВОЛС"}
-                      </TextType>
-                      <TextType>
-                        {formatDateString({
-                          dateString: item.datetime,
-                        })}
-                      </TextType>
-                    </MarginBottom>
-                    <MarginBottom>
-                      <TextType isBold={true}>
-                        {item.isActive ? "В работе" : "Отменена"}
-                      </TextType>
-                    </MarginBottom>
+                    <TwoColumns
+                      leftColumn={
+                        <TextType isBold={true}>
+                          {["connection", "repair"].includes(item.type)
+                            ? item?.client?.fullName
+                              ? item.client.fullName
+                              : "Клиент не указан"
+                            : item.address}
+                        </TextType>
+                      }
+                      rightColumn={
+                        <TextType isBold={true} align="right">
+                          {item.id
+                            ? `#${item.id}`
+                            : item.draftId
+                            ? `#(${item.draftId})`
+                            : ""}
+                        </TextType>
+                      }
+                    />
                   </PressableArea>
-                  <Buttons isItemButtons={true}>
-                    <Button
-                      icon={<EditIcon width={s(5)} height={s(16)} />}
-                      size={"small"}
-                      to={"AdminEditApplicationPage"}
+                </MarginBottom>
+                {!!item.installer && (
+                  <MarginBottom>
+                    <PressableArea
+                      to={"AdminInstallerPage"}
                       toParams={{
-                        id: item.id,
+                        id: item.installer.id,
                         backLink: {
-                          text: `Пул #${poolItem.id}`,
+                          text: `Пул #${poolId}`,
                           to: "AdminApplicationsPoolPage",
-                          params: { id: poolItem.id },
+                          params: { id: poolId },
                         },
                       }}
                     >
-                      Редактировать
-                    </Button>
-                    <Button
-                      icon={
-                        item.isActive ? (
-                          <TurnOffIcon width={s(10)} height={s(17)} />
-                        ) : (
-                          <TurnOnIcon width={s(10)} height={s(17)} />
-                        )
-                      }
-                      size={"small"}
-                    >
-                      {item.isActive ? "Отменить" : "Возобновить"}
-                    </Button>
-                  </Buttons>
-                </ListItem>
-              );
-            }}
-          />
-        )}
+                      {!!item.installer && (
+                        <TextType size="medium" isDashed={true}>
+                          Монтажник #{item.installer.id}{" "}
+                          {item.installer.lastname}{" "}
+                          {item.installer.firstname.charAt(0)}.
+                          {item.installer.middlename.charAt(0)}.
+                        </TextType>
+                      )}
+                    </PressableArea>
+                  </MarginBottom>
+                )}
+                <PressableArea
+                  to={"AdminApplicationPage"}
+                  toParams={{ id: item.id, draftId: item.draftId }}
+                >
+                  {!!item.comment && (
+                    <MarginBottom>
+                      <TextType size="small">{item.comment}</TextType>
+                    </MarginBottom>
+                  )}
+                  {!!item?.equipments?.length && (
+                    <MarginBottom>
+                      {item.equipments.map((equipment, equipmentIndex) => {
+                        const equipmentsCount = item?.equipments?.length
+                          ? item.equipments.length
+                          : 0;
+
+                        const isLastItem =
+                          equipmentIndex === equipmentsCount - 1;
+
+                        const equipmentItem = (
+                          <>
+                            <TextType isBold={true}>
+                              #{equipment.id} {equipment.name}
+                            </TextType>
+                            <TextType>{equipment.serialNumber}</TextType>
+                          </>
+                        );
+
+                        return (
+                          <React.Fragment key={equipmentIndex}>
+                            {isLastItem ? (
+                              equipmentItem
+                            ) : (
+                              <MarginBottom>{equipmentItem}</MarginBottom>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </MarginBottom>
+                  )}
+                  <MarginBottom>
+                    <TextType isBold={true}>
+                      {item.type == "connection"
+                        ? "Подключение"
+                        : item.type == "repair"
+                        ? "Ремонт"
+                        : "Монтаж ВОЛС"}
+                    </TextType>
+                    <TextType>
+                      {formatDateString({
+                        dateString: item.installDate,
+                      })}
+                    </TextType>
+                  </MarginBottom>
+                  <MarginBottom>
+                    <TextType isBold={true}>
+                      {item.status == "active"
+                        ? "В работе"
+                        : item.status == "pending"
+                        ? "Собирается"
+                        : item.status == "finished"
+                        ? "Завершена"
+                        : "Отменена"}
+                    </TextType>
+                  </MarginBottom>
+                </PressableArea>
+                <Buttons isItemButtons={true}>
+                  {!!item.status &&
+                    ["active", "pending", "cancelled"].includes(
+                      item.status
+                    ) && (
+                      <Button
+                        icon={<EditIcon width={s(5)} height={s(16)} />}
+                        size={"small"}
+                        to={"AdminEditApplicationPage"}
+                        toParams={{
+                          id: item.id,
+                          draftId: item.draftId,
+                          backLink: {
+                            text: `Пул #${poolId}`,
+                            to: "AdminApplicationsPoolPage",
+                            params: { id: poolId },
+                          },
+                        }}
+                      >
+                        Редактировать
+                      </Button>
+                    )}
+                  {!!item.status &&
+                    ["pending", "cancelled"].includes(item.status) && (
+                      <Button
+                        icon={
+                          ["pending"].includes(item.status) ? (
+                            <TurnOffIcon width={s(10)} height={s(17)} />
+                          ) : (
+                            <TurnOnIcon width={s(10)} height={s(17)} />
+                          )
+                        }
+                        size={"small"}
+                        onPress={() =>
+                          handleChangeStatusPress(
+                            ["pending"].includes(item.status)
+                              ? "cancelled"
+                              : "pending",
+                            item?.id,
+                            item?.draftId
+                          )
+                        }
+                      >
+                        {["pending"].includes(item.status)
+                          ? "Отменить"
+                          : "Возобновить"}
+                      </Button>
+                    )}
+                </Buttons>
+              </ListItem>
+            );
+          }}
+        />
       </Content>
       <Buttons>
-        <Button icon={<StartIcon width={s(15)} height={s(16)} />}>
-          Отправить в работу
-        </Button>
-        <Button
-          icon={<AddIcon width={s(16)} height={s(16)} />}
-          to={"AdminCreateApplicationPage"}
-          toParams={{
-            id: poolItem.id,
-            backLink: {
-              text: `Пул #${poolItem.id}`,
-              to: "AdminApplicationsPoolPage",
-              params: { id: poolItem.id },
-            },
-          }}
-        >
-          Добавить заявку
-        </Button>
+        {!!isPoolStatusIsPending && (
+          <Button
+            icon={<StartIcon width={s(15)} height={s(16)} />}
+            onPress={handleChangePoolStatusToActivePress}
+          >
+            Отправить в работу
+          </Button>
+        )}
+        {!!isPoolStatusIsPending && (
+          <Button
+            icon={<AddIcon width={s(16)} height={s(16)} />}
+            to={"AdminCreateApplicationPage"}
+            toParams={{
+              id: poolId,
+              backLink: {
+                text: `Пул #${poolId}`,
+                to: "AdminApplicationsPoolPage",
+                params: { id: poolId },
+              },
+            }}
+          >
+            Добавить заявку
+          </Button>
+        )}
       </Buttons>
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});

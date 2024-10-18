@@ -79,7 +79,7 @@ export default function Page() {
             },
       })
     );
-  }, [dispatch, installerData]);
+  }, [dispatch, installerData, pageParamsWhenMounted]);
 
   useEffect(() => {
     //  Set fields on mount

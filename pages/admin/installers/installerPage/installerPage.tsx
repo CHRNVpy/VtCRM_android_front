@@ -79,7 +79,7 @@ export default function Page() {
           : {},
       })
     );
-  }, [dispatch, installerData]);
+  }, [dispatch, installerData, pageParamsWhenMounted]);
 
   const handleShowPassword = useCallback(async () => {
     if (isPasswordVisible) {

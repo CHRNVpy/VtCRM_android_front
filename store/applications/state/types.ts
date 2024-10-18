@@ -41,7 +41,7 @@ export interface DefaultApplicationStateType {
   draftId?: number;
   type: "connection" | "repair" | "line setup";
   client?: {
-    number?: string;
+    account?: string;
     fullName?: string;
     phone?: string;
     address?: string;

@@ -29,7 +29,7 @@ const slice = createSlice({
           ...defaultInputState,
           text: "connection",
         } as { text: "connection" | "repair" | "line setup" },
-        clientNumber: {
+        clientAccount: {
           ...defaultInputState,
         },
         address: {
@@ -46,7 +46,7 @@ const slice = createSlice({
     },
     editApplicationFields: {
       inputs: {
-        clientNumber: {
+        clientAccount: {
           ...defaultInputState,
         },
         address: {
@@ -92,14 +92,14 @@ const slice = createSlice({
         "type",
       ]);
     },
-    setInputStateCreateClientNumberReducer(
+    setInputStateCreateClientAccountReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
         "createApplicationFields",
         "inputs",
-        "clientNumber",
+        "clientAccount",
       ]);
     },
     setInputStateCreateAddressReducer(
@@ -132,14 +132,14 @@ const slice = createSlice({
         "comment",
       ]);
     },
-    setInputStateEditClientNumberReducer(
+    setInputStateEditClientAccountReducer(
       state,
       action: InputStateDefaultReducerActionType
     ) {
       setInputStateDefaultReducer(state, action, [
         "editApplicationFields",
         "inputs",
-        "clientNumber",
+        "clientAccount",
       ]);
     },
     setInputStateEditInstallDateReducer(
@@ -182,11 +182,11 @@ export const {
   setCurrentPage,
   setApplications,
   setInputStateCreateTypeReducer,
-  setInputStateCreateClientNumberReducer,
+  setInputStateCreateClientAccountReducer,
   setInputStateCreateAddressReducer,
   setInputStateCreateInstallDateReducer,
   setInputStateCreateCommentReducer,
-  setInputStateEditClientNumberReducer,
+  setInputStateEditClientAccountReducer,
   setInputStateEditInstallDateReducer,
   setInputStateEditAddressReducer,
   setInputStateEditCommentReducer,

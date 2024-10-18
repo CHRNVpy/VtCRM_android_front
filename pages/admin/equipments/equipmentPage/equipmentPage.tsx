@@ -73,7 +73,7 @@ export default function Page() {
           : {},
       })
     );
-  }, [dispatch, equipmentData]);
+  }, [dispatch, equipmentData, pageParamsWhenMounted]);
 
   const installerData = useMemo(() => {
     if (!equipmentData) return;
