@@ -148,21 +148,21 @@ export default function SyncData({ children }: ContentProps) {
       await dispatch(getInstallersCollection());
 
       // Post all draft installers
-      installersListRef.current.forEach(async (installer) => {
+      installersListRef.current.forEach((installer) => {
         // If have id, draft is for backward compatibility of navigation
         if (installer?.id) return;
         if (!installer?.draftId) return;
 
-        await dispatch(postInstaller({ id: installer?.draftId }));
+        dispatch(postInstaller({ id: installer?.draftId }));
       });
 
       // Patch all modified installers
-      installersListRef.current.forEach(async (installer) => {
+      installersListRef.current.forEach((installer) => {
         // Should have id and be modified
         if (!installer?.id) return;
         if (!installer?.isModified) return;
 
-        await dispatch(patchInstaller({ id: installer?.id }));
+        dispatch(patchInstaller({ id: installer?.id }));
       });
     }
 
@@ -182,21 +182,21 @@ export default function SyncData({ children }: ContentProps) {
       await dispatch(getEquipmentsCollection(params));
 
       // Post all draft equipments
-      equipmentsListRef.current.forEach(async (equipment) => {
+      equipmentsListRef.current.forEach((equipment) => {
         // If have id, draft is for backward compatibility of navigation
         if (equipment?.id) return;
         if (!equipment?.draftId) return;
 
-        await dispatch(postEquipment({ id: equipment?.draftId }));
+        dispatch(postEquipment({ id: equipment?.draftId }));
       });
 
       // Patch all modified equipments
-      equipmentsListRef.current.forEach(async (equipment) => {
+      equipmentsListRef.current.forEach((equipment) => {
         // Should have id and be modified
         if (!equipment?.id) return;
         if (!equipment?.isModified) return;
 
-        await dispatch(patchEquipment({ id: equipment?.id }));
+        dispatch(patchEquipment({ id: equipment?.id }));
       });
     }
 
@@ -219,22 +219,32 @@ export default function SyncData({ children }: ContentProps) {
       // Get current state of applications collection
       await dispatch(getApplicationsCollection(params));
 
+      const poolDraftIdsAlreadyPosted: number[] = [];
+
       // Post all draft applications
-      applicationsListRef.current.forEach(async (application) => {
+      applicationsListRef.current.forEach((application) => {
         // If have id, draft is for backward compatibility of navigation
         if (application?.id) return;
         if (!application?.draftId) return;
 
-        await dispatch(postApplication({ id: application?.draftId }));
+        //  Prevent to push several applications with the same poolDraftId
+        if (application.poolDraftId) {
+          if (poolDraftIdsAlreadyPosted.includes(application.poolDraftId))
+            return;
+
+          poolDraftIdsAlreadyPosted.push(application.poolDraftId);
+        }
+
+        dispatch(postApplication({ id: application?.draftId }));
       });
 
       // Patch all modified applications
-      applicationsListRef.current.forEach(async (application) => {
+      applicationsListRef.current.forEach((application) => {
         // Should have id and be modified
         if (!application?.id) return;
         if (!application?.isModified) return;
 
-        await dispatch(patchApplication({ id: application?.id }));
+        dispatch(patchApplication({ id: application?.id }));
       });
     }
   }, [dispatch]);

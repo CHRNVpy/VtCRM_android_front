@@ -54,7 +54,7 @@ export const getInstallersCollection =
         ver: { data: ver },
       } = (getState() as RootState)?.stateInstallers;
 
-      const modifiedLocalInstallers = [...localInstallers];
+      let modifiedLocalInstallers = [...localInstallers];
 
       //  If we have up-to-date local ver
       if (ver >= payload.ver) return;
@@ -104,28 +104,30 @@ export const getInstallersCollection =
         });
       });
 
-      modifiedLocalInstallers.map((localInstaller) => {
-        //  If local have id, do nothing
-        if (localInstaller?.id) return localInstaller;
-        //  If local don't have draftId, do nothing
-        if (!localInstaller?.draftId) return localInstaller;
+      modifiedLocalInstallers = modifiedLocalInstallers.map(
+        (localInstaller) => {
+          //  If local have id, do nothing
+          if (localInstaller?.id) return localInstaller;
+          //  If local don't have draftId, do nothing
+          if (!localInstaller?.draftId) return localInstaller;
 
-        const remoteInstallerIndexWithSameHash = remoteInstallers.findIndex(
-          (remoteInstaller: DefaultInstallerStateType) => {
-            return remoteInstaller?.hash === localInstaller?.hash;
-          }
-        );
+          const remoteInstallerIndexWithSameHash = remoteInstallers.findIndex(
+            (remoteInstaller: DefaultInstallerStateType) => {
+              return remoteInstaller?.hash === localInstaller?.hash;
+            }
+          );
 
-        //  If nothing with same hash found, do nothing
-        if (remoteInstallerIndexWithSameHash === -1) return localInstaller;
+          //  If nothing with same hash found, do nothing
+          if (remoteInstallerIndexWithSameHash === -1) return localInstaller;
 
-        //  If found remote with same hash, set remote installer data to local installer
-        //  Saving draftId in the installer to retain the ability to navigate by draftId
-        return {
-          ...remoteInstallers[remoteInstallerIndexWithSameHash],
-          draftId: localInstaller.draftId,
-        };
-      });
+          //  If found remote with same hash, set remote installer data to local installer
+          //  Saving draftId in the installer to retain the ability to navigate by draftId
+          return {
+            ...remoteInstallers[remoteInstallerIndexWithSameHash],
+            draftId: localInstaller.draftId,
+          };
+        }
+      );
 
       dispatch(setVer({ action: "setData", data: payload.ver }));
 

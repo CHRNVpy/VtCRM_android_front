@@ -43,7 +43,8 @@ export default function Page() {
     return pageParams;
   }, []);
 
-  const poolId = pageParamsWhenMounted?.id;
+  const poolId: number | undefined = pageParamsWhenMounted?.id;
+  const poolDraftId: number | undefined = pageParamsWhenMounted?.draftId;
 
   const type = useSelector(
     (state: RootState) =>
@@ -192,6 +193,37 @@ export default function Page() {
       return applicationId + 1;
     }, 1);
 
+    //  Make new poolDraftId -> biggest id plus one
+    const newPoolDraftId = poolDraftId
+      ? poolDraftId
+      : poolId
+      ? undefined
+      : applicationsList.reduce((draftId, application) => {
+          if (!application?.poolDraftId && !application?.poolId) return draftId;
+
+          const applicationPoolId = (() => {
+            if (!application?.poolId && !application?.poolDraftId) return 0;
+
+            if (!application?.poolId && application?.poolDraftId)
+              return application.poolDraftId;
+
+            if (application?.poolId && !application?.poolDraftId)
+              return application.poolId;
+
+            if (application?.poolId && application?.poolDraftId) {
+              return application.poolId > application.poolDraftId
+                ? application.poolId
+                : application.poolDraftId;
+            }
+
+            return 0;
+          })();
+
+          if (draftId >= applicationPoolId + 1) return draftId;
+
+          return applicationPoolId + 1;
+        }, 1);
+
     //  Random hash which sets in local application and then posts to remote application
     const hash = (
       Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
@@ -209,6 +241,7 @@ export default function Page() {
       status: "pending",
       installDate: installDate,
       poolId: poolId,
+      poolDraftId: newPoolDraftId,
       hash,
     };
 

@@ -78,7 +78,7 @@ export const getEquipmentsCollection =
 
       let isChanged = false;
 
-      const modifiedLocalEquipments = [...localEquipments];
+      let modifiedLocalEquipments = [...localEquipments];
       const remoteEquipments = payload?.entities?.length
         ? payload?.entities
         : [];
@@ -128,32 +128,34 @@ export const getEquipmentsCollection =
         isChanged = true;
       });
 
-      modifiedLocalEquipments.map((localEquipment) => {
-        //  If local have id, do nothing
-        if (localEquipment?.id) return localEquipment;
-        //  If local don't have draftId, do nothing
-        if (!localEquipment?.draftId) return localEquipment;
+      modifiedLocalEquipments = modifiedLocalEquipments.map(
+        (localEquipment) => {
+          //  If local have id, do nothing
+          if (localEquipment?.id) return localEquipment;
+          //  If local don't have draftId, do nothing
+          if (!localEquipment?.draftId) return localEquipment;
 
-        const remoteEquipmentIndexWithSameHash = remoteEquipments.findIndex(
-          (remoteEquipment: DefaultEquipmentStateType) => {
-            return remoteEquipment?.hash === localEquipment?.hash;
-          }
-        );
+          const remoteEquipmentIndexWithSameHash = remoteEquipments.findIndex(
+            (remoteEquipment: DefaultEquipmentStateType) => {
+              return remoteEquipment?.hash === localEquipment?.hash;
+            }
+          );
 
-        //  If nothing with same hash found, do nothing
-        if (remoteEquipmentIndexWithSameHash === -1) return localEquipment;
+          //  If nothing with same hash found, do nothing
+          if (remoteEquipmentIndexWithSameHash === -1) return localEquipment;
 
-        isChanged = true;
+          isChanged = true;
 
-        //  If found remote with same hash, set remote equipment data to local equipment
-        //  Saving draftId in the equipment to retain the ability to navigate by draftId
-        return {
-          ...remoteEquipments[remoteEquipmentIndexWithSameHash],
-          draftId: localEquipment.draftId,
-          page,
-          ver,
-        };
-      });
+          //  If found remote with same hash, set remote equipment data to local equipment
+          //  Saving draftId in the equipment to retain the ability to navigate by draftId
+          return {
+            ...remoteEquipments[remoteEquipmentIndexWithSameHash],
+            draftId: localEquipment.draftId,
+            page,
+            ver,
+          };
+        }
+      );
 
       // Set ver for POST and PATCH
       dispatch(

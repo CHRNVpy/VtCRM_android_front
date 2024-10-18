@@ -103,37 +103,57 @@ export const postApplication = createPostAsyncThunkWithArguments({
     const page = Math.ceil(rowNum / 10);
     const ver = responseData.data.ver;
 
-    const modifiedApplications = [...applications].map((application) => {
+    const poolDraftIdtoPoolId: { [key: number]: number } = {};
+
+    let modifiedApplications = [...applications].map((application) => {
       //  Saving draftId in the application to retain the ability to navigate by draftId
-      if (application?.draftId == draftId)
+      if (application?.draftId == draftId) {
+        if (application?.poolDraftId)
+          poolDraftIdtoPoolId[application.poolDraftId] = entity.poolId;
+
         return { ...entity, draftId, page, ver };
+      }
 
       return application;
     });
 
-    const modifiedUniqueApplications = modifiedApplications.reduce(
-      (result, element) => {
-        const isExists = result.find((item: any) => item?.id === element?.id);
+    modifiedApplications = modifiedApplications.reduce((result, element) => {
+      const isExists = result.find((item: any) => item?.id === element?.id);
 
-        if (!isExists) {
-          result.push(element);
-
-          return result;
-        }
-
-        if (!element?.draftId) return result;
-
-        result = result.map((item: any) =>
-          item?.id === element?.id ? element : item
-        );
+      if (!isExists) {
+        result.push(element);
 
         return result;
-      },
-      []
-    );
+      }
+
+      if (!element?.draftId) return result;
+
+      result = result.map((item: any) =>
+        item?.id === element?.id ? element : item
+      );
+
+      return result;
+    }, []);
+
+    //  Set poolId for local applications without poolId, if we get some
+    if (Object.keys(poolDraftIdtoPoolId).length)
+      modifiedApplications = modifiedApplications.map((localApplication) => {
+        //  Don't have poolId, but have poolDraftId, and we can compare them
+        if (
+          !localApplication?.poolId &&
+          localApplication?.poolDraftId &&
+          localApplication.poolDraftId in poolDraftIdtoPoolId
+        )
+          return {
+            ...localApplication,
+            poolId: poolDraftIdtoPoolId[localApplication.poolDraftId],
+          };
+
+        return localApplication;
+      });
 
     dispatch(
-      setApplications({ action: "setData", data: modifiedUniqueApplications })
+      setApplications({ action: "setData", data: modifiedApplications })
     );
 
     dispatch(getApplicationsCollection({ page: page }));

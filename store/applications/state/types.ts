@@ -53,6 +53,7 @@ export interface DefaultApplicationStateType {
   status: "active" | "pending" | "finished" | "approved" | "cancelled";
   installDate: string;
   poolId?: number;
+  poolDraftId?: number;
   images?: ApplicationImageType[];
   equipments?: ApplicationEquipmentType[];
   page?: number;

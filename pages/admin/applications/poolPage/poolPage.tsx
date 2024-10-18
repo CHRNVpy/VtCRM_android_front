@@ -42,6 +42,7 @@ export default function Page() {
   }, []);
 
   const poolId: number | undefined = pageParamsWhenMounted?.id;
+  const poolDraftId: number | undefined = pageParamsWhenMounted?.draftId;
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
@@ -49,13 +50,14 @@ export default function Page() {
 
   const poolApplicationsList = useMemo(() => {
     return applicationsList.filter((application) => {
-      if (!application?.poolId) return false;
-
-      if (application.poolId !== poolId) return false;
+      if (!application?.poolId && !application?.poolDraftId) return false;
+      if (!!application.poolId && application.poolId !== poolId) return false;
+      if (!!application.poolDraftId && application.poolDraftId !== poolDraftId)
+        return false;
 
       return true;
     });
-  }, [applicationsList, poolId]);
+  }, [applicationsList, poolId, poolDraftId]);
 
   const isPoolStatusIsPending = useMemo(() => {
     return poolApplicationsList.some((application) => {
@@ -131,8 +133,15 @@ export default function Page() {
   const handleChangePoolStatusToActivePress = useCallback(async () => {
     const modifiedApplicationsList = [...applicationsList].map(
       (application) => {
-        if (!application?.poolId) return application;
-        if (application.poolId !== poolId) return application;
+        if (!application?.poolId && !application?.poolDraftId)
+          return application;
+        if (!!application.poolId && application.poolId !== poolId)
+          return application;
+        if (
+          !!application.poolDraftId &&
+          application.poolDraftId !== poolDraftId
+        )
+          return application;
 
         const isModified = application?.isModified
           ? application.isModified
@@ -160,7 +169,7 @@ export default function Page() {
 
       dispatch(patchApplication({ id: application.id }));
     });
-  }, [dispatch, poolId]);
+  }, [dispatch, poolId, poolDraftId]);
 
   if (!applicationsCount) return;
 
@@ -173,7 +182,7 @@ export default function Page() {
         isSettingsOpen={isSettingsOpen}
         setIsSettingsOpen={async () => setIsSettingsOpen(!isSettingsOpen)}
       >
-        Пул #{poolId}
+        Пул {poolId ? `#${poolId}` : `#(${poolDraftId})`}
       </Title>
       {!!isSettingsOpen && (
         <MarginBottom>
@@ -385,6 +394,7 @@ export default function Page() {
             to={"AdminCreateApplicationPage"}
             toParams={{
               id: poolId,
+              draftId: poolDraftId,
               backLink: {
                 text: `Пул #${poolId}`,
                 to: "AdminApplicationsPoolPage",

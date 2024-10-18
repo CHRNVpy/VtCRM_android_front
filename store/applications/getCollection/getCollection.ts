@@ -99,12 +99,12 @@ export const getApplicationsCollection =
 
       let isChanged = false;
 
-      const modifiedLocalApplications = [...localApplications];
-      const remoteApplications = payload?.entities?.length
+      let modifiedLocalApplications = [...localApplications];
+      const remoteApplicationsList = payload?.entities?.length
         ? payload?.entities
         : [];
 
-      remoteApplications.forEach(
+      remoteApplicationsList.forEach(
         (remoteApplication: DefaultApplicationStateType) => {
           const localApplicationIndexWithSameId = localApplications.findIndex(
             (localApplication) => {
@@ -176,32 +176,61 @@ export const getApplicationsCollection =
         }
       );
 
-      modifiedLocalApplications.map((localApplication) => {
-        //  If local have id, do nothing
-        if (localApplication?.id) return localApplication;
-        //  If local don't have draftId, do nothing
-        if (!localApplication?.draftId) return localApplication;
+      const poolDraftIdtoPoolId: { [key: number]: number } = {};
 
-        const remoteApplicationIndexWithSameHash = remoteApplications.findIndex(
-          (remoteApplication: DefaultApplicationStateType) => {
-            return remoteApplication?.hash === localApplication?.hash;
+      modifiedLocalApplications = modifiedLocalApplications.map(
+        (localApplication) => {
+          //  If local have id, do nothing
+          if (localApplication?.id) return localApplication;
+          //  If local don't have draftId, do nothing
+          if (!localApplication?.draftId) return localApplication;
+
+          const remoteApplicationIndexWithSameHash =
+            remoteApplicationsList.findIndex(
+              (remoteApplication: DefaultApplicationStateType) => {
+                return remoteApplication?.hash === localApplication?.hash;
+              }
+            );
+
+          //  If nothing with same hash found, do nothing
+          if (remoteApplicationIndexWithSameHash === -1)
+            return localApplication;
+
+          isChanged = true;
+
+          if (localApplication?.poolDraftId)
+            poolDraftIdtoPoolId[localApplication.poolDraftId] =
+              remoteApplicationsList[remoteApplicationIndexWithSameHash].poolId;
+
+          //  If found remote with same hash, set remote application data to local application
+          //  Saving draftId in the application to retain the ability to navigate by draftId
+          return {
+            ...remoteApplicationsList[remoteApplicationIndexWithSameHash],
+            draftId: localApplication.draftId,
+            page,
+            ver,
+          };
+        }
+      );
+
+      //  Set poolId for local applications without poolId, if we get some
+      if (Object.keys(poolDraftIdtoPoolId).length)
+        modifiedLocalApplications = modifiedLocalApplications.map(
+          (localApplication) => {
+            //  Don't have poolId, but have poolDraftId, and we can compare them
+            if (
+              !localApplication?.poolId &&
+              localApplication?.poolDraftId &&
+              localApplication.poolDraftId in poolDraftIdtoPoolId
+            )
+              return {
+                ...localApplication,
+                poolId: poolDraftIdtoPoolId[localApplication.poolDraftId],
+              };
+
+            return localApplication;
           }
         );
-
-        //  If nothing with same hash found, do nothing
-        if (remoteApplicationIndexWithSameHash === -1) return localApplication;
-
-        isChanged = true;
-
-        //  If found remote with same hash, set remote application data to local application
-        //  Saving draftId in the application to retain the ability to navigate by draftId
-        return {
-          ...remoteApplications[remoteApplicationIndexWithSameHash],
-          draftId: localApplication.draftId,
-          page,
-          ver,
-        };
-      });
 
       // Set ver for POST and PATCH
       dispatch(
