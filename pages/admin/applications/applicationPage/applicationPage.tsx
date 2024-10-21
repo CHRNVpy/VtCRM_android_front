@@ -393,9 +393,7 @@ export default function Page() {
       </ScrollView>
       <Buttons>
         {!!applicationData.status &&
-          ["active", "pending", "cancelled"].includes(
-            applicationData.status
-          ) && (
+          ["pending", "cancelled"].includes(applicationData.status) && (
             <Button
               icon={<EditIcon width={s(7)} height={s(22)} />}
               to={"AdminEditApplicationPage"}
