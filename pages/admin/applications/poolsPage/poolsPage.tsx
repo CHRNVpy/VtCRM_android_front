@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -17,8 +17,14 @@ import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString, ruApplicationsByCount } from "@/helpers/strings";
+import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 
 export default function Page() {
+  const dispatch: AppDispatch = useDispatch();
+
+  const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
+
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
   );
@@ -27,41 +33,20 @@ export default function Page() {
     (state: RootState) => state.statePools.pools.data
   );
 
-  console.log(poolsList);
+  //  When page opened
+  useEffect(() => {
+    if (poolsList?.length > 0) return;
 
-  /*
-  console.log(poolsListFromDb);
-  console.log(applicationsList);
-
-  const poolsList = useMemo(() => {
-    const result: any[] = [];
-
-    applicationsList.forEach((application) => {
-      const pool = result.find((pool) => {
-        if (pool.id == application.poolId) return true;
-
-        return false;
-      });
-
-      if (!pool) {
-        result.push({
-          id: application.poolId,
-          applicationsCount: 1,
-          applications: [application],
-        });
-      } else {
-        pool.applicationsCount = pool.applicationsCount + 1;
-        pool.applications.push(application);
-      }
-    });
-
-    return result;
-  }, [applicationsList]);
-  */
+    dispatch(getPoolsCollection());
+  }, []);
 
   return (
     <Wrapper>
-      <Header linkText={"На главную"} to={"AdminMainPage"} />
+      <Header
+        linkText={"На главную"}
+        to={"AdminMainPage"}
+        isSyncInProcess={isApplicationsSyncInProcess}
+      />
       <Title>Пулы заявок</Title>
       <Content>
         {!poolsList?.length && (
@@ -141,6 +126,10 @@ export default function Page() {
                             to={"AdminApplicationPage"}
                             toParams={{
                               id: applicationItem.id,
+                              draftId: applicationItem.draftId,
+                              backLink: {
+                                to: "AdminApplicationsPoolsPage",
+                              },
                             }}
                           >
                             <TwoColumns
@@ -148,7 +137,11 @@ export default function Page() {
                               leftColumn={
                                 <>
                                   <TextType>
-                                    {applicationItem?.client?.fullName}
+                                    {applicationItem.type == "connection"
+                                      ? applicationItem?.client?.fullName
+                                      : applicationItem.type == "repair"
+                                      ? applicationItem?.client?.fullName
+                                      : applicationItem?.address}
                                   </TextType>
                                   <TextType size="small">
                                     {applicationItem.type == "connection"

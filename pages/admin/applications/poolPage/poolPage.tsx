@@ -26,14 +26,22 @@ import { patchApplication } from "@/store/applications/patch/patch";
 import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
 import { setPage } from "@/store/navigation/state/state";
+import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
   const dispatch: AppDispatch = useDispatch();
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
+  );
+
+  const poolsList = useSelector(
+    (state: RootState) => state.statePools.pools.data
   );
 
   // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
@@ -171,11 +179,22 @@ export default function Page() {
     });
   }, [dispatch, poolId, poolDraftId]);
 
+  //  When page opened
+  useEffect(() => {
+    if (poolsList?.length > 0) return;
+
+    dispatch(getPoolsCollection());
+  }, []);
+
   if (!applicationsCount) return;
 
   return (
     <Wrapper>
-      <Header linkText={"Пулы заявок"} to={"AdminApplicationsPoolsPage"} />
+      <Header
+        linkText={"Пулы заявок"}
+        to={"AdminApplicationsPoolsPage"}
+        isSyncInProcess={isApplicationsSyncInProcess}
+      />
       <Title
         isWithSettings={true}
         isNoMargin={isSettingsOpen}

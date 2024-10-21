@@ -28,9 +28,12 @@ import {
 } from "@/store/applications/state/state";
 import { patchApplication } from "@/store/applications/patch/patch";
 import { s } from "react-native-size-matters";
+import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
+
+  const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -281,6 +284,7 @@ export default function Page() {
         linkText={`Заявка #${applicationData.id}`}
         to={"AdminApplicationPage"}
         toParams={{ id: applicationData.id }}
+        isSyncInProcess={isApplicationsSyncInProcess}
       />
       <Title>Редактирование заявки</Title>
       <FlatList
@@ -306,7 +310,7 @@ export default function Page() {
         }}
         ListHeaderComponent={
           <Content isWithPaddings={true}>
-            {applicationData.installer && (
+            {!!applicationData?.installer?.id && (
               <MarginBottom>
                 <PressableArea
                   to={"AdminInstallerPage"}

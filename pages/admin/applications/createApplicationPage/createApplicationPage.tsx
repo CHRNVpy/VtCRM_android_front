@@ -31,10 +31,12 @@ import { setPage } from "@/store/navigation/state/state";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { postApplication } from "@/store/applications/post/post";
 import { setPools } from "@/store/pools/state/state";
-import { DefaultPoolStateType } from "@/store/pools/state/types";
+import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
+
+  const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
@@ -318,7 +320,11 @@ export default function Page() {
 
   return (
     <Wrapper>
-      <Header linkText={`Список пулов`} to={"AdminApplicationsPoolsPage"} />
+      <Header
+        linkText={`Список пулов`}
+        to={"AdminApplicationsPoolsPage"}
+        isSyncInProcess={isApplicationsSyncInProcess}
+      />
       <Title>
         Добавление заявки {poolId ? <>в пул #{poolId}</> : <>и нового пула</>}
       </Title>

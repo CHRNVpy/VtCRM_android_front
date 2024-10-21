@@ -278,7 +278,7 @@ export default function SyncData({ children }: ContentProps) {
 
     intervalRef.current = setInterval(() => {
       syncData();
-    }, 60 * 1000);
+    }, 20 * 1000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

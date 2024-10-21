@@ -36,16 +36,28 @@ export const useIsApplicationsSyncInProcess = () => {
     );
   }, [applicationsPatchs]);
 
+  const poolsGetCollections = useSelector(
+    (state: RootState) => state.getCollectionPools.poolsGetCollectionState
+  );
+
+  const isPoolsGetCollectionInProcess = useMemo(() => {
+    return Object.keys(poolsGetCollections).some(
+      (poolPostKey) => poolsGetCollections[poolPostKey]?.isInProcess
+    );
+  }, [poolsGetCollections]);
+
   const isSyncInProcess = useMemo(() => {
     return (
       isApplicationsGetCollectionInProcess ||
       isApplicationsPostInProcess ||
-      isApplicationsPatchInProcess
+      isApplicationsPatchInProcess ||
+      isPoolsGetCollectionInProcess
     );
   }, [
     isApplicationsGetCollectionInProcess,
     isApplicationsPostInProcess,
     isApplicationsPatchInProcess,
+    isPoolsGetCollectionInProcess,
   ]);
 
   return isSyncInProcess;

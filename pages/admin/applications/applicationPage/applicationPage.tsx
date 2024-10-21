@@ -25,6 +25,7 @@ import {
 import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -33,6 +34,10 @@ export default function Page() {
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
+  );
+
+  const poolsList = useSelector(
+    (state: RootState) => state.statePools.pools.data
   );
 
   // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
@@ -158,6 +163,13 @@ export default function Page() {
     },
     [dispatch, applicationsList, applicationId, applicationDraftId]
   );
+
+  //  When page opened
+  useEffect(() => {
+    if (poolsList?.length > 0) return;
+
+    dispatch(getPoolsCollection());
+  }, []);
 
   if (!applicationData) return;
 
