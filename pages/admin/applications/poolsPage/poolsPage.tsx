@@ -247,6 +247,10 @@ export default function Page() {
                             toParams={{
                               id: applicationItem.id,
                               draftId: applicationItem.draftId,
+                              backLink: {
+                                text: `Пулы заявок`,
+                                to: "AdminApplicationsPoolsPage",
+                              },
                             }}
                           >
                             <TwoColumns
@@ -332,6 +336,7 @@ export default function Page() {
                           id: item.id,
                           draftId: item.draftId,
                           backLink: {
+                            text: `Пулы заявок`,
                             to: "AdminApplicationsPoolsPage",
                           },
                         }}
