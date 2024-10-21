@@ -32,23 +32,17 @@ import SaveIcon from "@/assets/saveIcon.svg";
 import { postApplication } from "@/store/applications/post/post";
 import { setPools } from "@/store/pools/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
-
-  const poolId: number | undefined = pageParamsWhenMounted?.id;
-  const poolDraftId: number | undefined = pageParamsWhenMounted?.draftId;
+  const poolId: number | undefined = pageParamsWhenFocused?.id;
+  const poolDraftId: number | undefined = pageParamsWhenFocused?.draftId;
 
   const type = useSelector(
     (state: RootState) =>
@@ -261,23 +255,23 @@ export default function Page() {
     //  Set changes to pools list
     let modifiedPoolsList = [...poolsList];
 
-    if (poolId) {
+    if (!!poolId || !!poolDraftId)
       modifiedPoolsList = modifiedPoolsList.map((pool) => {
-        if (pool.id !== poolId) return pool;
+        if (!pool.id && !pool.draftId) return pool;
+        if (!poolId && !poolDraftId) return pool;
+        if (!!pool.id && !!poolId && pool.id !== poolId) return pool;
+        if (!!pool.draftId && !!poolDraftId && pool.draftId !== poolDraftId)
+          return pool;
 
-        pool.applicationsCount = pool.applicationsCount + 1;
-
-        return pool;
+        return { ...pool, applicationsCount: pool.applicationsCount + 1 };
       });
-    }
 
-    if (!poolId && poolDraftId) {
+    if (!poolId && !poolDraftId && newPoolDraftId)
       modifiedPoolsList.push({
-        draftId: poolDraftId,
+        draftId: newPoolDraftId,
         status: "pending",
         applicationsCount: 1,
       });
-    }
 
     dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
 
@@ -290,20 +284,21 @@ export default function Page() {
     dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));
     dispatch(setInputStateCreateCommentReducer({ action: "reset" }));
 
+    //  Post application can be done only if it have a remote poolId or don't have poolDraftId
+    if (!!poolId || !poolDraftId) dispatch(postApplication({ id: draftId }));
+
     //  Change page to parent
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : { draftId: draftId },
       })
     );
-
-    dispatch(postApplication({ id: draftId }));
   }, [
     dispatch,
     isButtonDisabled,
@@ -313,20 +308,51 @@ export default function Page() {
     installDate,
     comment,
     applicationsList,
-    pageParamsWhenMounted,
+    pageParamsWhenFocused,
     poolId,
+    poolDraftId,
     poolsList,
   ]);
 
   return (
     <Wrapper>
       <Header
-        linkText={`Список пулов`}
-        to={"AdminApplicationsPoolsPage"}
+        linkText={
+          poolId
+            ? `Пул #${poolId}`
+            : poolDraftId
+            ? `Пул #(${poolDraftId})`
+            : `Пулы заявок`
+        }
+        to={
+          poolId
+            ? "AdminApplicationsPoolPage"
+            : poolDraftId
+            ? "AdminApplicationsPoolPage"
+            : "AdminApplicationsPoolsPage"
+        }
+        toParams={
+          poolId
+            ? {
+                id: poolId,
+                draftId: poolDraftId,
+              }
+            : poolDraftId
+            ? {
+                id: poolId,
+                draftId: poolDraftId,
+              }
+            : {}
+        }
         isSyncInProcess={isApplicationsSyncInProcess}
       />
       <Title>
-        Добавление заявки {poolId ? <>в пул #{poolId}</> : <>и нового пула</>}
+        Добавление заявки{" "}
+        {poolId || poolDraftId ? (
+          <>в пул {poolId ? `#${poolId}` : `#(${poolDraftId})`}</>
+        ) : (
+          <>и нового пула</>
+        )}
       </Title>
       <FlatList
         keyboardShouldPersistTaps="always"

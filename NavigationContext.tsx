@@ -32,7 +32,7 @@ export const NavigationProvider: React.FC<{
 }> = ({ children, navigationRef }) => {
   const navigate = (
     name: keyof RootStackParamList,
-    params?: { [params: string]: any }
+    params: { [params: string]: any } = {}
   ) => {
     navigationRef.current?.navigate(name, params);
   };

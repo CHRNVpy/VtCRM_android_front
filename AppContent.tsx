@@ -68,7 +68,7 @@ export default function App() {
     //  Default admin page
     dispatch(setPage({ action: "setData", data: "AdminMainPage" }));
     navigate("AdminMainPage");
-  }, [navigate, accessToken, page, pageParams]);
+  }, [accessToken, page, pageParams]);
 
   return (
     <SafeAreaView style={styles.wrapper}>

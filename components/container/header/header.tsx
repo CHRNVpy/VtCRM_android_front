@@ -6,16 +6,17 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import LogoSvg from "@/assets/logo.svg";
 import BackLinkIconSvg from "@/assets/backLinkIcon.svg";
 import { RootStackParamList } from "@/NavigationContext";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@/store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
 import { setPage } from "@/store/navigation/state/state";
 import colors from "@/helpers/colors";
 import { s } from "react-native-size-matters";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 interface ContentProps {
   linkText?: string;
@@ -33,14 +34,7 @@ export default function Header({
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
-
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
   const handleOnPress = useCallback(() => {
     if (!to) return;
@@ -48,15 +42,15 @@ export default function Header({
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : to,
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : toParams,
       })
     );
-  }, [dispatch, to, toParams, pageParamsWhenMounted]);
+  }, [dispatch, to, toParams, pageParamsWhenFocused]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
@@ -67,24 +61,24 @@ export default function Header({
       dispatch(
         setPage({
           action: "setData",
-          data: pageParamsWhenMounted?.backLink?.to
-            ? pageParamsWhenMounted?.backLink?.to
+          data: pageParamsWhenFocused?.backLink?.to
+            ? pageParamsWhenFocused?.backLink?.to
             : to,
-          params: pageParamsWhenMounted?.backLink?.to
-            ? pageParamsWhenMounted?.backLink?.params
+          params: pageParamsWhenFocused?.backLink?.to
+            ? pageParamsWhenFocused?.backLink?.params
             : toParams,
         })
       );
     });
 
     return unsubscribe;
-  }, [dispatch, navigation, to, toParams, pageParamsWhenMounted]);
+  }, [dispatch, navigation, to, toParams, pageParamsWhenFocused]);
 
   return (
     <Pressable onPress={handleOnPress}>
       <View style={[styles.header, !!linkText && styles.isWithLink]}>
         <View style={styles.content}>
-          {linkText || pageParamsWhenMounted?.backLink?.text ? (
+          {linkText || pageParamsWhenFocused?.backLink?.text ? (
             <View style={styles.backLink}>
               <BackLinkIconSvg width={s(31)} height={s(26)} />
               <Text
@@ -92,8 +86,8 @@ export default function Header({
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {pageParamsWhenMounted?.backLink?.text
-                  ? pageParamsWhenMounted?.backLink?.text
+                {pageParamsWhenFocused?.backLink?.text
+                  ? pageParamsWhenFocused?.backLink?.text
                   : linkText}
               </Text>
             </View>

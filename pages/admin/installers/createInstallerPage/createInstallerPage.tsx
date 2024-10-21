@@ -23,6 +23,7 @@ import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setPage } from "@/store/navigation/state/state";
 import { postInstaller } from "@/store/installers/post/post";
 import { s } from "react-native-size-matters";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -32,14 +33,7 @@ export default function Page() {
   const phoneInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
-
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
   const lastname = useSelector(
     (state: RootState) =>
@@ -228,11 +222,11 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminInstallersPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {},
       })
     );
@@ -247,7 +241,7 @@ export default function Page() {
     phone,
     password,
     installersData,
-    pageParamsWhenMounted,
+    pageParamsWhenFocused,
   ]);
 
   return (

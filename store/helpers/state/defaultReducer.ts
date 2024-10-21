@@ -37,5 +37,8 @@ export const setStateDefaultReducer = (
     stateByPath.data = externalDefaultState?.data
       ? externalDefaultState?.data
       : defaultState.data;
+    stateByPath.params = externalDefaultState?.params
+      ? externalDefaultState?.params
+      : defaultState.params;
   }
 };

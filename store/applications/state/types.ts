@@ -60,6 +60,7 @@ export interface DefaultApplicationStateType {
   ver?: number;
   hash?: string;
   isModified?: boolean;
+  isApplicationCanBePushed?: boolean;
 }
 
 export interface DefaultApplicationsStateType extends DefaultStateType {

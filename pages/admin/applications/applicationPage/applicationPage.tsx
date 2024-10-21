@@ -27,23 +27,17 @@ import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
-
-  const applicationId = pageParamsWhenMounted?.id;
-  const applicationDraftId = pageParamsWhenMounted?.draftId;
+  const applicationId = pageParamsWhenFocused?.id;
+  const applicationDraftId = pageParamsWhenFocused?.draftId;
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
@@ -111,15 +105,15 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminApplicationsPoolsPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {},
       })
     );
-  }, [dispatch, applicationData, pageParamsWhenMounted]);
+  }, [dispatch, applicationData, pageParamsWhenFocused]);
 
   const handleChangeStatusPress = useCallback(
     async (status: DefaultApplicationStateType["status"]) => {
@@ -178,22 +172,28 @@ export default function Page() {
         linkText={
           applicationData.poolId
             ? `Пул #${applicationData.poolId}`
-            : applicationData.draftId
+            : applicationData.poolDraftId
             ? `Пул #(${applicationData.poolDraftId})`
             : `Пулы заявок`
         }
         to={
           applicationData.poolId
             ? "AdminApplicationsPoolPage"
-            : applicationData.draftId
+            : applicationData.poolDraftId
             ? "AdminApplicationsPoolPage"
             : "AdminApplicationsPoolsPage"
         }
         toParams={
           applicationData.poolId
-            ? { id: applicationData.poolId }
+            ? {
+                id: applicationData.poolId,
+                draftId: applicationData.poolDraftId,
+              }
             : applicationData.poolDraftId
-            ? { draftId: applicationData.poolDraftId }
+            ? {
+                id: applicationData.poolId,
+                draftId: applicationData.poolDraftId,
+              }
             : {}
         }
         isSyncInProcess={isApplicationsSyncInProcess}

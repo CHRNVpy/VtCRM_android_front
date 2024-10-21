@@ -25,6 +25,7 @@ import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setInstallers } from "@/store/installers/state/state";
 import { useIsInstallersSyncInProcess } from "@/components/hooks/isInstallersSyncInProcess/isInstallersSyncInProcess";
 import * as Clipboard from "expo-clipboard";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -32,17 +33,10 @@ export default function Page() {
 
   const isInstallersSyncInProcess = useIsInstallersSyncInProcess();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
-
-  const installerId = pageParamsWhenMounted?.id;
-  const installerDraftId = pageParamsWhenMounted?.draftId;
+  const installerId = pageParamsWhenFocused?.id;
+  const installerDraftId = pageParamsWhenFocused?.draftId;
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
@@ -71,15 +65,15 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminInstallersPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {},
       })
     );
-  }, [dispatch, installerData, pageParamsWhenMounted]);
+  }, [dispatch, installerData, pageParamsWhenFocused]);
 
   const handleShowPassword = useCallback(async () => {
     if (isPasswordVisible) {
@@ -252,8 +246,8 @@ export default function Page() {
           icon={<ChangePasswordIcon width={s(22)} height={s(20)} />}
           to={"AdminEditInstallerPasswordPage"}
           toParams={{
-            id: pageParamsWhenMounted?.id,
-            draftId: pageParamsWhenMounted?.draftId,
+            id: pageParamsWhenFocused?.id,
+            draftId: pageParamsWhenFocused?.draftId,
           }}
         >
           Сменить пароль
@@ -262,8 +256,8 @@ export default function Page() {
           icon={<EditIcon width={s(7)} height={s(22)} />}
           to={"AdminEditInstallerPage"}
           toParams={{
-            id: pageParamsWhenMounted?.id,
-            draftId: pageParamsWhenMounted?.draftId,
+            id: pageParamsWhenFocused?.id,
+            draftId: pageParamsWhenFocused?.draftId,
           }}
         >
           Редактировать

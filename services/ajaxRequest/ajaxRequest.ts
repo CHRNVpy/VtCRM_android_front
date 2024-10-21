@@ -69,6 +69,8 @@ const ajaxRequest = async (
   },
   preventRepeat: boolean = false
 ): Promise<AjaxRequestResult | { status: number; data?: any }> => {
+  return { status: 500, data: "noInternet" };
+  /*
   const mainHeaders: AxiosRequestHeaders["headers"] = {};
 
   mainHeaders["Content-Type"] = "application/json";
@@ -202,6 +204,7 @@ const ajaxRequest = async (
 
     return response;
   }
+    */
 };
 
 export const cancelTokenFunction = axios.CancelToken;

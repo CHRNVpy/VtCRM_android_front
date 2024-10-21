@@ -218,21 +218,14 @@ export default function SyncData({ children }: ContentProps) {
       // Get current state of applications collection
       await dispatch(getPoolsCollection(params));
 
-      const poolDraftIdsAlreadyPosted: number[] = [];
-
       // Post all draft applications
       applicationsListRef.current.forEach((application) => {
         // If have id, draft is for backward compatibility of navigation
         if (application?.id) return;
         if (!application?.draftId) return;
 
-        //  Prevent to push several applications with the same poolDraftId
-        if (application.poolDraftId) {
-          if (poolDraftIdsAlreadyPosted.includes(application.poolDraftId))
-            return;
-
-          poolDraftIdsAlreadyPosted.push(application.poolDraftId);
-        }
+        //  If don't have poolId, and also have poolDraftId, it should wait for remote poolId
+        if (!application.poolId && !!application.poolDraftId) return;
 
         dispatch(postApplication({ id: application?.draftId }));
       });

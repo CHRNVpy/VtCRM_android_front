@@ -31,6 +31,7 @@ import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplication
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 import { patchPool } from "@/store/pools/patch/patch";
 import { setPools } from "@/store/pools/state/state";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -47,13 +48,10 @@ export default function Page() {
     (state: RootState) => state.patchPool.patchPoolState
   );
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  const poolId: number | undefined = pageParamsWhenMounted?.id;
-  const poolDraftId: number | undefined = pageParamsWhenMounted?.draftId;
+  const poolId: number | undefined = pageParamsWhenFocused?.id;
+  const poolDraftId: number | undefined = pageParamsWhenFocused?.draftId;
 
   const isPatchCurrentPoolInProcess = useMemo(() => {
     if (!poolId) return false;
@@ -69,10 +67,13 @@ export default function Page() {
     (state: RootState) => state.statePools.pools.data
   );
 
+  const applicationsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
   const poolData = useMemo(() => {
     return poolsList.find((pool) => {
       if (!!pool?.id && !!poolId && pool.id == poolId) return true;
-
       if (!!pool?.draftId && !!poolDraftId && pool?.draftId == poolDraftId)
         return true;
 
@@ -80,9 +81,9 @@ export default function Page() {
     });
   }, [poolsList, poolId, poolDraftId]);
 
-  const applicationsList = useSelector(
-    (state: RootState) => state.stateApplications.applications.data
-  );
+  const isPoolStatusIsPending = useMemo(() => {
+    return poolData?.status == "pending";
+  }, [poolData]);
 
   const poolApplicationsList = useMemo(() => {
     return applicationsList.filter((application) => {
@@ -95,10 +96,6 @@ export default function Page() {
     });
   }, [applicationsList, poolId, poolDraftId]);
 
-  const isPoolStatusIsPending = useMemo(() => {
-    return poolData?.status == "pending";
-  }, [poolApplicationsList, poolData]);
-
   const applicationsCount = useMemo(() => {
     return poolApplicationsList ? poolApplicationsList.length : 0;
   }, [poolApplicationsList]);
@@ -110,15 +107,15 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminApplicationsPoolsPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {},
       })
     );
-  }, [dispatch, applicationsCount, pageParamsWhenMounted]);
+  }, [dispatch, applicationsCount, pageParamsWhenFocused]);
 
   const handleChangeStatusPress = useCallback(
     async (
@@ -439,14 +436,14 @@ export default function Page() {
               id: poolId,
               draftId: poolDraftId,
               backLink: {
-                text: `Пул #${poolId}`,
+                text: `Пул ${poolId ? `#${poolId}` : `#(${poolDraftId})`}`,
                 to: "AdminApplicationsPoolPage",
-                params: { id: poolId },
+                params: { id: poolId, draftId: poolDraftId },
               },
             }}
             isDisabled={isPatchCurrentPoolInProcess}
           >
-            Добавить заявку {poolId} {poolDraftId}
+            Добавить заявку {poolId} D{poolDraftId}
           </Button>
         )}
       </Buttons>

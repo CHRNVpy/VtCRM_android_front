@@ -29,23 +29,17 @@ import {
 import { patchApplication } from "@/store/applications/patch/patch";
 import { s } from "react-native-size-matters";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
-
-  const applicationId = pageParamsWhenMounted?.id;
-  const applicationDraftId = pageParamsWhenMounted?.draftId;
+  const applicationId = pageParamsWhenFocused?.id;
+  const applicationDraftId = pageParamsWhenFocused?.draftId;
 
   const clientAccount = useSelector(
     (state: RootState) =>
@@ -94,18 +88,18 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {
-              id: pageParamsWhenMounted.id,
-              draftId: pageParamsWhenMounted.draftId,
+              id: pageParamsWhenFocused.id,
+              draftId: pageParamsWhenFocused.draftId,
             },
       })
     );
-  }, [dispatch, applicationData, pageParamsWhenMounted]);
+  }, [dispatch, applicationData, pageParamsWhenFocused]);
 
   useEffect(() => {
     //  Set fields on mount
@@ -250,14 +244,14 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {
-              id: pageParamsWhenMounted.id,
-              draftId: pageParamsWhenMounted.draftId,
+              id: pageParamsWhenFocused.id,
+              draftId: pageParamsWhenFocused.draftId,
             },
       })
     );
@@ -273,7 +267,7 @@ export default function Page() {
     installDate,
     comment,
     applicationsList,
-    pageParamsWhenMounted,
+    pageParamsWhenFocused,
   ]);
 
   if (!applicationData) return null;

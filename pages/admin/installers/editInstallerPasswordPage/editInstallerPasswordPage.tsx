@@ -17,21 +17,15 @@ import {
   setInstallers,
 } from "@/store/installers/state/state";
 import { patchInstaller } from "@/store/installers/patch/patch";
+import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParamsWhenFocused = usePageParamsWhenFocused();
 
-  // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
-  const pageParamsWhenMounted = useMemo(() => {
-    return pageParams;
-  }, []);
-
-  const installerId = pageParamsWhenMounted?.id;
-  const installerDraftId = pageParamsWhenMounted?.draftId;
+  const installerId = pageParamsWhenFocused?.id;
+  const installerDraftId = pageParamsWhenFocused?.draftId;
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
@@ -60,18 +54,18 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminInstallerPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {
-              id: pageParamsWhenMounted.id,
-              draftId: pageParamsWhenMounted.draftId,
+              id: pageParamsWhenFocused.id,
+              draftId: pageParamsWhenFocused.draftId,
             },
       })
     );
-  }, [dispatch, installerData, pageParamsWhenMounted]);
+  }, [dispatch, installerData, pageParamsWhenFocused]);
 
   useEffect(() => {
     //  Clear password field on unmount
@@ -132,14 +126,14 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.to
+        data: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.to
           : "AdminInstallerPage",
-        params: pageParamsWhenMounted?.backLink?.to
-          ? pageParamsWhenMounted?.backLink?.params
+        params: pageParamsWhenFocused?.backLink?.to
+          ? pageParamsWhenFocused?.backLink?.params
           : {
-              id: pageParamsWhenMounted.id,
-              draftId: pageParamsWhenMounted.draftId,
+              id: pageParamsWhenFocused.id,
+              draftId: pageParamsWhenFocused.draftId,
             },
       })
     );
@@ -151,7 +145,7 @@ export default function Page() {
     dispatch,
     isButtonDisabled,
     password,
-    pageParamsWhenMounted,
+    pageParamsWhenFocused,
     installersList,
     installerId,
     installerDraftId,
@@ -164,7 +158,7 @@ export default function Page() {
       <Header
         linkText={`#${installerData.id} ${installerData.lastname} ${installerData.firstname} ${installerData.middlename}`}
         to={"AdminInstallerPage"}
-        toParams={{ id: pageParamsWhenMounted?.id }}
+        toParams={{ id: pageParamsWhenFocused?.id }}
       />
       <Title>Изменение пароля</Title>
       <Content isWithPaddings={true}>

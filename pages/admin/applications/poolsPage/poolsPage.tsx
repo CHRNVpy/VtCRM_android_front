@@ -247,9 +247,6 @@ export default function Page() {
                             toParams={{
                               id: applicationItem.id,
                               draftId: applicationItem.draftId,
-                              backLink: {
-                                to: "AdminApplicationsPoolsPage",
-                              },
                             }}
                           >
                             <TwoColumns
@@ -333,10 +330,14 @@ export default function Page() {
                         to={"AdminCreateApplicationPage"}
                         toParams={{
                           id: item.id,
+                          draftId: item.draftId,
+                          backLink: {
+                            to: "AdminApplicationsPoolsPage",
+                          },
                         }}
                         isDisabled={isInProcess}
                       >
-                        Добавить заявку
+                        Добавить заявку {item.id} D{item.draftId}
                       </Button>
                       <Button
                         icon={<StartIcon width={s(13)} height={s(13)} />}
