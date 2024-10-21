@@ -19,6 +19,7 @@ import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCol
 import { postApplication } from "@/store/applications/post/post";
 import { patchApplication } from "@/store/applications/patch/patch";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
+import { patchPool } from "@/store/pools/patch/patch";
 
 interface ContentProps {
   children?: ReactNode;
@@ -243,6 +244,15 @@ export default function SyncData({ children }: ContentProps) {
         if (!application?.isModified) return;
 
         dispatch(patchApplication({ id: application?.id }));
+      });
+
+      // Patch all modified pools
+      poolsListRef.current.forEach((pool) => {
+        // Should have id and be modified
+        if (!pool?.id) return;
+        if (!pool?.isModified) return;
+
+        dispatch(patchPool({ id: pool?.id }));
       });
     }
   }, [dispatch]);

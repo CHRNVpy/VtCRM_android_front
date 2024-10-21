@@ -11,7 +11,7 @@ import {
 } from "@/store/applications/patch/config";
 import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { setApplications } from "@/store/applications/state/state";
-import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 import { PatchState } from "@/store/helpers/patch/types";
 
 const slice = createSlice({
@@ -96,14 +96,18 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
       applications: { data: applications },
     } = (getState() as RootState)?.stateApplications;
 
+    const {
+      pools: { data: pools },
+    } = (getState() as RootState)?.statePools;
+
     const entity = responseData.data.entity;
 
-    let page = 1;
+    let currentPoolId: number | undefined;
 
     const modifiedApplications = [...applications].map((application) => {
       //  Saving draftId in the application to retain the ability to navigate by draftId
       if (application?.id == id) {
-        page = application?.page ? application?.page : page;
+        currentPoolId = application?.poolId;
 
         return {
           ...entity,
@@ -116,11 +120,16 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
       return application;
     });
 
+    const currentPool = pools.find(
+      (pool) => !!currentPoolId && pool.id == currentPoolId
+    );
+
     dispatch(
       setApplications({ action: "setData", data: modifiedApplications })
     );
 
-    dispatch(getApplicationsCollection({ page: page }));
+    if (currentPool?.page)
+      dispatch(getPoolsCollection({ page: currentPool.page }));
   },
 });
 

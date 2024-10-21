@@ -26,6 +26,7 @@ import postApplicationReducer from "@/store/applications/post/post";
 import patchApplicationReducer from "@/store/applications/patch/patch";
 import getCollectionPoolsReducer from "@/store/pools/getCollection/getCollection";
 import statePoolsReducer from "@/store/pools/state/state";
+import patchPoolReducer from "@/store/pools/patch/patch";
 
 const postLoginPersistConfig = {
   key: "postLogin",
@@ -104,6 +105,11 @@ const getCollectionPoolsPersistConfig = {
 
 const statePoolsPersistConfig = {
   key: "statePools",
+  storage,
+};
+
+const patchPoolPersistConfig = {
+  key: "patchPool",
   storage,
 };
 
@@ -187,6 +193,11 @@ const persistedStatePoolsReducer = persistReducer(
   statePoolsReducer
 );
 
+const persistedPatchPoolReducer = persistReducer(
+  patchPoolPersistConfig,
+  patchPoolReducer
+);
+
 const store = configureStore({
   reducer: {
     postLogin: persistedPostLoginReducer,
@@ -205,6 +216,7 @@ const store = configureStore({
     patchApplication: persistedPatchApplicationReducer,
     getCollectionPools: persistedGetCollectionPoolsReducer,
     statePools: persistedStatePoolsReducer,
+    patchPool: persistedPatchPoolReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

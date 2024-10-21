@@ -77,7 +77,7 @@ export const postInstaller = createPostAsyncThunkWithArguments({
     data.status = "active";
     data.hash = installer?.hash;
 
-    data.ver = ver;
+    data.ver = ver ? ver : 0;
 
     return data;
   },

@@ -29,6 +29,8 @@ import TextType from "@/components/wrappers/textType/textType";
 import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
+import { patchPool } from "@/store/pools/patch/patch";
+import { setPools } from "@/store/pools/state/state";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -41,6 +43,10 @@ export default function Page() {
     (state: RootState) => state.stateNavigation.page.params
   );
 
+  const poolsPatchs = useSelector(
+    (state: RootState) => state.patchPool.patchPoolState
+  );
+
   // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
   const pageParamsWhenMounted = useMemo(() => {
     return pageParams;
@@ -48,6 +54,31 @@ export default function Page() {
 
   const poolId: number | undefined = pageParamsWhenMounted?.id;
   const poolDraftId: number | undefined = pageParamsWhenMounted?.draftId;
+
+  const isPatchCurrentPoolInProcess = useMemo(() => {
+    if (!poolId) return false;
+
+    if (!poolsPatchs?.[poolId]) return false;
+
+    if (poolsPatchs?.[poolId]?.isInProcess) return true;
+
+    return false;
+  }, [poolsPatchs, poolId]);
+
+  const poolsList = useSelector(
+    (state: RootState) => state.statePools.pools.data
+  );
+
+  const poolData = useMemo(() => {
+    return poolsList.find((pool) => {
+      if (!!pool?.id && !!poolId && pool.id == poolId) return true;
+
+      if (!!pool?.draftId && !!poolDraftId && pool?.draftId == poolDraftId)
+        return true;
+
+      return false;
+    });
+  }, [poolsList, poolId, poolDraftId]);
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
@@ -65,10 +96,8 @@ export default function Page() {
   }, [applicationsList, poolId, poolDraftId]);
 
   const isPoolStatusIsPending = useMemo(() => {
-    return poolApplicationsList.some((application) => {
-      return application.status == "pending";
-    });
-  }, [poolApplicationsList]);
+    return poolData?.status == "pending";
+  }, [poolApplicationsList, poolData]);
 
   const applicationsCount = useMemo(() => {
     return poolApplicationsList ? poolApplicationsList.length : 0;
@@ -136,45 +165,25 @@ export default function Page() {
   );
 
   const handleChangePoolStatusToActivePress = useCallback(async () => {
-    const modifiedApplicationsList = [...applicationsList].map(
-      (application) => {
-        if (!application?.poolId && !application?.poolDraftId)
-          return application;
-        if (!!application.poolId && application.poolId !== poolId)
-          return application;
-        if (
-          !!application.poolDraftId &&
-          application.poolDraftId !== poolDraftId
-        )
-          return application;
+    const modifiedPoolsList = [...poolsList].map((pool) => {
+      if (!poolId && !poolDraftId) return pool;
 
-        const isModified = application?.isModified
-          ? application.isModified
-          : application?.id
-          ? true
-          : false;
+      if (!pool.id && !pool.draftId) return pool;
 
-        return {
-          ...application,
-          status: "active",
-          isModified,
-        };
-      }
-    );
+      if (!!poolId && !!pool.id && poolId !== pool.id) return pool;
 
-    //  Set applications to store
-    dispatch(
-      setApplications({ action: "setData", data: modifiedApplicationsList })
-    );
+      if (!!poolDraftId && !!pool.draftId && poolDraftId !== pool.draftId)
+        return pool;
 
-    modifiedApplicationsList.forEach((application) => {
-      if (!application?.id) return;
-
-      if (!application?.isModified) return;
-
-      dispatch(patchApplication({ id: application.id }));
+      return { ...pool, status: "active", isModified: true };
     });
-  }, [dispatch, poolId, poolDraftId]);
+
+    dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
+
+    if (!poolId) return;
+
+    dispatch(patchPool({ id: poolId }));
+  }, [dispatch, poolsList, poolId, poolDraftId]);
 
   //  When page opened
   useEffect(() => {
@@ -235,7 +244,9 @@ export default function Page() {
                           {["connection", "repair"].includes(item.type)
                             ? item?.client?.fullName
                               ? item.client.fullName
-                              : "Клиент не указан"
+                              : item.id
+                              ? "Клиент не указан"
+                              : `Клиент #${item?.client?.account}`
                             : item.address}
                         </TextType>
                       }
@@ -353,7 +364,8 @@ export default function Page() {
                   </MarginBottom>
                 </PressableArea>
                 <Buttons isItemButtons={true}>
-                  {!!item.status &&
+                  {!!isPoolStatusIsPending &&
+                    !!item.status &&
                     ["active", "pending", "cancelled"].includes(
                       item.status
                     ) && (
@@ -370,11 +382,13 @@ export default function Page() {
                             params: { id: poolId },
                           },
                         }}
+                        isDisabled={isPatchCurrentPoolInProcess}
                       >
                         Редактировать
                       </Button>
                     )}
-                  {!!item.status &&
+                  {!!isPoolStatusIsPending &&
+                    !!item.status &&
                     ["pending", "cancelled"].includes(item.status) && (
                       <Button
                         icon={
@@ -394,6 +408,7 @@ export default function Page() {
                             item?.draftId
                           )
                         }
+                        isDisabled={isPatchCurrentPoolInProcess}
                       >
                         {["pending"].includes(item.status)
                           ? "Отменить"
@@ -411,6 +426,7 @@ export default function Page() {
           <Button
             icon={<StartIcon width={s(15)} height={s(16)} />}
             onPress={handleChangePoolStatusToActivePress}
+            isInProcess={isPatchCurrentPoolInProcess}
           >
             Отправить в работу
           </Button>
@@ -428,8 +444,9 @@ export default function Page() {
                 params: { id: poolId },
               },
             }}
+            isDisabled={isPatchCurrentPoolInProcess}
           >
-            Добавить заявку
+            Добавить заявку {poolId} {poolDraftId}
           </Button>
         )}
       </Buttons>

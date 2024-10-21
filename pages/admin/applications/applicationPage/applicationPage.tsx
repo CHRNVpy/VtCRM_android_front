@@ -37,10 +37,6 @@ export default function Page() {
     (state: RootState) => state.stateNavigation.page.params
   );
 
-  const poolsList = useSelector(
-    (state: RootState) => state.statePools.pools.data
-  );
-
   // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
   const pageParamsWhenMounted = useMemo(() => {
     return pageParams;
@@ -182,14 +178,24 @@ export default function Page() {
         linkText={
           applicationData.poolId
             ? `Пул #${applicationData.poolId}`
+            : applicationData.draftId
+            ? `Пул #(${applicationData.poolDraftId})`
             : `Пулы заявок`
         }
         to={
           applicationData.poolId
             ? "AdminApplicationsPoolPage"
+            : applicationData.draftId
+            ? "AdminApplicationsPoolPage"
             : "AdminApplicationsPoolsPage"
         }
-        toParams={applicationData.poolId ? { id: applicationData.poolId } : {}}
+        toParams={
+          applicationData.poolId
+            ? { id: applicationData.poolId }
+            : applicationData.poolDraftId
+            ? { draftId: applicationData.poolDraftId }
+            : {}
+        }
         isSyncInProcess={isApplicationsSyncInProcess}
       />
       <ScrollView>
@@ -201,7 +207,9 @@ export default function Page() {
                   {["connection", "repair"].includes(applicationData.type)
                     ? applicationData?.client?.fullName
                       ? applicationData.client.fullName
-                      : "Клиент не указан"
+                      : applicationData.id
+                      ? "Клиент не указан"
+                      : `Клиент #${applicationData?.client?.account}`
                     : applicationData.address}
                 </Title>
               }

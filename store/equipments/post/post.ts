@@ -74,7 +74,7 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     data.serialNumber = equipment?.serialNumber;
     data.comment = equipment?.comment;
     data.hash = equipment?.hash;
-    data.ver = ver;
+    data.ver = ver ? ver : 0;
 
     return data;
   },

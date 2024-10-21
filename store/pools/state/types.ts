@@ -9,6 +9,7 @@ export interface DefaultPoolStateType {
   entities?: [];
   page?: number;
   ver?: number;
+  isModified?: boolean;
 }
 
 export interface DefaultPoolsStateType extends DefaultStateType {

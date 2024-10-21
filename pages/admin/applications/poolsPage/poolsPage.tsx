@@ -22,6 +22,8 @@ import { formatDateString, ruApplicationsByCount } from "@/helpers/strings";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import { debounce } from "lodash";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
+import { patchPool } from "@/store/pools/patch/patch";
+import { setPools } from "@/store/pools/state/state";
 
 export default function Page() {
   const [pageByScrollData, setPageByScrollData] = useState<{
@@ -47,6 +49,10 @@ export default function Page() {
 
   const pagesLoaded = useSelector(
     (state: RootState) => state.statePools.pagesLoaded.data
+  );
+
+  const poolsPatchs = useSelector(
+    (state: RootState) => state.patchPool.patchPoolState
   );
 
   const handleOnEndReached = useCallback(() => {
@@ -113,6 +119,30 @@ export default function Page() {
     };
   }, [pageByScrollData?.page, debouncedGetPoolsByPage]);
 
+  const handleChangePoolStatusToActivePress = useCallback(
+    async (poolId?: number, poolDraftId?: number) => {
+      const modifiedPoolsList = [...poolsList].map((pool) => {
+        if (!poolId && !poolDraftId) return pool;
+
+        if (!pool.id && !pool.draftId) return pool;
+
+        if (!!poolId && !!pool.id && poolId !== pool.id) return pool;
+
+        if (!!poolDraftId && !!pool.draftId && poolDraftId !== pool.draftId)
+          return pool;
+
+        return { ...pool, status: "active", isModified: true };
+      });
+
+      dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
+
+      if (!poolId) return;
+
+      dispatch(patchPool({ id: poolId }));
+    },
+    [dispatch, poolsList]
+  );
+
   //  When page opened
   useEffect(() => {
     if (poolsList?.length > 0) return;
@@ -154,6 +184,9 @@ export default function Page() {
             }
             renderItem={({ item, index }) => {
               let applicationsCount = 0;
+
+              const isInProcess =
+                !!item?.id && !!poolsPatchs?.[item?.id]?.isInProcess;
 
               return (
                 <ListItem isLastItem={index === poolsList.length - 1}>
@@ -224,11 +257,15 @@ export default function Page() {
                               leftColumn={
                                 <>
                                   <TextType>
-                                    {applicationItem.type == "connection"
+                                    {["connection", "repair"].includes(
+                                      applicationItem.type
+                                    )
                                       ? applicationItem?.client?.fullName
-                                      : applicationItem.type == "repair"
-                                      ? applicationItem?.client?.fullName
-                                      : applicationItem?.address}
+                                        ? applicationItem.client.fullName
+                                        : applicationItem.id
+                                        ? "Клиент не указан"
+                                        : `Клиент #${applicationItem?.client?.account}`
+                                      : applicationItem.address}
                                   </TextType>
                                   <TextType size="small">
                                     {applicationItem.type == "connection"
@@ -288,24 +325,37 @@ export default function Page() {
                       }
                     )}
                   </MarginBottom>
-                  <Buttons isItemButtons={true}>
-                    <Button
-                      icon={<AddIcon width={s(13)} height={s(14)} />}
-                      size={"small"}
-                      to={"AdminCreateApplicationPage"}
-                      toParams={{
-                        id: item.id,
-                      }}
-                    >
-                      Добавить заявку
-                    </Button>
-                    <Button
-                      icon={<StartIcon width={s(13)} height={s(13)} />}
-                      size={"small"}
-                    >
-                      Отправить в работу
-                    </Button>
-                  </Buttons>
+                  {item.status == "pending" && (
+                    <Buttons isItemButtons={true}>
+                      <Button
+                        icon={<AddIcon width={s(13)} height={s(14)} />}
+                        size={"small"}
+                        to={"AdminCreateApplicationPage"}
+                        toParams={{
+                          id: item.id,
+                        }}
+                        isDisabled={isInProcess}
+                      >
+                        Добавить заявку
+                      </Button>
+                      <Button
+                        icon={<StartIcon width={s(13)} height={s(13)} />}
+                        size={"small"}
+                        isInProcess={isInProcess}
+                        onPress={async () =>
+                          handleChangePoolStatusToActivePress(
+                            item?.id,
+                            item?.draftId
+                          )
+                        }
+                      >
+                        Отправить в работу
+                      </Button>
+                    </Buttons>
+                  )}
+                  {item.status == "active" && (
+                    <TextType isBold={true}>В работе</TextType>
+                  )}
                 </ListItem>
               );
             }}

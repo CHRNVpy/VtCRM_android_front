@@ -79,8 +79,6 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     getState: Function,
     payload: { [key: string]: any }
   ) => {
-    console.log("GET PAGE", payload.page);
-
     const page = payload?.page ? payload.page : 1;
 
     const params: { [key: string]: any } = {};
@@ -108,6 +106,7 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     let remoteApplicationsList: DefaultApplicationStateType[] = [];
 
     const modifiedLocalPools = [...localPools];
+
     const remotePools = payload?.entities?.length ? payload?.entities : [];
 
     remotePools.forEach((remotePool: DefaultPoolStateType) => {

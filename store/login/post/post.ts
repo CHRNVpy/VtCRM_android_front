@@ -59,7 +59,7 @@ const slice = createSlice({
 
           if (data.code == "Incorrect username or password") {
             stateByPath.errorFields = ["login", "password"];
-            stateByPath.errorText = "Неправильный номер договора или пароль";
+            stateByPath.errorText = "Неправильный логин или пароль";
           }
 
           if (data.code !== "Incorrect username or password") {

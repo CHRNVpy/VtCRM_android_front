@@ -15,7 +15,7 @@ import {
 } from "@/store/navigation/state/state";
 import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { setApplications } from "@/store/applications/state/state";
-import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 import { PostState } from "@/store/helpers/post/types";
 import { setPools } from "@/store/pools/state/state";
 
@@ -79,7 +79,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
     data.installDate = application?.installDate;
     data.poolId = application?.poolId;
     data.hash = application?.hash;
-    data.ver = ver;
+    data.ver = ver ? ver : 0;
 
     return data;
   },
@@ -107,8 +107,10 @@ export const postApplication = createPostAsyncThunkWithArguments({
     const rowNum = entity.rowNum;
     const poolRowNum = entity.poolRowNum;
     const page = Math.ceil(rowNum / 10) > 0 ? Math.ceil(rowNum / 10) : 1;
+
     const poolPage =
       Math.ceil(poolRowNum / 10) > 0 ? Math.ceil(poolRowNum / 10) : 1;
+
     const ver = responseData.data.ver;
 
     const poolDraftIdtoPoolId: { [key: number]: number } = {};
@@ -180,7 +182,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
       dispatch(setPools({ action: "setData", data: modifiedLocalPools }));
     }
 
-    dispatch(getApplicationsCollection({ page: page }));
+    dispatch(getPoolsCollection({ page: poolPage }));
   },
 });
 
