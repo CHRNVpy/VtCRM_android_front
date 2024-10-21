@@ -10,6 +10,7 @@ import Wrapper from "@/components/wrappers/wrapper/wrapper";
 import Content from "@/components/wrappers/content/content";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
+import Status from "@/components/wrappers/status/status";
 import EditIcon from "@/assets/editIcon.svg";
 import TurnOnIcon from "@/assets/turnOnIcon.svg";
 import TurnOffIcon from "@/assets/turnOffIcon.svg";
@@ -203,13 +204,25 @@ export default function Page() {
                 </Title>
               }
               rightColumn={
-                <TextType size="biggest">
-                  {applicationData.id
-                    ? `#${applicationData.id}`
-                    : applicationData.draftId
-                    ? `#(${applicationData.draftId})`
-                    : ""}
-                </TextType>
+                <>
+                  <TextType size="biggest">
+                    {applicationData.id
+                      ? `#${applicationData.id}`
+                      : applicationData.draftId
+                      ? `#(${applicationData.draftId})`
+                      : ""}
+                  </TextType>
+                  {["active", "pending", "cancelled"].includes(
+                    applicationData.status
+                  ) && (
+                    <Status
+                      size="big"
+                      isActive={["active", "pending"].includes(
+                        applicationData.status
+                      )}
+                    />
+                  )}
+                </>
               }
             />
           </MarginBottom>

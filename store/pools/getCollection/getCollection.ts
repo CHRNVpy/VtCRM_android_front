@@ -93,8 +93,6 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
       pools: { data: localPools },
     } = (getState() as RootState)?.statePools;
 
-    console.log(payload);
-
     const {
       applications: { data: localApplications },
     } = (getState() as RootState)?.stateApplications;

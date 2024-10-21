@@ -14,6 +14,7 @@ import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import ListItem from "@/components/wrappers/listItem/listItem";
 import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import PressableArea from "@/components/controls/pressableArea/pressableArea";
+import Status from "@/components/wrappers/status/status";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import EditIcon from "@/assets/editIcon.svg";
@@ -243,13 +244,24 @@ export default function Page() {
                         </TextType>
                       }
                       rightColumn={
-                        <TextType isBold={true} align="right">
-                          {item.id
-                            ? `#${item.id}`
-                            : item.draftId
-                            ? `#(${item.draftId})`
-                            : ""}
-                        </TextType>
+                        <>
+                          <TextType isBold={true} align="right">
+                            {item.id
+                              ? `#${item.id}`
+                              : item.draftId
+                              ? `#(${item.draftId})`
+                              : ""}
+                          </TextType>
+                          {["active", "pending", "cancelled"].includes(
+                            item.status
+                          ) && (
+                            <Status
+                              isActive={["active", "pending"].includes(
+                                item.status
+                              )}
+                            />
+                          )}
+                        </>
                       }
                     />
                   </PressableArea>

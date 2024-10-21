@@ -13,6 +13,7 @@ import TwoColumns from "@/components/wrappers/twoColumns/twoColumns";
 import TextType from "@/components/wrappers/textType/textType";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import PressableArea from "@/components/controls/pressableArea/pressableArea";
+import Status from "@/components/wrappers/status/status";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
@@ -155,8 +156,19 @@ export default function Page() {
                               rightColumn={
                                 <>
                                   <TextType align="right">
-                                    #{applicationItem.id}
+                                    {applicationItem?.id
+                                      ? `#${applicationItem.id}`
+                                      : `#(${applicationItem.draftId})`}
                                   </TextType>
+                                  {["active", "pending", "cancelled"].includes(
+                                    applicationItem.status
+                                  ) && (
+                                    <Status
+                                      isActive={["active", "pending"].includes(
+                                        applicationItem.status
+                                      )}
+                                    />
+                                  )}
                                   <TextType align="right" size="small">
                                     {formatDateString({
                                       dateString: applicationItem.installDate,
