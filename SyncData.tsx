@@ -53,8 +53,8 @@ export default function SyncData({ children }: ContentProps) {
   const equipmentData = useMemo(() => {
     if (!["AdminEquipmentPage"].includes(page)) return;
 
-    const equipmentId = pageParams?.id;
-    const equipmentDraftId = pageParams?.draftId;
+    const equipmentId = pageParams?.[page]?.id;
+    const equipmentDraftId = pageParams?.[page]?.draftId;
 
     return equipmentsList.find((equipment) => {
       if (!!equipment?.id && !!equipmentId && equipment.id == equipmentId)

@@ -60,7 +60,7 @@ export default function App() {
     }
 
     if (page) {
-      navigate(page, pageParams);
+      navigate(page, pageParams?.[page]);
 
       return;
     }

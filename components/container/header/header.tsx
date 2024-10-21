@@ -16,7 +16,7 @@ import { AppDispatch } from "@/store/store";
 import { setPage } from "@/store/navigation/state/state";
 import colors from "@/helpers/colors";
 import { s } from "react-native-size-matters";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 interface ContentProps {
   linkText?: string;
@@ -34,7 +34,7 @@ export default function Header({
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation();
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
   const handleOnPress = useCallback(() => {
     if (!to) return;
@@ -42,15 +42,13 @@ export default function Header({
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
-          : to,
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        data: pageParams?.backLink?.to ? pageParams?.backLink?.to : to,
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : toParams,
       })
     );
-  }, [dispatch, to, toParams, pageParamsWhenFocused]);
+  }, [dispatch, to, toParams, pageParams]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
@@ -61,24 +59,22 @@ export default function Header({
       dispatch(
         setPage({
           action: "setData",
-          data: pageParamsWhenFocused?.backLink?.to
-            ? pageParamsWhenFocused?.backLink?.to
-            : to,
-          params: pageParamsWhenFocused?.backLink?.to
-            ? pageParamsWhenFocused?.backLink?.params
+          data: pageParams?.backLink?.to ? pageParams?.backLink?.to : to,
+          params: pageParams?.backLink?.to
+            ? pageParams?.backLink?.params
             : toParams,
         })
       );
     });
 
     return unsubscribe;
-  }, [dispatch, navigation, to, toParams, pageParamsWhenFocused]);
+  }, [dispatch, navigation, to, toParams, pageParams]);
 
   return (
     <Pressable onPress={handleOnPress}>
       <View style={[styles.header, !!linkText && styles.isWithLink]}>
         <View style={styles.content}>
-          {linkText || pageParamsWhenFocused?.backLink?.text ? (
+          {linkText || pageParams?.backLink?.text ? (
             <View style={styles.backLink}>
               <BackLinkIconSvg width={s(31)} height={s(26)} />
               <Text
@@ -86,8 +82,8 @@ export default function Header({
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {pageParamsWhenFocused?.backLink?.text
-                  ? pageParamsWhenFocused?.backLink?.text
+                {pageParams?.backLink?.text
+                  ? pageParams?.backLink?.text
                   : linkText}
               </Text>
             </View>

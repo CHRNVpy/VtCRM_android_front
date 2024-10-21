@@ -22,7 +22,7 @@ import { setPage } from "@/store/navigation/state/state";
 import { s } from "react-native-size-matters";
 import { trimIgnoringNL } from "@/helpers/strings";
 import { postEquipment } from "@/store/equipments/post/post";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -30,7 +30,7 @@ export default function Page() {
   const serialNumberInputRef = useRef<TextInput>(null);
   const commentInputRef = useRef<TextInput>(null);
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
   const name = useSelector(
     (state: RootState) =>
@@ -163,11 +163,11 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminEquipmentsPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {},
       })
     );
@@ -180,7 +180,7 @@ export default function Page() {
     serialNumber,
     comment,
     equipmentsData,
-    pageParamsWhenFocused,
+    pageParams,
   ]);
 
   return (

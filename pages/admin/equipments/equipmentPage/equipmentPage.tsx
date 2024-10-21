@@ -16,21 +16,17 @@ import { s } from "react-native-size-matters";
 import EditIcon from "@/assets/editIcon.svg";
 import { trimIgnoringNL } from "@/helpers/strings";
 import { useIsEquipmentsSyncInProcess } from "@/components/hooks/isEquipmentsSyncInProcess/isEquipmentsSyncInProcess";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isEquipmentsSyncInProcess = useIsEquipmentsSyncInProcess();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
+  const pageParams = usePageParams();
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
-
-  const equipmentId = pageParamsWhenFocused?.id;
-  const equipmentDraftId = pageParamsWhenFocused?.draftId;
+  const equipmentId = pageParams?.id;
+  const equipmentDraftId = pageParams?.draftId;
 
   const equipmentsList = useSelector(
     (state: RootState) => state.stateEquipments.equipments.data
@@ -63,15 +59,13 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminEquipmentsPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
-          : {},
+        params: pageParams?.backLink?.to ? pageParams?.backLink?.params : {},
       })
     );
-  }, [dispatch, equipmentData, pageParamsWhenFocused]);
+  }, [dispatch, equipmentData, pageParams]);
 
   const installerData = useMemo(() => {
     if (!equipmentData) return;

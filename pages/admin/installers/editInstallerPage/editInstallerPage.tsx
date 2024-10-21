@@ -21,7 +21,7 @@ import {
   setInstallers,
 } from "@/store/installers/state/state";
 import { patchInstaller } from "@/store/installers/patch/patch";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -30,10 +30,10 @@ export default function Page() {
   const middlenameInputRef = useRef<TextInput>(null);
   const phoneInputRef = useRef<TextInput>(null);
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const installerId = pageParamsWhenFocused?.id;
-  const installerDraftId = pageParamsWhenFocused?.draftId;
+  const installerId = pageParams?.id;
+  const installerDraftId = pageParams?.draftId;
 
   const installersList = useSelector(
     (state: RootState) => state.stateInstallers.installers.data
@@ -62,18 +62,18 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminInstallerPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
-  }, [dispatch, installerData, pageParamsWhenFocused]);
+  }, [dispatch, installerData, pageParams]);
 
   useEffect(() => {
     //  Set fields on mount
@@ -232,14 +232,14 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminInstallerPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
@@ -254,7 +254,7 @@ export default function Page() {
     firstname,
     middlename,
     phone,
-    pageParamsWhenFocused,
+    pageParams,
     installersList,
     installerId,
     installerDraftId,
@@ -265,9 +265,15 @@ export default function Page() {
   return (
     <Wrapper>
       <Header
-        linkText={`#${installerData.id} ${installerData.lastname} ${installerData.firstname} ${installerData.middlename}`}
+        linkText={`${
+          installerData.id
+            ? `#${installerData.id}`
+            : `#(${installerData.draftId})`
+        } ${installerData.lastname} ${installerData.firstname} ${
+          installerData.middlename
+        }`}
         to={"AdminInstallerPage"}
-        toParams={{ id: pageParamsWhenFocused?.id }}
+        toParams={{ id: pageParams?.id, draftId: pageParams?.draftId }}
       />
       <Title>Редактирование монтажника</Title>
       <Content isWithPaddings={true}>

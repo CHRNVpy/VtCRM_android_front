@@ -32,17 +32,17 @@ import SaveIcon from "@/assets/saveIcon.svg";
 import { postApplication } from "@/store/applications/post/post";
 import { setPools } from "@/store/pools/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const poolId: number | undefined = pageParamsWhenFocused?.id;
-  const poolDraftId: number | undefined = pageParamsWhenFocused?.draftId;
+  const poolId: number | undefined = pageParams?.id;
+  const poolDraftId: number | undefined = pageParams?.draftId;
 
   const type = useSelector(
     (state: RootState) =>
@@ -291,11 +291,11 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : { draftId: draftId },
       })
     );
@@ -308,7 +308,7 @@ export default function Page() {
     installDate,
     comment,
     applicationsList,
-    pageParamsWhenFocused,
+    pageParams,
     poolId,
     poolDraftId,
     poolsList,
@@ -357,12 +357,18 @@ export default function Page() {
       <FlatList
         keyboardShouldPersistTaps="always"
         data={equipmentsList}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) =>
+          item?.id
+            ? `remote-${item?.id.toString()}`
+            : item?.draftId
+            ? `draft-${item?.draftId.toString()}`
+            : `noid-${index}`
+        }
         renderItem={({ item, index }) => {
           return (
             <ListItem isLastItem={index === equipmentsList.length - 1}>
               <TextType isBold={true}>
-                #{item.id} {item.name}
+                {item.id ? `#${item.id}` : `#(${item.draftId})`} {item.name}
               </TextType>
               <TextType>{item.serialNumber}</TextType>
             </ListItem>

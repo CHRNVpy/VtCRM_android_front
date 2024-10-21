@@ -337,7 +337,7 @@ export default function Page() {
                         }}
                         isDisabled={isInProcess}
                       >
-                        Добавить заявку {item.id} D{item.draftId}
+                        Добавить заявку
                       </Button>
                       <Button
                         icon={<StartIcon width={s(13)} height={s(13)} />}

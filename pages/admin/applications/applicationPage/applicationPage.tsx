@@ -27,17 +27,17 @@ import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const applicationId = pageParamsWhenFocused?.id;
-  const applicationDraftId = pageParamsWhenFocused?.draftId;
+  const applicationId = pageParams?.id;
+  const applicationDraftId = pageParams?.draftId;
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
@@ -105,15 +105,13 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminApplicationsPoolsPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
-          : {},
+        params: pageParams?.backLink?.to ? pageParams?.backLink?.params : {},
       })
     );
-  }, [dispatch, applicationData, pageParamsWhenFocused]);
+  }, [dispatch, applicationData, pageParams]);
 
   const handleChangeStatusPress = useCallback(
     async (status: DefaultApplicationStateType["status"]) => {

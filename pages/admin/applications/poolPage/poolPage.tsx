@@ -31,7 +31,7 @@ import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplication
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 import { patchPool } from "@/store/pools/patch/patch";
 import { setPools } from "@/store/pools/state/state";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -40,18 +40,14 @@ export default function Page() {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const pageParams = useSelector(
-    (state: RootState) => state.stateNavigation.page.params
-  );
-
   const poolsPatchs = useSelector(
     (state: RootState) => state.patchPool.patchPoolState
   );
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const poolId: number | undefined = pageParamsWhenFocused?.id;
-  const poolDraftId: number | undefined = pageParamsWhenFocused?.draftId;
+  const poolId: number | undefined = pageParams?.id;
+  const poolDraftId: number | undefined = pageParams?.draftId;
 
   const isPatchCurrentPoolInProcess = useMemo(() => {
     if (!poolId) return false;
@@ -107,15 +103,13 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminApplicationsPoolsPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
-          : {},
+        params: pageParams?.backLink?.to ? pageParams?.backLink?.params : {},
       })
     );
-  }, [dispatch, applicationsCount, pageParamsWhenFocused]);
+  }, [dispatch, applicationsCount, pageParams]);
 
   const handleChangeStatusPress = useCallback(
     async (
@@ -227,13 +221,19 @@ export default function Page() {
           renderItem={({ item, index }) => {
             return (
               <ListItem
-                key={item.id}
+                key={
+                  item?.id
+                    ? `remote-${item?.id.toString()}`
+                    : item?.draftId
+                    ? `draft-${item?.draftId.toString()}`
+                    : `noid-${index}`
+                }
                 isLastItem={index === applicationsCount - 1}
               >
                 <MarginBottom size="small">
                   <PressableArea
                     to={"AdminApplicationPage"}
-                    toParams={{ id: item.id }}
+                    toParams={{ id: item.id, draftId: item.draftId }}
                   >
                     <TwoColumns
                       leftColumn={
@@ -277,9 +277,11 @@ export default function Page() {
                       toParams={{
                         id: item.installer.id,
                         backLink: {
-                          text: `Пул #${poolId}`,
+                          text: `Пул ${
+                            poolId ? `#${poolId}` : `#(${poolDraftId})`
+                          }`,
                           to: "AdminApplicationsPoolPage",
-                          params: { id: poolId },
+                          params: { id: poolId, draftId: poolDraftId },
                         },
                       }}
                     >
@@ -316,7 +318,10 @@ export default function Page() {
                         const equipmentItem = (
                           <>
                             <TextType isBold={true}>
-                              #{equipment.id} {equipment.name}
+                              {equipment.id
+                                ? `#${equipment.id}`
+                                : `#(${equipment.draftId})`}{" "}
+                              {equipment.name}
                             </TextType>
                             <TextType>{equipment.serialNumber}</TextType>
                           </>
@@ -374,9 +379,11 @@ export default function Page() {
                           id: item.id,
                           draftId: item.draftId,
                           backLink: {
-                            text: `Пул #${poolId}`,
+                            text: `Пул ${
+                              poolId ? `#${poolId}` : `#(${poolDraftId})`
+                            }`,
                             to: "AdminApplicationsPoolPage",
-                            params: { id: poolId },
+                            params: { id: poolId, draftId: poolDraftId },
                           },
                         }}
                         isDisabled={isPatchCurrentPoolInProcess}

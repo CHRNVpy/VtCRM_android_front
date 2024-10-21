@@ -23,7 +23,7 @@ import { DefaultInstallerStateType } from "@/store/installers/state/types";
 import { setPage } from "@/store/navigation/state/state";
 import { postInstaller } from "@/store/installers/post/post";
 import { s } from "react-native-size-matters";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -33,7 +33,7 @@ export default function Page() {
   const phoneInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
   const lastname = useSelector(
     (state: RootState) =>
@@ -222,11 +222,11 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminInstallersPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {},
       })
     );
@@ -241,7 +241,7 @@ export default function Page() {
     phone,
     password,
     installersData,
-    pageParamsWhenFocused,
+    pageParams,
   ]);
 
   return (

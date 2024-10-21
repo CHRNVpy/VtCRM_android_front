@@ -24,7 +24,7 @@ import {
 } from "@/store/equipments/state/state";
 import { patchEquipment } from "@/store/equipments/patch/patch";
 import { trimIgnoringNL } from "@/helpers/strings";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -32,10 +32,10 @@ export default function Page() {
   const serialNumberInputRef = useRef<TextInput>(null);
   const commentInputRef = useRef<TextInput>(null);
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const equipmentId = pageParamsWhenFocused?.id;
-  const equipmentDraftId = pageParamsWhenFocused?.draftId;
+  const equipmentId = pageParams?.id;
+  const equipmentDraftId = pageParams?.draftId;
 
   const equipmentsList = useSelector(
     (state: RootState) => state.stateEquipments.equipments.data
@@ -68,18 +68,18 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminEquipmentPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
-  }, [dispatch, equipmentData, pageParamsWhenFocused]);
+  }, [dispatch, equipmentData, pageParams]);
 
   useEffect(() => {
     //  Set fields on mount
@@ -210,14 +210,14 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminEquipmentPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
@@ -231,7 +231,7 @@ export default function Page() {
     name,
     serialNumber,
     comment,
-    pageParamsWhenFocused,
+    pageParams,
     equipmentsList,
     equipmentId,
     equipmentDraftId,
@@ -258,7 +258,7 @@ export default function Page() {
           equipmentData.id ? equipmentData.id : `(${equipmentData.draftId})`
         } ${equipmentData.name}`}
         to={`AdminEquipmentPage`}
-        toParams={{ id: pageParamsWhenFocused.id }}
+        toParams={{ id: equipmentData.id, draftId: equipmentData.draftId }}
       />
       <Title>Редактирование оборудования</Title>
       <Content isWithPaddings={true}>
@@ -278,7 +278,10 @@ export default function Page() {
                             : `(${equipmentData.draftId})`
                         } ${equipmentData.name}`,
                         to: "AdminEditEquipmentPage",
-                        params: { id: pageParamsWhenFocused.id },
+                        params: {
+                          id: pageParams.id,
+                          draftId: equipmentData.draftId,
+                        },
                       },
                     }}
                   >
@@ -299,7 +302,10 @@ export default function Page() {
                             : `(${equipmentData.draftId})`
                         } ${equipmentData.name}`,
                         to: "AdminEditEquipmentPage",
-                        params: { id: pageParamsWhenFocused.id },
+                        params: {
+                          id: pageParams.id,
+                          draftId: equipmentData.draftId,
+                        },
                       },
                     }}
                   >
@@ -315,7 +321,10 @@ export default function Page() {
                     </TextType>
                   </PressableArea>
                   <TextType align="right" isDashed={true}>
-                    Заявка #{equipmentData.applicationId}
+                    Заявка{" "}
+                    {equipmentData.applicationId
+                      ? `#${equipmentData.applicationId}`
+                      : `#(${equipmentData.applicationDraftId})`}
                   </TextType>
                 </>
               }

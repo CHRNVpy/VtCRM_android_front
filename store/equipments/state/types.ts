@@ -10,6 +10,7 @@ export interface DefaultEquipmentStateType {
   comment: string;
   installerId?: number;
   applicationId?: number;
+  applicationDraftId?: number;
   hash?: string;
   isModified?: boolean;
 }

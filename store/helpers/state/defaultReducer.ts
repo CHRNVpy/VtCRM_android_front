@@ -26,19 +26,25 @@ export const setStateDefaultReducer = (
 
   if (payload.action == "setData") {
     stateByPath.data = payload.data;
-    stateByPath.params = payload.params
-      ? payload.params
-      : externalDefaultState?.params
-      ? externalDefaultState?.params
-      : defaultState.params;
+    stateByPath.params = {
+      ...stateByPath.params,
+      [payload.data]: payload.params
+        ? payload.params
+        : externalDefaultState?.params
+        ? externalDefaultState?.params
+        : defaultState.params,
+    };
   }
 
   if (payload.action == "reset") {
     stateByPath.data = externalDefaultState?.data
       ? externalDefaultState?.data
       : defaultState.data;
-    stateByPath.params = externalDefaultState?.params
-      ? externalDefaultState?.params
-      : defaultState.params;
+    stateByPath.params = {
+      ...stateByPath.params,
+      [payload.data]: externalDefaultState?.params
+        ? externalDefaultState?.params
+        : defaultState.params,
+    };
   }
 };

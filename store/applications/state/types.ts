@@ -14,7 +14,8 @@ export interface ApplicationInstallerType {
 }
 
 export interface ApplicationEquipmentType {
-  id: number;
+  id?: number;
+  draftId?: number;
   rowNum: number;
   name: string;
   serialNumber: string;

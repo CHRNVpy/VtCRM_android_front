@@ -29,17 +29,17 @@ import {
 import { patchApplication } from "@/store/applications/patch/patch";
 import { s } from "react-native-size-matters";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
-import usePageParamsWhenFocused from "@/components/hooks/pageParamsWhenFocused/pageParamsWhenFocused";
+import usePageParams from "@/components/hooks/pageParams/pageParams";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
 
-  const pageParamsWhenFocused = usePageParamsWhenFocused();
+  const pageParams = usePageParams();
 
-  const applicationId = pageParamsWhenFocused?.id;
-  const applicationDraftId = pageParamsWhenFocused?.draftId;
+  const applicationId = pageParams?.id;
+  const applicationDraftId = pageParams?.draftId;
 
   const clientAccount = useSelector(
     (state: RootState) =>
@@ -88,18 +88,18 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
-  }, [dispatch, applicationData, pageParamsWhenFocused]);
+  }, [dispatch, applicationData, pageParams]);
 
   useEffect(() => {
     //  Set fields on mount
@@ -200,11 +200,11 @@ export default function Page() {
       (application) => {
         if (
           (!application?.id ||
-            !applicationId ||
-            application.id != applicationId) &&
+            !applicationData?.id ||
+            application.id != applicationData?.id) &&
           (!application?.draftId ||
-            !applicationDraftId ||
-            application?.draftId != applicationDraftId)
+            !applicationData?.draftId ||
+            application?.draftId != applicationData?.draftId)
         )
           return application;
 
@@ -244,14 +244,14 @@ export default function Page() {
     dispatch(
       setPage({
         action: "setData",
-        data: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.to
+        data: pageParams?.backLink?.to
+          ? pageParams?.backLink?.to
           : "AdminApplicationPage",
-        params: pageParamsWhenFocused?.backLink?.to
-          ? pageParamsWhenFocused?.backLink?.params
+        params: pageParams?.backLink?.to
+          ? pageParams?.backLink?.params
           : {
-              id: pageParamsWhenFocused.id,
-              draftId: pageParamsWhenFocused.draftId,
+              id: pageParams.id,
+              draftId: pageParams.draftId,
             },
       })
     );
@@ -267,7 +267,8 @@ export default function Page() {
     installDate,
     comment,
     applicationsList,
-    pageParamsWhenFocused,
+    applicationData,
+    pageParams,
   ]);
 
   if (!applicationData) return null;
@@ -275,16 +276,26 @@ export default function Page() {
   return (
     <Wrapper>
       <Header
-        linkText={`Заявка #${applicationData.id}`}
+        linkText={`Заявка ${
+          applicationData.id
+            ? `#${applicationData.id}`
+            : `#(${applicationData.draftId})`
+        }`}
         to={"AdminApplicationPage"}
-        toParams={{ id: applicationData.id }}
+        toParams={{ id: applicationData.id, draftId: applicationData.draftId }}
         isSyncInProcess={isApplicationsSyncInProcess}
       />
       <Title>Редактирование заявки</Title>
       <FlatList
         keyboardShouldPersistTaps="always"
         data={applicationData.equipments ? applicationData.equipments : []}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) =>
+          item?.id
+            ? `remote-${item?.id.toString()}`
+            : item?.draftId
+            ? `draft-${item?.draftId.toString()}`
+            : `noid-${index}`
+        }
         renderItem={({ item, index }) => {
           return (
             <ListItem
@@ -296,7 +307,7 @@ export default function Page() {
               }
             >
               <TextType isBold={true}>
-                #{item.id} {item.name}
+                {item.id ? `#${item.id}` : `#(${item.draftId})`} {item.name}
               </TextType>
               <TextType>{item.serialNumber}</TextType>
             </ListItem>
@@ -389,7 +400,10 @@ export default function Page() {
         <Button
           icon={<EditIcon width={s(7)} height={s(22)} />}
           to={"AdminEditEquipmentsListInApplicationPage"}
-          toParams={{ id: applicationData.id }}
+          toParams={{
+            id: applicationData.id,
+            draftId: applicationData.draftId,
+          }}
         >
           Изменить оборудование
         </Button>
