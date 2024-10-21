@@ -18,7 +18,7 @@ import { patchEquipment } from "@/store/equipments/patch/patch";
 import { getEquipmentsCollection } from "@/store/equipments/getCollection/getCollection";
 import { postApplication } from "@/store/applications/post/post";
 import { patchApplication } from "@/store/applications/patch/patch";
-import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
+import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 
 interface ContentProps {
   children?: ReactNode;
@@ -217,7 +217,7 @@ export default function SyncData({ children }: ContentProps) {
           : undefined;
 
       // Get current state of applications collection
-      await dispatch(getApplicationsCollection(params));
+      await dispatch(getPoolsCollection(params));
 
       const poolDraftIdsAlreadyPosted: number[] = [];
 

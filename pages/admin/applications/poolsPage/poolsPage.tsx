@@ -23,6 +23,16 @@ export default function Page() {
     (state: RootState) => state.stateApplications.applications.data
   );
 
+  const poolsList = useSelector(
+    (state: RootState) => state.statePools.pools.data
+  );
+
+  console.log(poolsList);
+
+  /*
+  console.log(poolsListFromDb);
+  console.log(applicationsList);
+
   const poolsList = useMemo(() => {
     const result: any[] = [];
 
@@ -47,33 +57,48 @@ export default function Page() {
 
     return result;
   }, [applicationsList]);
+  */
 
   return (
     <Wrapper>
       <Header linkText={"На главную"} to={"AdminMainPage"} />
       <Title>Пулы заявок</Title>
       <Content>
+        {!poolsList?.length && (
+          <Content isWithPaddings={true}>
+            <TextType color="gray">Пулов нет</TextType>
+          </Content>
+        )}
         {!!poolsList.length && (
           <FlatList
             keyboardShouldPersistTaps="always"
             data={poolsList}
-            keyExtractor={(item, index) => item.id.toString()}
+            keyExtractor={(item, index) =>
+              item?.id
+                ? `remote-${item?.id.toString()}`
+                : item?.draftId
+                ? `draft-${item?.draftId.toString()}`
+                : `noid-${index}`
+            }
             renderItem={({ item, index }) => {
+              let applicationsCount = 0;
+
               return (
                 <ListItem isLastItem={index === poolsList.length - 1}>
                   <MarginBottom>
                     <PressableArea
                       to={"AdminApplicationsPoolPage"}
                       toParams={{
-                        id: item.id,
-                        draftId: item.poolDraftId,
+                        id: item?.id,
+                        draftId: item?.draftId,
                       }}
                     >
                       <TwoColumns
                         leftColumn={
                           <>
                             <TextType isBold={true} isDashed={true}>
-                              Пул #{item.id}
+                              Пул{" "}
+                              {item?.id ? `#${item.id}` : `#(${item.draftId})`}
                             </TextType>
                           </>
                         }
@@ -91,8 +116,26 @@ export default function Page() {
                     </PressableArea>
                   </MarginBottom>
                   <MarginBottom>
-                    {item.applications.map(
-                      (applicationItem: any, applicationIndex: any) => {
+                    {applicationsList.map(
+                      (applicationItem, applicationIndex) => {
+                        if (
+                          !!applicationItem?.poolId &&
+                          !!item?.id &&
+                          applicationItem.poolId !== item.id
+                        )
+                          return null;
+
+                        if (
+                          !applicationItem?.poolId &&
+                          applicationItem?.poolDraftId &&
+                          !item?.id &&
+                          !!item.draftId &&
+                          applicationItem.poolDraftId !== item.draftId
+                        )
+                          return null;
+
+                        applicationsCount++;
+
                         const itemElement = (
                           <PressableArea
                             to={"AdminApplicationPage"}
@@ -101,6 +144,7 @@ export default function Page() {
                             }}
                           >
                             <TwoColumns
+                              ratio="50/50"
                               leftColumn={
                                 <>
                                   <TextType>
@@ -122,7 +166,7 @@ export default function Page() {
                                   </TextType>
                                   <TextType align="right" size="small">
                                     {formatDateString({
-                                      dateString: applicationItem.datetime,
+                                      dateString: applicationItem.installDate,
                                     })}
                                   </TextType>
                                 </>
@@ -132,9 +176,16 @@ export default function Page() {
                         );
 
                         return (
-                          <React.Fragment key={applicationItem.id}>
-                            {applicationIndex ===
-                            item.applications.length - 1 ? (
+                          <React.Fragment
+                            key={
+                              applicationItem?.id
+                                ? `remote-${applicationItem?.id.toString()}`
+                                : applicationItem?.draftId
+                                ? `draft-${applicationItem?.draftId.toString()}`
+                                : `noid-${applicationIndex}`
+                            }
+                          >
+                            {applicationsCount == item.applicationsCount ? (
                               itemElement
                             ) : (
                               <MarginBottom size="small">
@@ -181,5 +232,3 @@ export default function Page() {
     </Wrapper>
   );
 }
-
-const styles = StyleSheet.create({});

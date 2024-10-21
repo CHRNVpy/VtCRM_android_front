@@ -17,6 +17,7 @@ import { DefaultApplicationStateType } from "@/store/applications/state/types";
 import { setApplications } from "@/store/applications/state/state";
 import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 import { PostState } from "@/store/helpers/post/types";
+import { setPools } from "@/store/pools/state/state";
 
 const slice = createSlice({
   name: reducerName,
@@ -98,6 +99,10 @@ export const postApplication = createPostAsyncThunkWithArguments({
       applications: { data: applications },
     } = (getState() as RootState)?.stateApplications;
 
+    const {
+      pools: { data: localPools },
+    } = (getState() as RootState)?.statePools;
+
     const entity = responseData.data.entity;
     const rowNum = entity.rowNum;
     const page = Math.ceil(rowNum / 10);
@@ -155,6 +160,20 @@ export const postApplication = createPostAsyncThunkWithArguments({
     dispatch(
       setApplications({ action: "setData", data: modifiedApplications })
     );
+
+    if (Object.keys(poolDraftIdtoPoolId).length) {
+      const modifiedLocalPools = [...localPools].map((localPool) => {
+        if (!localPool?.draftId) return localPool;
+
+        if (!poolDraftIdtoPoolId[localPool.draftId]) return localPool;
+
+        localPool.id = poolDraftIdtoPoolId[localPool.draftId];
+
+        return localPool;
+      });
+
+      dispatch(setPools({ action: "setData", data: modifiedLocalPools }));
+    }
 
     dispatch(getApplicationsCollection({ page: page }));
   },

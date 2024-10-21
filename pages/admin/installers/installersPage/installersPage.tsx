@@ -97,11 +97,12 @@ export default function Page() {
       />
       <Title>Монтажники</Title>
       <Content>
-        {!installersList?.length ? (
+        {!installersList?.length && (
           <Content isWithPaddings={true}>
             <TextType color="gray">Монтажников нет</TextType>
           </Content>
-        ) : (
+        )}
+        {!!installersList?.length && (
           <FlatList
             keyboardShouldPersistTaps="always"
             data={installersList}

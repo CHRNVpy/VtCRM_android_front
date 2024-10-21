@@ -145,8 +145,13 @@ export default function Page() {
           </Inputs>
         </MarginBottom>
       )}
-      {!!equipmentsList.length && (
-        <Content>
+      <Content>
+        {!equipmentsList?.length && (
+          <Content isWithPaddings={true}>
+            <TextType color="gray">Оборудования нет</TextType>
+          </Content>
+        )}
+        {!!equipmentsList.length && (
           <FlatList
             onEndReached={handleOnEndReached}
             onEndReachedThreshold={0.5}
@@ -281,8 +286,8 @@ export default function Page() {
               );
             }}
           />
-        </Content>
-      )}
+        )}
+      </Content>
       <Buttons>
         <Button
           icon={<AddIcon width={s(16)} height={s(16)} />}

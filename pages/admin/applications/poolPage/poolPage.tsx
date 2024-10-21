@@ -235,7 +235,7 @@ export default function Page() {
                     />
                   </PressableArea>
                 </MarginBottom>
-                {!!item.installer && (
+                {!!item?.installer?.id && (
                   <MarginBottom>
                     <PressableArea
                       to={"AdminInstallerPage"}
@@ -248,7 +248,7 @@ export default function Page() {
                         },
                       }}
                     >
-                      {!!item.installer && (
+                      {!!item?.installer?.id && (
                         <TextType size="medium" isDashed={true}>
                           Монтажник #{item.installer.id}{" "}
                           {item.installer.lastname}{" "}

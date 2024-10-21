@@ -30,6 +30,8 @@ import { trimIgnoringNL } from "@/helpers/strings";
 import { setPage } from "@/store/navigation/state/state";
 import SaveIcon from "@/assets/saveIcon.svg";
 import { postApplication } from "@/store/applications/post/post";
+import { setPools } from "@/store/pools/state/state";
+import { DefaultPoolStateType } from "@/store/pools/state/types";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -78,6 +80,10 @@ export default function Page() {
 
   const applicationsList = useSelector(
     (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const poolsList = useSelector(
+    (state: RootState) => state.statePools.pools.data
   );
 
   const items = [
@@ -250,6 +256,29 @@ export default function Page() {
     //  Set new application to store
     dispatch(setApplications({ action: "setData", data }));
 
+    //  Set changes to pools list
+    let modifiedPoolsList = [...poolsList];
+
+    if (poolId) {
+      modifiedPoolsList = modifiedPoolsList.map((pool) => {
+        if (pool.id !== poolId) return pool;
+
+        pool.applicationsCount = pool.applicationsCount + 1;
+
+        return pool;
+      });
+    }
+
+    if (!poolId && poolDraftId) {
+      modifiedPoolsList.push({
+        draftId: poolDraftId,
+        status: "pending",
+        applicationsCount: 1,
+      });
+    }
+
+    dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
+
     //  Clear all inputs and states
     dispatch(
       setInputStateCreateTypeReducer({ action: "setText", text: "connection" })
@@ -284,6 +313,7 @@ export default function Page() {
     applicationsList,
     pageParamsWhenMounted,
     poolId,
+    poolsList,
   ]);
 
   return (
