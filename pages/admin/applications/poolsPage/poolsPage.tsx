@@ -66,6 +66,7 @@ export default function Page() {
                       to={"AdminApplicationsPoolPage"}
                       toParams={{
                         id: item.id,
+                        draftId: item.poolDraftId,
                       }}
                     >
                       <TwoColumns
