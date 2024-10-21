@@ -105,7 +105,10 @@ export default function Page() {
     //  Set fields on mount
     dispatch(
       setInputStateEditClientAccountReducer({
-        action: "reset",
+        action: "setText",
+        text: applicationData?.client?.account
+          ? applicationData.client.account
+          : "",
       })
     );
     dispatch(

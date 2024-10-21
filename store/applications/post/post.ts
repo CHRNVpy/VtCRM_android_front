@@ -81,6 +81,8 @@ export const postApplication = createPostAsyncThunkWithArguments({
     data.hash = application?.hash;
     data.ver = ver ? ver : 0;
 
+    console.log("POST", data);
+
     return data;
   },
   callbackAfterPost: async (
@@ -90,6 +92,8 @@ export const postApplication = createPostAsyncThunkWithArguments({
     responseStatus,
     payload
   ) => {
+    console.log(responseData);
+
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 

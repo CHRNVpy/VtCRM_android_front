@@ -101,6 +101,8 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     const page = payload.page;
     const ver = payload.appVer;
 
+    console.log(page);
+
     let isChanged = false;
     let modifiedLocalApplications = [...localApplications];
     let remoteApplicationsList: DefaultApplicationStateType[] = [];
@@ -161,6 +163,8 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     });
 
     let isApplicationsChanged = false;
+
+    console.log("length", remoteApplicationsList?.length);
 
     //  Parse every remote application
     remoteApplicationsList.forEach(

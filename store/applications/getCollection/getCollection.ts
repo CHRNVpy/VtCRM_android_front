@@ -105,6 +105,8 @@ export const getApplicationsCollection =
 
       let isChanged = false;
 
+      console.log(payload?.entities, page, pages);
+
       let modifiedLocalApplications = [...localApplications];
       const remoteApplicationsList = payload?.entities?.length
         ? payload?.entities
