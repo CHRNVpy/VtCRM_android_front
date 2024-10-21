@@ -105,7 +105,10 @@ export const postApplication = createPostAsyncThunkWithArguments({
 
     const entity = responseData.data.entity;
     const rowNum = entity.rowNum;
+    const poolRowNum = entity.poolRowNum;
     const page = Math.ceil(rowNum / 10) > 0 ? Math.ceil(rowNum / 10) : 1;
+    const poolPage =
+      Math.ceil(poolRowNum / 10) > 0 ? Math.ceil(poolRowNum / 10) : 1;
     const ver = responseData.data.ver;
 
     const poolDraftIdtoPoolId: { [key: number]: number } = {};
@@ -168,6 +171,8 @@ export const postApplication = createPostAsyncThunkWithArguments({
         if (!poolDraftIdtoPoolId[localPool.draftId]) return localPool;
 
         localPool.id = poolDraftIdtoPoolId[localPool.draftId];
+        localPool.page = poolPage;
+        localPool.ver = ver;
 
         return localPool;
       });

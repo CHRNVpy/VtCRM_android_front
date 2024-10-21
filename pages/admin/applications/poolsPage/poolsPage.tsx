@@ -1,5 +1,5 @@
-import { FlatList, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import { FlatList, ViewToken } from "react-native";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import Header from "@/components/container/header/header";
@@ -14,14 +14,21 @@ import TextType from "@/components/wrappers/textType/textType";
 import MarginBottom from "@/components/wrappers/marginBottom/marginBottom";
 import PressableArea from "@/components/controls/pressableArea/pressableArea";
 import Status from "@/components/wrappers/status/status";
+import Loading from "@/components/controls/loading/loading";
 import AddIcon from "@/assets/addIcon.svg";
 import StartIcon from "@/assets/startIcon.svg";
 import { s } from "react-native-size-matters";
 import { formatDateString, ruApplicationsByCount } from "@/helpers/strings";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
+import { debounce } from "lodash";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 
 export default function Page() {
+  const [pageByScrollData, setPageByScrollData] = useState<{
+    firstIndex: number | null;
+    page?: number;
+  }>();
+
   const dispatch: AppDispatch = useDispatch();
 
   const isApplicationsSyncInProcess = useIsApplicationsSyncInProcess();
@@ -34,9 +41,81 @@ export default function Page() {
     (state: RootState) => state.statePools.pools.data
   );
 
+  const totalPages = useSelector(
+    (state: RootState) => state.statePools.totalPages.data
+  );
+
+  const pagesLoaded = useSelector(
+    (state: RootState) => state.statePools.pagesLoaded.data
+  );
+
+  const handleOnEndReached = useCallback(() => {
+    if (totalPages <= pagesLoaded) return;
+
+    //  Get current state of pools collection
+    dispatch(getPoolsCollection({ page: pagesLoaded + 1 }));
+  }, [totalPages, pagesLoaded]);
+
+  const debouncedGetPoolsByPage = useCallback(
+    debounce((updatePage) => {
+      //  Get current state of pools collection
+      dispatch(getPoolsCollection({ page: updatePage }));
+    }, 300),
+    [dispatch]
+  );
+
+  const handleOnViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (!viewableItems.length) return;
+      if (!viewableItems?.[0]) return;
+
+      setPageByScrollData((prevPageByScrollData) => {
+        if (!viewableItems[0]?.item?.page) return prevPageByScrollData;
+
+        //  Just to filter nulls
+        if (prevPageByScrollData?.firstIndex === null)
+          return prevPageByScrollData;
+        if (viewableItems[0].index === null) return prevPageByScrollData;
+
+        //  If not set, set first
+        if (!prevPageByScrollData)
+          return {
+            firstIndex: viewableItems[0].index,
+            page: viewableItems[0]?.item?.page,
+          };
+
+        //  If same first index
+        if (prevPageByScrollData?.firstIndex == viewableItems[0].index)
+          return prevPageByScrollData;
+
+        if (prevPageByScrollData?.firstIndex > viewableItems[0].index) {
+          return {
+            firstIndex: viewableItems[0].index,
+            page: viewableItems[0]?.item?.page,
+          };
+        }
+
+        return {
+          firstIndex: viewableItems[0].index,
+          page: viewableItems[viewableItems?.length - 1]?.item?.page,
+        };
+      });
+    }
+  ).current;
+
+  useEffect(() => {
+    if (pageByScrollData?.page === undefined) return;
+
+    debouncedGetPoolsByPage(pageByScrollData?.page);
+
+    return () => {
+      debouncedGetPoolsByPage.cancel();
+    };
+  }, [pageByScrollData?.page, debouncedGetPoolsByPage]);
+
   //  When page opened
   useEffect(() => {
-    //if (poolsList?.length > 0) return;
+    if (poolsList?.length > 0) return;
 
     dispatch(getPoolsCollection({ page: 1 }));
   }, []);
@@ -57,8 +136,15 @@ export default function Page() {
         )}
         {!!poolsList.length && (
           <FlatList
+            onEndReached={handleOnEndReached}
+            onEndReachedThreshold={0.5}
+            onViewableItemsChanged={handleOnViewableItemsChanged}
+            viewabilityConfig={{ itemVisiblePercentThreshold: 0 }}
             keyboardShouldPersistTaps="always"
             data={poolsList}
+            ListFooterComponent={
+              <Loading isInProcess={totalPages > pagesLoaded} />
+            }
             keyExtractor={(item, index) =>
               item?.id
                 ? `remote-${item?.id.toString()}`

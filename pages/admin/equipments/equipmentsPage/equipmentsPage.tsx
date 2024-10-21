@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, ViewToken } from "react-native";
+import { FlatList, ViewToken } from "react-native";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";

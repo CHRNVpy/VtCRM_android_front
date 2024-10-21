@@ -79,6 +79,8 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     getState: Function,
     payload: { [key: string]: any }
   ) => {
+    console.log("GET PAGE", payload.page);
+
     const page = payload?.page ? payload.page : 1;
 
     const params: { [key: string]: any } = {};
