@@ -74,66 +74,64 @@ export default function SyncData({ children }: ContentProps) {
     (state: RootState) => state.stateApplications.applications.data
   );
 
-  const applicationCurrentPage = useSelector(
+  const poolsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
+
+  const poolCurrentPage = useSelector(
     (state: RootState) => state.stateApplications.currentPage.data
   );
 
-  const applicationData = useMemo(() => {
-    if (!["AdminApplicationPage"].includes(page)) return;
+  const poolData = useMemo(() => {
+    if (!["AdminApplicationsPoolPage"].includes(page)) return;
 
-    const applicationId = pageParams?.id;
-    const applicationDraftId = pageParams?.draftId;
+    const poolId = pageParams?.id;
+    const poolDraftId = pageParams?.draftId;
 
-    return applicationsList.find((application) => {
-      if (
-        !!application?.id &&
-        !!applicationId &&
-        application.id == applicationId
-      )
-        return true;
+    return poolsList.find((pool) => {
+      if (!!pool?.id && !!poolId && pool.id == poolId) return true;
 
-      if (
-        !!application?.draftId &&
-        !!applicationDraftId &&
-        application?.draftId == applicationDraftId
-      )
+      if (!!pool?.draftId && !!poolDraftId && pool?.draftId == poolDraftId)
         return true;
 
       return false;
     });
-  }, [applicationsList, pageParams, page]);
+  }, [poolsList, pageParams, page]);
 
   // Use refs to hold the latest values
   const installersListRef = useRef(installersList);
   const equipmentsListRef = useRef(equipmentsList);
   const applicationsListRef = useRef(applicationsList);
+  const poolsListRef = useRef(poolsList);
   const isConnectedRef = useRef(isConnected);
   const pageRef = useRef(page);
   const equipmentDataRef = useRef(equipmentData);
   const equipmentCurrentPageRef = useRef(equipmentCurrentPage);
-  const applicationDataRef = useRef(applicationData);
-  const applicationCurrentPageRef = useRef(applicationCurrentPage);
+  const poolDataRef = useRef(poolData);
+  const poolCurrentPageRef = useRef(poolCurrentPage);
 
   useEffect(() => {
     installersListRef.current = installersList;
     equipmentsListRef.current = equipmentsList;
     applicationsListRef.current = applicationsList;
+    poolsListRef.current = poolsList;
     isConnectedRef.current = isConnected;
     pageRef.current = page;
     equipmentDataRef.current = equipmentData;
     equipmentCurrentPageRef.current = equipmentCurrentPage;
-    applicationDataRef.current = applicationData;
-    applicationCurrentPageRef.current = applicationCurrentPage;
+    poolDataRef.current = poolData;
+    poolCurrentPageRef.current = poolCurrentPage;
   }, [
     installersList,
     equipmentsList,
     applicationsList,
+    poolsList,
     isConnected,
     page,
     equipmentData,
     equipmentCurrentPage,
-    applicationData,
-    applicationCurrentPage,
+    poolData,
+    poolCurrentPage,
   ]);
 
   // Sync all the data with the server
@@ -176,7 +174,7 @@ export default function SyncData({ children }: ContentProps) {
           ? { page: equipmentDataRef.current?.page }
           : equipmentCurrentPageRef.current
           ? { page: equipmentCurrentPageRef.current }
-          : undefined;
+          : { page: 1 };
 
       // Get current state of equipments collection
       await dispatch(getEquipmentsCollection(params));
@@ -209,12 +207,12 @@ export default function SyncData({ children }: ContentProps) {
     ) {
       // Set page of application if it is application page
       const params =
-        ["AdminApplicationPage"].includes(pageRef.current) &&
-        applicationDataRef.current?.page
-          ? { page: applicationDataRef.current?.page }
-          : applicationCurrentPageRef.current
-          ? { page: applicationCurrentPageRef.current }
-          : undefined;
+        ["AdminApplicationsPoolPage"].includes(pageRef.current) &&
+        poolDataRef.current?.page
+          ? { page: poolDataRef.current?.page }
+          : poolCurrentPageRef.current
+          ? { page: poolCurrentPageRef.current }
+          : { page: 1 };
 
       // Get current state of applications collection
       await dispatch(getPoolsCollection(params));

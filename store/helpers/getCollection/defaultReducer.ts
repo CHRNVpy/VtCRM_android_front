@@ -12,15 +12,23 @@ export const setGetCollectionStateDefaultReducer = (
   path: Array<string>
 ) => {
   const payload = action.payload;
+  const page = payload.page ? payload.page.toString() : "0";
 
-  const stateByPath = path
+  const stateByPathWithoutPage = path
     ? (path.reduce((result, item) => {
         if (!result) return undefined;
         if (!result?.[item]) return undefined;
 
         return result[item];
-      }, state) as GetCollectionState)
+      }, state) as { [key: string]: GetCollectionState })
     : undefined;
+
+  if (!stateByPathWithoutPage) return;
+
+  if (!stateByPathWithoutPage[page])
+    stateByPathWithoutPage[page] = { ...defaultGetCollectionState };
+
+  const stateByPath = stateByPathWithoutPage[page];
 
   if (!stateByPath) return;
 
@@ -29,7 +37,8 @@ export const setGetCollectionStateDefaultReducer = (
   }
 
   if (payload.action == "reset") {
-    if (stateByPath?.ajaxCancel) stateByPath?.ajaxCancel();
+    if (stateByPath.ajaxCancel && typeof stateByPath.ajaxCancel === "function")
+      stateByPath.ajaxCancel();
 
     stateByPath.data = defaultGetCollectionState.data;
     stateByPath.ajaxCancel = defaultGetCollectionState.ajaxCancel;

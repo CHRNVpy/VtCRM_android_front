@@ -80,10 +80,16 @@ export const getApplicationsCollection =
       payload: { [key: string]: any }
     ) => {
       const page = payload?.page ? payload.page : 1;
+      const poolId = payload?.payload?.poolId;
 
       const params: { [key: string]: any } = {};
 
       if (page) params.page = page;
+
+      if (poolId) {
+        params.pool_id = poolId;
+        params.per_page = 100;
+      }
 
       return params;
     },

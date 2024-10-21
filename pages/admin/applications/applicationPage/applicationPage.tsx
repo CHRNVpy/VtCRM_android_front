@@ -26,7 +26,7 @@ import {
 import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
 import colors from "@/helpers/colors";
-import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
+import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 
 export default function Page() {
   const dispatch: AppDispatch = useDispatch();
@@ -167,9 +167,11 @@ export default function Page() {
 
   //  When page opened
   useEffect(() => {
-    if (poolsList?.length > 0) return;
+    if (!applicationData?.poolId) return;
 
-    dispatch(getPoolsCollection());
+    dispatch(
+      getApplicationsCollection({ page: 1, poolId: applicationData.poolId })
+    );
   }, []);
 
   if (!applicationData) return;

@@ -7,7 +7,9 @@ export const getCollectionDefaultExtraReducer = (
 ) => {
   builder
     .addCase(asyncThunk.pending, (state: any, action: any) => {
-      const page: string = action.meta.arg?.page?.toString();
+      const page: string = action.meta.arg?.page
+        ? action.meta.arg?.page?.toString()
+        : "0";
       const path: Array<string> = action.meta.arg.path;
 
       const stateByPath: { [key: string]: GetCollectionState } = path
@@ -22,16 +24,18 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      if (page && !stateByPath[page])
+      if (!stateByPath[page])
         stateByPath[page] = { ...defaultGetCollectionState };
 
-      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+      const stateByPathWithId = stateByPath[page];
 
       stateByPathWithId.isLoaded = false;
       stateByPathWithId.isInProcess = true;
     })
     .addCase(asyncThunk.rejected, (state: any, action: any) => {
-      const page: string = action.meta.arg?.page?.toString();
+      const page: string = action.meta.arg?.page
+        ? action.meta.arg?.page?.toString()
+        : "0";
       const path: Array<string> = action.meta.arg.path;
 
       const stateByPath: { [key: string]: GetCollectionState } = path
@@ -46,16 +50,18 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      if (page && !stateByPath[page])
+      if (!stateByPath[page])
         stateByPath[page] = { ...defaultGetCollectionState };
 
-      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+      const stateByPathWithId = stateByPath[page];
 
       stateByPathWithId.isLoaded = false;
       stateByPathWithId.isInProcess = false;
     })
     .addCase(asyncThunk.fulfilled, (state: any, action: any) => {
-      const page: string = action.meta.arg?.page?.toString();
+      const page: string = action.meta.arg?.page
+        ? action.meta.arg?.page?.toString()
+        : "0";
       const path: Array<string> = action.meta.arg.path;
 
       const stateByPath: { [key: string]: GetCollectionState } = path
@@ -70,10 +76,10 @@ export const getCollectionDefaultExtraReducer = (
 
       if (!stateByPath) return;
 
-      if (page && !stateByPath[page])
+      if (!stateByPath[page])
         stateByPath[page] = { ...defaultGetCollectionState };
 
-      const stateByPathWithId = page ? stateByPath[page] : stateByPath;
+      const stateByPathWithId = stateByPath[page];
 
       stateByPathWithId.isLoaded = true;
       stateByPathWithId.isInProcess = false;

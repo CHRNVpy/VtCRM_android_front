@@ -9,6 +9,7 @@ export type GetCollectionDefaultReducerActionType = {
   payload: {
     action: "setAjaxCancel" | "setPage" | "setFilters" | "reset";
     data?: any;
+    page?: number;
   };
   type: string;
 };

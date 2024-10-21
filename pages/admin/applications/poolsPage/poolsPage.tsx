@@ -36,9 +36,9 @@ export default function Page() {
 
   //  When page opened
   useEffect(() => {
-    if (poolsList?.length > 0) return;
+    //if (poolsList?.length > 0) return;
 
-    dispatch(getPoolsCollection());
+    dispatch(getPoolsCollection({ page: 1 }));
   }, []);
 
   return (

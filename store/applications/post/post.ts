@@ -105,7 +105,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
 
     const entity = responseData.data.entity;
     const rowNum = entity.rowNum;
-    const page = Math.ceil(rowNum / 10);
+    const page = Math.ceil(rowNum / 10) > 0 ? Math.ceil(rowNum / 10) : 1;
     const ver = responseData.data.ver;
 
     const poolDraftIdtoPoolId: { [key: number]: number } = {};

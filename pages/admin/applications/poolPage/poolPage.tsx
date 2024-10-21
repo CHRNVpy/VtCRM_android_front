@@ -28,7 +28,7 @@ import { formatDateString } from "@/helpers/strings";
 import TextType from "@/components/wrappers/textType/textType";
 import { setPage } from "@/store/navigation/state/state";
 import { useIsApplicationsSyncInProcess } from "@/components/hooks/isApplicationsSyncInProcess/isApplicationsSyncInProcess";
-import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
+import { getApplicationsCollection } from "@/store/applications/getCollection/getCollection";
 
 export default function Page() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -39,10 +39,6 @@ export default function Page() {
 
   const pageParams = useSelector(
     (state: RootState) => state.stateNavigation.page.params
-  );
-
-  const poolsList = useSelector(
-    (state: RootState) => state.statePools.pools.data
   );
 
   // Wrapping in useMemo without dependencies to prevent header from changing when the page updates
@@ -182,9 +178,9 @@ export default function Page() {
 
   //  When page opened
   useEffect(() => {
-    if (poolsList?.length > 0) return;
+    if (!poolId) return;
 
-    dispatch(getPoolsCollection());
+    dispatch(getApplicationsCollection({ page: 1, poolId }));
   }, []);
 
   if (!applicationsCount) return;

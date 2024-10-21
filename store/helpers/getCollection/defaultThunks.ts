@@ -39,7 +39,7 @@ export const createGetCollectionAsyncThunkWithArguments = ({
     async (
       payload:
         | {
-            page?: number;
+            [key: string | "page"]: string | number;
           }
         | undefined,
       { dispatch }
@@ -56,6 +56,7 @@ export const createGetCollectionAsyncThunkWithArguments = ({
           getParamsFromStateFunction,
           callbackAfterGet,
           page: payload?.page,
+          payload,
         })
       );
     }
@@ -88,6 +89,11 @@ export const createGetCollectionAsyncThunk = ({
           payload: any
         ) => Promise<void>;
         page: number;
+        payload:
+          | {
+              [key: string | "page"]: string | number;
+            }
+          | undefined;
       },
       { dispatch, getState, rejectWithValue }
     ) => {
@@ -97,9 +103,7 @@ export const createGetCollectionAsyncThunk = ({
         const refreshToken = (getState() as { [name: string]: any })
           ?.stateNavigation?.refreshToken?.data;
 
-        const path = payload.page
-          ? [...payload.path, payload.page.toString()]
-          : payload.path;
+        const path = [...payload.path, payload.page ? payload.page : "0"];
 
         const reducerAction = payload.reducerAction;
 
@@ -126,6 +130,7 @@ export const createGetCollectionAsyncThunk = ({
             reducerAction({
               action: "setAjaxCancel",
               data: ajaxCancel,
+              page: payload.page,
             })
           );
 
