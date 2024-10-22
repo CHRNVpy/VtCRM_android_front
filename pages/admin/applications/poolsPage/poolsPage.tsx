@@ -223,21 +223,17 @@ export default function Page() {
                   <MarginBottom>
                     {applicationsList.map(
                       (applicationItem, applicationIndex) => {
-                        if (
-                          !!applicationItem?.poolId &&
+                        const isIdValid =
                           !!item?.id &&
-                          applicationItem.poolId !== item.id
-                        )
-                          return null;
+                          applicationItem?.poolId &&
+                          applicationItem?.poolId == item?.id;
 
-                        if (
-                          !applicationItem?.poolId &&
+                        const isDraftIdValid =
+                          !!item?.draftId &&
                           applicationItem?.poolDraftId &&
-                          !item?.id &&
-                          !!item.draftId &&
-                          applicationItem.poolDraftId !== item.draftId
-                        )
-                          return null;
+                          applicationItem?.poolDraftId == item?.draftId;
+
+                        if (!isIdValid && !isDraftIdValid) return null;
 
                         applicationsCount++;
 

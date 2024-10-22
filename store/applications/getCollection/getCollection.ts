@@ -19,6 +19,7 @@ import {
   setCurrentPage,
   setApplications,
 } from "@/store/applications/state/state";
+import { setPools } from "@/store/pools/state/state";
 import { RootState } from "@/store/store";
 import {
   DefaultApplicationStateType,
@@ -98,14 +99,15 @@ export const getApplicationsCollection =
         pagesLoaded: { data: pagesLoaded },
         applications: { data: localApplications },
       } = (getState() as RootState)?.stateApplications;
+      const {
+        pools: { data: localPools },
+      } = (getState() as RootState)?.statePools;
 
       const pages = payload.pages;
       const page = payload.page;
       const ver = payload.appVer;
 
       let isChanged = false;
-
-      console.log(payload?.entities, page, pages);
 
       let modifiedLocalApplications = [...localApplications];
       const remoteApplicationsList = payload?.entities?.length
@@ -229,7 +231,7 @@ export const getApplicationsCollection =
             if (
               !localApplication?.poolId &&
               localApplication?.poolDraftId &&
-              localApplication.poolDraftId in poolDraftIdtoPoolId
+              poolDraftIdtoPoolId[localApplication.poolDraftId]
             )
               return {
                 ...localApplication,
@@ -239,6 +241,24 @@ export const getApplicationsCollection =
             return localApplication;
           }
         );
+
+      //  Update poolId if poolDraftIdtoPoolId have any elements
+      if (Object.keys(poolDraftIdtoPoolId).length) {
+        const modifiedLocalPools = [...localPools].map((localPool) => {
+          if (!localPool?.draftId) return localPool;
+
+          if (!poolDraftIdtoPoolId[localPool.draftId]) return localPool;
+
+          return {
+            ...localPool,
+            id: poolDraftIdtoPoolId[localPool.draftId],
+            page: localPool.page,
+            ver: ver,
+          };
+        });
+
+        dispatch(setPools({ action: "setData", data: modifiedLocalPools }));
+      }
 
       // Set ver for POST and PATCH
       dispatch(

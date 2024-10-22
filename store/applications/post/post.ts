@@ -81,8 +81,6 @@ export const postApplication = createPostAsyncThunkWithArguments({
     data.hash = application?.hash;
     data.ver = ver ? ver : 0;
 
-    console.log("POST", data);
-
     return data;
   },
   callbackAfterPost: async (
@@ -92,8 +90,6 @@ export const postApplication = createPostAsyncThunkWithArguments({
     responseStatus,
     payload
   ) => {
-    console.log(responseData);
-
     if (responseStatus !== 200) return;
     if (responseData.status !== "ok") return;
 
@@ -156,7 +152,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
         if (
           !localApplication?.poolId &&
           localApplication?.poolDraftId &&
-          localApplication.poolDraftId in poolDraftIdtoPoolId
+          poolDraftIdtoPoolId[localApplication.poolDraftId]
         )
           return {
             ...localApplication,
@@ -176,11 +172,12 @@ export const postApplication = createPostAsyncThunkWithArguments({
 
         if (!poolDraftIdtoPoolId[localPool.draftId]) return localPool;
 
-        localPool.id = poolDraftIdtoPoolId[localPool.draftId];
-        localPool.page = poolPage;
-        localPool.ver = ver;
-
-        return localPool;
+        return {
+          ...localPool,
+          id: poolDraftIdtoPoolId[localPool.draftId],
+          page: poolPage,
+          ver: ver,
+        };
       });
 
       dispatch(setPools({ action: "setData", data: modifiedLocalPools }));

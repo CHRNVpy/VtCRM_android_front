@@ -101,13 +101,11 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     const page = payload.page;
     const ver = payload.appVer;
 
-    console.log(page);
-
     let isChanged = false;
     let modifiedLocalApplications = [...localApplications];
     let remoteApplicationsList: DefaultApplicationStateType[] = [];
 
-    const modifiedLocalPools = [...localPools];
+    let modifiedLocalPools = [...localPools];
 
     const remotePools = payload?.entities?.length ? payload?.entities : [];
 
@@ -128,7 +126,9 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
       if (localPoolIndexWithSameId === -1) {
         modifiedLocalPools.push({
           ...remotePool,
-          applicationsCount: remotePool?.entities?.length ?? 0,
+          applicationsCount: remotePool?.entities?.length
+            ? remotePool.entities.length
+            : 0,
           entities: undefined,
           page,
           ver,
@@ -144,6 +144,8 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
         localPools[localPoolIndexWithSameId].installerId ==
           remotePool.installerId &&
         localPools[localPoolIndexWithSameId].status == remotePool.status &&
+        localPools[localPoolIndexWithSameId]?.applicationsCount ==
+          remotePool?.entities?.length &&
         localPools[localPoolIndexWithSameId].page == remotePool.page &&
         localPools[localPoolIndexWithSameId].ver == remotePool.ver
       )
@@ -152,7 +154,9 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
       //  If it was modified remotely, replace local pool with remote copy
       modifiedLocalPools.splice(localPoolIndexWithSameId, 1, {
         ...remotePool,
-        applicationsCount: remotePool?.entities?.length ?? 0,
+        applicationsCount: remotePool?.entities?.length
+          ? remotePool.entities.length
+          : 0,
         entities: undefined,
         page,
         ver,
@@ -163,8 +167,6 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
     });
 
     let isApplicationsChanged = false;
-
-    console.log("length", remoteApplicationsList?.length);
 
     //  Parse every remote application
     remoteApplicationsList.forEach(
@@ -289,7 +291,8 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
           if (
             !localApplication?.poolId &&
             localApplication?.poolDraftId &&
-            localApplication.poolDraftId in poolDraftIdtoPoolId
+            poolDraftIdtoPoolId[localApplication.poolDraftId] &&
+            poolDraftIdtoPoolId[localApplication.poolDraftId]
           )
             return {
               ...localApplication,
@@ -305,6 +308,20 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
       dispatch(
         setApplications({ action: "setData", data: modifiedLocalApplications })
       );
+
+    //  Update poolId if poolDraftIdtoPoolId have any elements
+    if (Object.keys(poolDraftIdtoPoolId).length)
+      modifiedLocalPools = modifiedLocalPools.map((localPool) => {
+        if (!localPool?.draftId) return localPool;
+        if (!poolDraftIdtoPoolId[localPool.draftId]) return localPool;
+
+        return {
+          ...localPool,
+          id: poolDraftIdtoPoolId[localPool.draftId],
+          page: localPool.page,
+          ver: ver,
+        };
+      });
 
     // Set applications ver for POST and PATCH
     dispatch(

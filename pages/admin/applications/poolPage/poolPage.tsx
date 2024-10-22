@@ -83,12 +83,16 @@ export default function Page() {
 
   const poolApplicationsList = useMemo(() => {
     return applicationsList.filter((application) => {
-      if (!application?.poolId && !application?.poolDraftId) return false;
-      if (!!application.poolId && application.poolId !== poolId) return false;
-      if (!!application.poolDraftId && application.poolDraftId !== poolDraftId)
-        return false;
+      if (!!application?.poolId && !!poolId && application.poolId == poolId)
+        return true;
+      if (
+        !!application?.poolDraftId &&
+        !!poolDraftId &&
+        application.poolDraftId == poolDraftId
+      )
+        return true;
 
-      return true;
+      return false;
     });
   }, [applicationsList, poolId, poolDraftId]);
 
@@ -220,16 +224,7 @@ export default function Page() {
           }
           renderItem={({ item, index }) => {
             return (
-              <ListItem
-                key={
-                  item?.id
-                    ? `remote-${item?.id.toString()}`
-                    : item?.draftId
-                    ? `draft-${item?.draftId.toString()}`
-                    : `noid-${index}`
-                }
-                isLastItem={index === applicationsCount - 1}
-              >
+              <ListItem isLastItem={index === applicationsCount - 1}>
                 <MarginBottom size="small">
                   <PressableArea
                     to={"AdminApplicationPage"}

@@ -244,6 +244,7 @@ export default function Page() {
       installDate: installDate,
       poolId: poolId,
       poolDraftId: newPoolDraftId,
+      isApplicationCanBePushed: !poolDraftId && !poolId && !!newPoolDraftId,
       hash,
     };
 
@@ -284,8 +285,12 @@ export default function Page() {
     dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));
     dispatch(setInputStateCreateCommentReducer({ action: "reset" }));
 
-    //  Post application can be done only if it have a remote poolId or don't have poolDraftId
-    if (!!poolId || !poolDraftId) dispatch(postApplication({ id: draftId }));
+    if (!!poolId || !poolDraftId) {
+      //  If have poolId, it's ok to push
+      //  If don't have default poolDraftId, will create new poolId, it's ok to push
+
+      dispatch(postApplication({ id: draftId }));
+    }
 
     //  Change page to parent
     dispatch(
