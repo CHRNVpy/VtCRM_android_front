@@ -201,19 +201,13 @@ export default function Page() {
       )
         return installer;
 
-      const isModified = installer?.isModified
-        ? installer.isModified
-        : installer?.id
-        ? true
-        : false;
-
       return {
         ...installer,
         lastname: lastname.trim(),
         firstname: firstname.trim(),
         middlename: middlename.trim(),
         phone: phone.trim(),
-        isModified,
+        isModified: true,
       };
     });
 

@@ -181,18 +181,12 @@ export default function Page() {
       )
         return equipment;
 
-      const isModified = equipment?.isModified
-        ? equipment.isModified
-        : equipment?.id
-        ? true
-        : false;
-
       return {
         ...equipment,
         name: name.trim(),
         serialNumber: serialNumber.trim(),
         comment: trimIgnoringNL({ text: comment }),
-        isModified,
+        isModified: true,
       };
     });
 

@@ -123,22 +123,14 @@ export default function Page() {
   const handleChangePoolStatusToActivePress = useCallback(
     async (poolId?: number, poolDraftId?: number) => {
       const modifiedPoolsList = [...poolsList].map((pool) => {
-        if (!poolId && !poolDraftId) return pool;
+        const isPoolIdSame = !!poolId && !!pool.id && pool.id == poolId;
 
-        if (!pool.id && !pool.draftId) return pool;
+        const isPoolDraftIdSame =
+          !!poolDraftId && !!pool.draftId && pool.draftId == poolDraftId;
 
-        if (!!poolId && !!pool.id && poolId !== pool.id) return pool;
+        if (!isPoolIdSame && !isPoolDraftIdSame) return pool;
 
-        if (!!poolDraftId && !!pool.draftId && poolDraftId !== pool.draftId)
-          return pool;
-
-        const isModified = pool?.isModified
-          ? pool.isModified
-          : pool?.id
-          ? true
-          : false;
-
-        return { ...pool, status: "active", isModified };
+        return { ...pool, status: "active", isModified: true };
       });
 
       dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
@@ -146,24 +138,18 @@ export default function Page() {
       const modifiedApplicationsList = [...applicationsList].map(
         (application) => {
           const isPoolIdSame =
-            !!poolId && application?.poolId && application?.poolId == poolId;
+            !!poolId && !!application?.poolId && application.poolId == poolId;
 
           const isPoolDraftIdSame =
             !!poolDraftId &&
-            application?.poolDraftId &&
-            application?.poolDraftId == poolDraftId;
+            !!application?.poolDraftId &&
+            application.poolDraftId == poolDraftId;
 
           if (!isPoolIdSame && !isPoolDraftIdSame) return application;
 
           if (application.status == "cancelled") return application;
 
-          const isModified = application?.isModified
-            ? application.isModified
-            : application?.id
-            ? true
-            : false;
-
-          return { ...application, status: "active", isModified };
+          return { ...application, status: "active" };
         }
       );
 

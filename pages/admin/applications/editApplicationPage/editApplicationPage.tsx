@@ -211,12 +211,6 @@ export default function Page() {
         )
           return application;
 
-        const isModified = application?.isModified
-          ? application.isModified
-          : application?.id
-          ? true
-          : false;
-
         return {
           ...application,
           client: clientAccount
@@ -227,7 +221,7 @@ export default function Page() {
           address: address,
           installDate: installDate,
           comment: trimIgnoringNL({ text: comment }),
-          isModified,
+          isModified: true,
         };
       }
     );

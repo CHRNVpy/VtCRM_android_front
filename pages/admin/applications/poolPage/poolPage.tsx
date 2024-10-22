@@ -140,16 +140,10 @@ export default function Page() {
           )
             return application;
 
-          const isModified = application?.isModified
-            ? application.isModified
-            : application?.id
-            ? true
-            : false;
-
           return {
             ...application,
             status: status,
-            isModified,
+            isModified: true,
           };
         }
       );
@@ -168,26 +162,17 @@ export default function Page() {
 
   const handleChangePoolStatusToActivePress = useCallback(async () => {
     const modifiedPoolsList = [...poolsList].map((pool) => {
-      if (!poolData?.id && !poolData?.draftId) return pool;
+      const isPoolIdSame =
+        !!poolData?.id && !!pool?.id && pool.id == poolData.id;
 
-      if (!pool.id && !pool.draftId) return pool;
-
-      if (!!poolData?.id && !!pool.id && poolData?.id !== pool.id) return pool;
-
-      if (
+      const isPoolDraftIdSame =
         !!poolData?.draftId &&
-        !!pool.draftId &&
-        poolData?.draftId !== pool.draftId
-      )
-        return pool;
+        !!pool?.draftId &&
+        pool.draftId == poolData.draftId;
 
-      const isModified = pool?.isModified
-        ? pool.isModified
-        : pool?.id
-        ? true
-        : false;
+      if (!isPoolIdSame && !isPoolDraftIdSame) return pool;
 
-      return { ...pool, status: "active", isModified };
+      return { ...pool, status: "active", isModified: true };
     });
 
     dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
@@ -208,13 +193,7 @@ export default function Page() {
 
         if (application.status == "cancelled") return application;
 
-        const isModified = application?.isModified
-          ? application.isModified
-          : application?.id
-          ? true
-          : false;
-
-        return { ...application, status: "active", isModified };
+        return { ...application, status: "active" };
       }
     );
 

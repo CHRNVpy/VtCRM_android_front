@@ -102,18 +102,25 @@ export const postEquipment = createPostAsyncThunkWithArguments({
     const modifiedEquipments = [...equipments].map((equipment) => {
       //  Saving draftId in the equipment to retain the ability to navigate by draftId
       if (equipment?.draftId == draftId)
-        return { ...entity, draftId, page, ver };
+        return {
+          ...entity,
+          draftId,
+          isModified: equipment.isModified,
+          page,
+          ver,
+        };
 
       return equipment;
     });
 
     const modifiedUniqueEquipments = modifiedEquipments.reduce(
       (result, element) => {
-        const isExists = result.find(
-          (item: any) => !!item?.id && !!element?.id && item?.id === element?.id
+        const isSameHash = result.find(
+          (item: any) =>
+            !!item?.hash && !!element?.hash && item?.hash === element?.hash
         );
 
-        if (!isExists) {
+        if (!isSameHash) {
           result.push(element);
 
           return result;
@@ -122,7 +129,7 @@ export const postEquipment = createPostAsyncThunkWithArguments({
         if (!element?.draftId) return result;
 
         result = result.map((item: any) =>
-          item?.id === element?.id ? element : item
+          item?.hash === element?.hash ? element : item
         );
 
         return result;

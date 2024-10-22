@@ -105,13 +105,7 @@ export default function Page() {
       )
         return installer;
 
-      const isModified = installer?.isModified
-        ? installer.isModified
-        : installer?.id
-        ? true
-        : false;
-
-      return { ...installer, password: password.trim(), isModified };
+      return { ...installer, password: password.trim(), isModified: true };
     });
 
     //  Set new installer to store

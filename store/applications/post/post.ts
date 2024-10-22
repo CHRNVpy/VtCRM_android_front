@@ -18,6 +18,7 @@ import { setApplications } from "@/store/applications/state/state";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 import { PostState } from "@/store/helpers/post/types";
 import { setPools } from "@/store/pools/state/state";
+import { isModifier } from "typescript";
 
 const slice = createSlice({
   name: reducerName,
@@ -125,6 +126,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
           ...entity,
           draftId: application.draftId,
           poolDraftId: application.poolDraftId,
+          isModified: application.isModified,
           page,
           ver,
         };
@@ -135,11 +137,12 @@ export const postApplication = createPostAsyncThunkWithArguments({
 
     //  Leave only unique with draftId priority
     modifiedApplications = modifiedApplications.reduce((result, element) => {
-      const isExists = result.find(
-        (item: any) => !!item?.id && !!element?.id && item?.id === element?.id
+      const isSameHash = result.find(
+        (item: any) =>
+          !!item?.hash && !!element?.hash && item?.hash === element?.hash
       );
 
-      if (!isExists) {
+      if (!isSameHash) {
         result.push(element);
 
         return result;
@@ -148,7 +151,7 @@ export const postApplication = createPostAsyncThunkWithArguments({
       if (!element?.draftId) return result;
 
       result = result.map((item: any) =>
-        item?.id === element?.id ? element : item
+        item?.hash === element?.hash ? element : item
       );
 
       return result;

@@ -68,9 +68,7 @@ export default function Page() {
         data: pageParams?.backLink?.to
           ? pageParams?.backLink?.to
           : "AdminInstallersPage",
-        params: pageParams?.backLink?.to
-          ? pageParams?.backLink?.params
-          : {},
+        params: pageParams?.backLink?.to ? pageParams?.backLink?.params : {},
       })
     );
   }, [dispatch, installerData, pageParams]);
@@ -114,15 +112,9 @@ export default function Page() {
         )
           return installer;
 
-        const isModified = installer?.isModified
-          ? installer.isModified
-          : installer?.id
-          ? true
-          : false;
-
         const status = installer.status == "active" ? "inactive" : "active";
 
-        return { ...installer, status, isModified };
+        return { ...installer, status, isModified: true };
       });
 
       //  Set new installer to store

@@ -151,16 +151,19 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
       )
         return;
 
+      //  If it was modified locally, do nothing, it will be updated in next sync step
+      if (localPools[localPoolIndexWithSameId].isModified) return;
+
       //  If it was modified remotely, replace local pool with remote copy
       modifiedLocalPools.splice(localPoolIndexWithSameId, 1, {
         ...remotePool,
+        draftId: localPools[localPoolIndexWithSameId].draftId,
         applicationsCount: remotePool?.entities?.length
           ? remotePool.entities.length
           : 0,
         entities: undefined,
         page,
         ver,
-        draftId: localPools[localPoolIndexWithSameId].draftId,
       });
 
       isChanged = true;

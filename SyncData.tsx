@@ -77,7 +77,7 @@ export default function SyncData({ children }: ContentProps) {
   );
 
   const poolsList = useSelector(
-    (state: RootState) => state.stateApplications.applications.data
+    (state: RootState) => state.statePools.pools.data
   );
 
   const poolCurrentPage = useSelector(

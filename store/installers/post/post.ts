@@ -102,7 +102,8 @@ export const postInstaller = createPostAsyncThunkWithArguments({
 
     const modifiedInstallers = [...installers].map((installer) => {
       //  Saving draftId in the installer to retain the ability to navigate by draftId
-      if (installer?.draftId == draftId) return { ...entity, draftId };
+      if (installer?.draftId == draftId)
+        return { ...entity, isModified: installer.isModified, draftId };
 
       return installer;
     });
