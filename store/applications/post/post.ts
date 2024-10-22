@@ -118,17 +118,26 @@ export const postApplication = createPostAsyncThunkWithArguments({
     let modifiedApplications = [...applications].map((application) => {
       //  Saving draftId in the application to retain the ability to navigate by draftId
       if (application?.draftId == draftId) {
-        if (application?.poolDraftId)
+        if (!application?.poolId && application?.poolDraftId)
           poolDraftIdtoPoolId[application.poolDraftId] = entity.poolId;
 
-        return { ...entity, draftId, page, ver };
+        return {
+          ...entity,
+          draftId: application.draftId,
+          poolDraftId: application.poolDraftId,
+          page,
+          ver,
+        };
       }
 
       return application;
     });
 
+    //  Leave only unique with draftId priority
     modifiedApplications = modifiedApplications.reduce((result, element) => {
-      const isExists = result.find((item: any) => item?.id === element?.id);
+      const isExists = result.find(
+        (item: any) => !!item?.id && !!element?.id && item?.id === element?.id
+      );
 
       if (!isExists) {
         result.push(element);
@@ -162,10 +171,11 @@ export const postApplication = createPostAsyncThunkWithArguments({
         return localApplication;
       });
 
-    dispatch(
+    await dispatch(
       setApplications({ action: "setData", data: modifiedApplications })
     );
 
+    //  Set id to pools with draftId and no id
     if (Object.keys(poolDraftIdtoPoolId).length) {
       const modifiedLocalPools = [...localPools].map((localPool) => {
         if (!localPool?.draftId) return localPool;
@@ -180,10 +190,10 @@ export const postApplication = createPostAsyncThunkWithArguments({
         };
       });
 
-      dispatch(setPools({ action: "setData", data: modifiedLocalPools }));
+      await dispatch(setPools({ action: "setData", data: modifiedLocalPools }));
     }
 
-    dispatch(getPoolsCollection({ page: poolPage }));
+    await dispatch(getPoolsCollection({ page: poolPage }));
   },
 });
 

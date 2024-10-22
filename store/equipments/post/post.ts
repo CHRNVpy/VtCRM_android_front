@@ -109,7 +109,9 @@ export const postEquipment = createPostAsyncThunkWithArguments({
 
     const modifiedUniqueEquipments = modifiedEquipments.reduce(
       (result, element) => {
-        const isExists = result.find((item: any) => item?.id === element?.id);
+        const isExists = result.find(
+          (item: any) => !!item?.id && !!element?.id && item?.id === element?.id
+        );
 
         if (!isExists) {
           result.push(element);
@@ -128,10 +130,10 @@ export const postEquipment = createPostAsyncThunkWithArguments({
       []
     );
 
-    dispatch(
+    await dispatch(
       setEquipments({ action: "setData", data: modifiedUniqueEquipments })
     );
-    dispatch(getEquipmentsCollection({ page: page }));
+    await dispatch(getEquipmentsCollection({ page: page }));
   },
 });
 

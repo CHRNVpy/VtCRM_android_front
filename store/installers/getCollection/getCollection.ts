@@ -129,11 +129,11 @@ export const getInstallersCollection =
         }
       );
 
-      dispatch(setVer({ action: "setData", data: payload.ver }));
+      await dispatch(setVer({ action: "setData", data: payload.ver }));
 
       if (!modifiedLocalInstallers?.length) return;
 
-      dispatch(
+      await dispatch(
         setInstallers({ action: "setData", data: modifiedLocalInstallers })
       );
     },

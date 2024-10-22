@@ -49,33 +49,35 @@ export default function Page() {
   const poolId: number | undefined = pageParams?.id;
   const poolDraftId: number | undefined = pageParams?.draftId;
 
-  const isPatchCurrentPoolInProcess = useMemo(() => {
-    if (!poolId) return false;
-
-    if (!poolsPatchs?.[poolId]) return false;
-
-    if (poolsPatchs?.[poolId]?.isInProcess) return true;
-
-    return false;
-  }, [poolsPatchs, poolId]);
-
   const poolsList = useSelector(
     (state: RootState) => state.statePools.pools.data
   );
 
-  const applicationsList = useSelector(
-    (state: RootState) => state.stateApplications.applications.data
-  );
-
   const poolData = useMemo(() => {
-    return poolsList.find((pool) => {
+    const result = poolsList.find((pool) => {
       if (!!pool?.id && !!poolId && pool.id == poolId) return true;
       if (!!pool?.draftId && !!poolDraftId && pool?.draftId == poolDraftId)
         return true;
 
       return false;
     });
+
+    return result;
   }, [poolsList, poolId, poolDraftId]);
+
+  const isPatchCurrentPoolInProcess = useMemo(() => {
+    if (!poolData?.id) return false;
+
+    if (!poolsPatchs?.[poolData?.id]) return false;
+
+    if (poolsPatchs?.[poolData?.id]?.isInProcess) return true;
+
+    return false;
+  }, [poolsPatchs, poolData?.id]);
+
+  const applicationsList = useSelector(
+    (state: RootState) => state.stateApplications.applications.data
+  );
 
   const isPoolStatusIsPending = useMemo(() => {
     return poolData?.status == "pending";
@@ -83,27 +85,32 @@ export default function Page() {
 
   const poolApplicationsList = useMemo(() => {
     return applicationsList.filter((application) => {
-      if (!!application?.poolId && !!poolId && application.poolId == poolId)
+      if (
+        !!application?.poolId &&
+        !!poolData?.id &&
+        application.poolId == poolData?.id
+      )
         return true;
+
       if (
         !!application?.poolDraftId &&
-        !!poolDraftId &&
-        application.poolDraftId == poolDraftId
+        !!poolData?.draftId &&
+        application.poolDraftId == poolData?.draftId
       )
         return true;
 
       return false;
     });
-  }, [applicationsList, poolId, poolDraftId]);
+  }, [applicationsList, poolData?.id, poolData?.draftId]);
 
   const applicationsCount = useMemo(() => {
     return poolApplicationsList ? poolApplicationsList.length : 0;
   }, [poolApplicationsList]);
 
   useEffect(() => {
-    if (applicationsCount) return;
+    if (poolData) return;
 
-    //  Navigate back if no application found
+    //  Navigate back if no poolData found
     dispatch(
       setPage({
         action: "setData",
@@ -113,7 +120,7 @@ export default function Page() {
         params: pageParams?.backLink?.to ? pageParams?.backLink?.params : {},
       })
     );
-  }, [dispatch, applicationsCount, pageParams]);
+  }, [dispatch, poolData, pageParams]);
 
   const handleChangeStatusPress = useCallback(
     async (
@@ -161,30 +168,70 @@ export default function Page() {
 
   const handleChangePoolStatusToActivePress = useCallback(async () => {
     const modifiedPoolsList = [...poolsList].map((pool) => {
-      if (!poolId && !poolDraftId) return pool;
+      if (!poolData?.id && !poolData?.draftId) return pool;
 
       if (!pool.id && !pool.draftId) return pool;
 
-      if (!!poolId && !!pool.id && poolId !== pool.id) return pool;
+      if (!!poolData?.id && !!pool.id && poolData?.id !== pool.id) return pool;
 
-      if (!!poolDraftId && !!pool.draftId && poolDraftId !== pool.draftId)
+      if (
+        !!poolData?.draftId &&
+        !!pool.draftId &&
+        poolData?.draftId !== pool.draftId
+      )
         return pool;
 
-      return { ...pool, status: "active", isModified: true };
+      const isModified = pool?.isModified
+        ? pool.isModified
+        : pool?.id
+        ? true
+        : false;
+
+      return { ...pool, status: "active", isModified };
     });
 
     dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
 
-    if (!poolId) return;
+    const modifiedApplicationsList = [...applicationsList].map(
+      (application) => {
+        const isPoolIdSame =
+          !!poolData?.id &&
+          application?.poolId &&
+          application?.poolId == poolData?.id;
 
-    dispatch(patchPool({ id: poolId }));
-  }, [dispatch, poolsList, poolId, poolDraftId]);
+        const isPoolDraftIdSame =
+          !!poolData?.draftId &&
+          application?.poolDraftId &&
+          application?.poolDraftId == poolData?.draftId;
+
+        if (!isPoolIdSame && !isPoolDraftIdSame) return application;
+
+        if (application.status == "cancelled") return application;
+
+        const isModified = application?.isModified
+          ? application.isModified
+          : application?.id
+          ? true
+          : false;
+
+        return { ...application, status: "active", isModified };
+      }
+    );
+
+    dispatch(
+      setApplications({ action: "setData", data: modifiedApplicationsList })
+    );
+
+    if (!poolData?.id) return;
+
+    dispatch(patchPool({ id: poolData?.id }));
+  }, [dispatch, poolsList, poolData?.id, poolData?.draftId, applicationsList]);
 
   //  When page opened
   useEffect(() => {
-    if (!poolId) return;
+    if (!poolData?.id) return;
 
-    dispatch(getApplicationsCollection({ page: 1, poolId }));
+    dispatch(getApplicationsCollection({ page: 1, poolId: poolData?.id }));
   }, []);
 
   if (!applicationsCount) return;
@@ -202,7 +249,7 @@ export default function Page() {
         isSettingsOpen={isSettingsOpen}
         setIsSettingsOpen={async () => setIsSettingsOpen(!isSettingsOpen)}
       >
-        Пул {poolId ? `#${poolId}` : `#(${poolDraftId})`}
+        Пул {poolData?.id ? `#${poolData.id}` : `#(${poolData?.draftId})`}
       </Title>
       {!!isSettingsOpen && (
         <MarginBottom>
@@ -273,19 +320,24 @@ export default function Page() {
                         id: item.installer.id,
                         backLink: {
                           text: `Пул ${
-                            poolId ? `#${poolId}` : `#(${poolDraftId})`
+                            poolData?.id
+                              ? `#${poolData?.id}`
+                              : `#(${poolData?.draftId})`
                           }`,
                           to: "AdminApplicationsPoolPage",
-                          params: { id: poolId, draftId: poolDraftId },
+                          params: {
+                            id: poolData?.id,
+                            draftId: poolData?.draftId,
+                          },
                         },
                       }}
                     >
                       {!!item?.installer?.id && (
                         <TextType size="medium" isDashed={true}>
                           Монтажник #{item.installer.id}{" "}
-                          {item.installer.lastname}{" "}
-                          {item.installer.firstname.charAt(0)}.
-                          {item.installer.middlename.charAt(0)}.
+                          {item.installer?.lastname}{" "}
+                          {item.installer?.firstname?.charAt(0)}.
+                          {item.installer?.middlename?.charAt(0)}.
                         </TextType>
                       )}
                     </PressableArea>
@@ -375,10 +427,15 @@ export default function Page() {
                           draftId: item.draftId,
                           backLink: {
                             text: `Пул ${
-                              poolId ? `#${poolId}` : `#(${poolDraftId})`
+                              poolData?.id
+                                ? `#${poolData?.id}`
+                                : `#(${poolData?.draftId})`
                             }`,
                             to: "AdminApplicationsPoolPage",
-                            params: { id: poolId, draftId: poolDraftId },
+                            params: {
+                              id: poolData?.id,
+                              draftId: poolData?.draftId,
+                            },
                           },
                         }}
                         isDisabled={isPatchCurrentPoolInProcess}
@@ -435,17 +492,19 @@ export default function Page() {
             icon={<AddIcon width={s(16)} height={s(16)} />}
             to={"AdminCreateApplicationPage"}
             toParams={{
-              id: poolId,
-              draftId: poolDraftId,
+              id: poolData?.id,
+              draftId: poolData?.draftId,
               backLink: {
-                text: `Пул ${poolId ? `#${poolId}` : `#(${poolDraftId})`}`,
+                text: `Пул ${
+                  poolData?.id ? `#${poolData?.id}` : `#(${poolData?.draftId})`
+                }`,
                 to: "AdminApplicationsPoolPage",
-                params: { id: poolId, draftId: poolDraftId },
+                params: { id: poolData?.id, draftId: poolData?.draftId },
               },
             }}
             isDisabled={isPatchCurrentPoolInProcess}
           >
-            Добавить заявку {poolId} D{poolDraftId}
+            Добавить заявку
           </Button>
         )}
       </Buttons>

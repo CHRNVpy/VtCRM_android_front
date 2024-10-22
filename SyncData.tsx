@@ -20,6 +20,7 @@ import { postApplication } from "@/store/applications/post/post";
 import { patchApplication } from "@/store/applications/patch/patch";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 import { patchPool } from "@/store/pools/patch/patch";
+import { getApplicationsCollection } from "./store/applications/getCollection/getCollection";
 
 interface ContentProps {
   children?: ReactNode;
@@ -141,28 +142,34 @@ export default function SyncData({ children }: ContentProps) {
     if (!pageRef.current) return;
 
     if (
-      ["AdminInstallersPage", "AdminInstallerPage"].includes(pageRef.current)
+      [
+        "AdminApplicationsPoolsPage",
+        "AdminApplicationsPoolPage",
+        "AdminApplicationPage",
+        "AdminInstallersPage",
+        "AdminInstallerPage",
+      ].includes(pageRef.current)
     ) {
       // Get current state of installers collection
       await dispatch(getInstallersCollection());
 
       // Post all draft installers
-      installersListRef.current.forEach((installer) => {
+      for (const installer of installersListRef.current) {
         // If have id, draft is for backward compatibility of navigation
-        if (installer?.id) return;
-        if (!installer?.draftId) return;
+        if (installer?.id) continue;
+        if (!installer?.draftId) continue;
 
-        dispatch(postInstaller({ id: installer?.draftId }));
-      });
+        await dispatch(postInstaller({ id: installer?.draftId }));
+      }
 
       // Patch all modified installers
-      installersListRef.current.forEach((installer) => {
+      for (const installer of installersListRef.current) {
         // Should have id and be modified
-        if (!installer?.id) return;
-        if (!installer?.isModified) return;
+        if (!installer?.id) continue;
+        if (!installer?.isModified) continue;
 
-        dispatch(patchInstaller({ id: installer?.id }));
-      });
+        await dispatch(patchInstaller({ id: installer?.id }));
+      }
     }
 
     if (
@@ -181,22 +188,22 @@ export default function SyncData({ children }: ContentProps) {
       await dispatch(getEquipmentsCollection(params));
 
       // Post all draft equipments
-      equipmentsListRef.current.forEach((equipment) => {
+      for (const equipment of equipmentsListRef.current) {
         // If have id, draft is for backward compatibility of navigation
-        if (equipment?.id) return;
-        if (!equipment?.draftId) return;
+        if (equipment?.id) continue;
+        if (!equipment?.draftId) continue;
 
-        dispatch(postEquipment({ id: equipment?.draftId }));
-      });
+        await dispatch(postEquipment({ id: equipment?.draftId }));
+      }
 
       // Patch all modified equipments
-      equipmentsListRef.current.forEach((equipment) => {
+      for (const equipment of equipmentsListRef.current) {
         // Should have id and be modified
-        if (!equipment?.id) return;
-        if (!equipment?.isModified) return;
+        if (!equipment?.id) continue;
+        if (!equipment?.isModified) continue;
 
-        dispatch(patchEquipment({ id: equipment?.id }));
-      });
+        await dispatch(patchEquipment({ id: equipment?.id }));
+      }
     }
 
     if (
@@ -219,41 +226,42 @@ export default function SyncData({ children }: ContentProps) {
       await dispatch(getPoolsCollection(params));
 
       // Post all draft applications
-      applicationsListRef.current.forEach((application) => {
+      for (const application of applicationsListRef.current) {
         // If have id, draft is for backward compatibility of navigation
-        if (application?.id) return;
-        if (!application?.draftId) return;
+        if (application?.id) continue;
+        if (!application?.draftId) continue;
 
         if (
           !application.poolId &&
           !!application.poolDraftId &&
           !application.isApplicationCanBePushed
-        )
-          return;
+        ) {
+          continue;
+        }
 
         //  If have poolId, it's ok to push
         //  If don't have poolDraftId, it will create new poolId, it's ok to push
         //  If can be push it's the only one with new poolDraftId, it's ok to push
-        dispatch(postApplication({ id: application?.draftId }));
-      });
+        await dispatch(postApplication({ id: application?.draftId }));
+      }
 
       // Patch all modified applications
-      applicationsListRef.current.forEach((application) => {
+      for (const application of applicationsListRef.current) {
         // Should have id and be modified
-        if (!application?.id) return;
-        if (!application?.isModified) return;
+        if (!application?.id) continue;
+        if (!application?.isModified) continue;
 
-        dispatch(patchApplication({ id: application?.id }));
-      });
+        await dispatch(patchApplication({ id: application?.id }));
+      }
 
       // Patch all modified pools
-      poolsListRef.current.forEach((pool) => {
+      for (const pool of poolsListRef.current) {
         // Should have id and be modified
-        if (!pool?.id) return;
-        if (!pool?.isModified) return;
+        if (!pool?.id) continue;
+        if (!pool?.isModified) continue;
 
-        dispatch(patchPool({ id: pool?.id }));
-      });
+        await dispatch(patchPool({ id: pool?.id }));
+      }
     }
   }, [dispatch]);
 

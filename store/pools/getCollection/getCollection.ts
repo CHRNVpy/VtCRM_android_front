@@ -232,11 +232,11 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
         //  If it was modified remotely, replace local application with remote copy
         modifiedLocalApplications.splice(localApplicationIndexWithSameId, 1, {
           ...remoteApplication,
-          page,
-          ver,
           draftId: localApplications[localApplicationIndexWithSameId].draftId,
           poolDraftId:
             localApplications[localApplicationIndexWithSameId].poolDraftId,
+          page,
+          ver,
         });
 
         isApplicationsChanged = true;
@@ -265,6 +265,7 @@ export const getPoolsCollection = createGetCollectionAsyncThunkWithArguments({
         isApplicationsChanged = true;
 
         if (
+          !localApplication?.poolId &&
           localApplication?.poolDraftId &&
           remoteApplicationsList[remoteApplicationIndexWithSameHash].poolId
         )

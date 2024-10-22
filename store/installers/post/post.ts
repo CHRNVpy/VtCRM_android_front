@@ -107,8 +107,10 @@ export const postInstaller = createPostAsyncThunkWithArguments({
       return installer;
     });
 
-    dispatch(setVer({ action: "setData", data: ver }));
-    dispatch(setInstallers({ action: "setData", data: modifiedInstallers }));
+    await dispatch(setVer({ action: "setData", data: ver }));
+    await dispatch(
+      setInstallers({ action: "setData", data: modifiedInstallers })
+    );
   },
 });
 

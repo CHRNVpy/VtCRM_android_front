@@ -24,6 +24,7 @@ import { debounce } from "lodash";
 import { getPoolsCollection } from "@/store/pools/getCollection/getCollection";
 import { patchPool } from "@/store/pools/patch/patch";
 import { setPools } from "@/store/pools/state/state";
+import { setApplications } from "@/store/applications/state/state";
 
 export default function Page() {
   const [pageByScrollData, setPageByScrollData] = useState<{
@@ -131,16 +132,50 @@ export default function Page() {
         if (!!poolDraftId && !!pool.draftId && poolDraftId !== pool.draftId)
           return pool;
 
-        return { ...pool, status: "active", isModified: true };
+        const isModified = pool?.isModified
+          ? pool.isModified
+          : pool?.id
+          ? true
+          : false;
+
+        return { ...pool, status: "active", isModified };
       });
 
       dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
+
+      const modifiedApplicationsList = [...applicationsList].map(
+        (application) => {
+          const isPoolIdSame =
+            !!poolId && application?.poolId && application?.poolId == poolId;
+
+          const isPoolDraftIdSame =
+            !!poolDraftId &&
+            application?.poolDraftId &&
+            application?.poolDraftId == poolDraftId;
+
+          if (!isPoolIdSame && !isPoolDraftIdSame) return application;
+
+          if (application.status == "cancelled") return application;
+
+          const isModified = application?.isModified
+            ? application.isModified
+            : application?.id
+            ? true
+            : false;
+
+          return { ...application, status: "active", isModified };
+        }
+      );
+
+      dispatch(
+        setApplications({ action: "setData", data: modifiedApplicationsList })
+      );
 
       if (!poolId) return;
 
       dispatch(patchPool({ id: poolId }));
     },
-    [dispatch, poolsList]
+    [dispatch, poolsList, applicationsList]
   );
 
   //  When page opened
@@ -223,17 +258,17 @@ export default function Page() {
                   <MarginBottom>
                     {applicationsList.map(
                       (applicationItem, applicationIndex) => {
-                        const isIdValid =
+                        const isPoolIdSame =
                           !!item?.id &&
                           applicationItem?.poolId &&
                           applicationItem?.poolId == item?.id;
 
-                        const isDraftIdValid =
+                        const isPoolDraftIdSame =
                           !!item?.draftId &&
                           applicationItem?.poolDraftId &&
                           applicationItem?.poolDraftId == item?.draftId;
 
-                        if (!isIdValid && !isDraftIdValid) return null;
+                        if (!isPoolIdSame && !isPoolDraftIdSame) return null;
 
                         applicationsCount++;
 

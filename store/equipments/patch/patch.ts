@@ -116,8 +116,10 @@ export const patchEquipment = createPatchAsyncThunkWithArguments({
       return equipment;
     });
 
-    dispatch(setEquipments({ action: "setData", data: modifiedEquipments }));
-    dispatch(getEquipmentsCollection({ page: page }));
+    await dispatch(
+      setEquipments({ action: "setData", data: modifiedEquipments })
+    );
+    await dispatch(getEquipmentsCollection({ page: page }));
   },
 });
 

@@ -91,7 +91,7 @@ export const patchPool = createPatchAsyncThunkWithArguments({
 
     const entity = responseData.data.entity;
 
-    const modifiedPools = [...pools].map((pool) => {
+    const modifiedPoolsList = [...pools].map((pool) => {
       //  Saving draftId in the pool to retain the ability to navigate by draftId
       if (pool?.id == id) {
         return {
@@ -106,7 +106,7 @@ export const patchPool = createPatchAsyncThunkWithArguments({
       return pool;
     });
 
-    dispatch(setPools({ action: "setData", data: modifiedPools }));
+    dispatch(setPools({ action: "setData", data: modifiedPoolsList }));
 
     if (entity?.id) dispatch(getApplicationsCollection({ poolId: entity?.id }));
   },

@@ -166,6 +166,18 @@ export default function Page() {
     return false;
   }, [type, clientAccount, address, installDate]);
 
+  const poolData = useMemo(() => {
+    const result = poolsList.find((pool) => {
+      if (!!pool?.id && !!poolId && pool.id == poolId) return true;
+      if (!!pool?.draftId && !!poolDraftId && pool?.draftId == poolDraftId)
+        return true;
+
+      return false;
+    });
+
+    return result;
+  }, [poolsList, poolId, poolDraftId]);
+
   const handleCreateApplication = useCallback(async () => {
     if (isButtonDisabled) return;
 
@@ -196,9 +208,9 @@ export default function Page() {
     }, 1);
 
     //  Make new poolDraftId -> biggest id plus one
-    const newPoolDraftId = poolDraftId
-      ? poolDraftId
-      : poolId
+    const newPoolDraftId = poolData?.draftId
+      ? poolData?.draftId
+      : poolData?.id
       ? undefined
       : applicationsList.reduce((draftId, application) => {
           if (!application?.poolDraftId && !application?.poolId) return draftId;
@@ -242,9 +254,10 @@ export default function Page() {
       comment: trimIgnoringNL({ text: comment }),
       status: "pending",
       installDate: installDate,
-      poolId: poolId,
+      poolId: poolData?.id,
       poolDraftId: newPoolDraftId,
-      isApplicationCanBePushed: !poolDraftId && !poolId && !!newPoolDraftId,
+      isApplicationCanBePushed:
+        !poolData?.draftId && !poolData?.id && !!newPoolDraftId,
       hash,
     };
 
@@ -256,18 +269,23 @@ export default function Page() {
     //  Set changes to pools list
     let modifiedPoolsList = [...poolsList];
 
-    if (!!poolId || !!poolDraftId)
+    if (!!poolData?.id || !!poolData?.draftId)
       modifiedPoolsList = modifiedPoolsList.map((pool) => {
         if (!pool.id && !pool.draftId) return pool;
-        if (!poolId && !poolDraftId) return pool;
-        if (!!pool.id && !!poolId && pool.id !== poolId) return pool;
-        if (!!pool.draftId && !!poolDraftId && pool.draftId !== poolDraftId)
+        if (!poolData?.id && !poolData?.draftId) return pool;
+        if (!!pool.id && !!poolData?.id && pool.id !== poolData?.id)
+          return pool;
+        if (
+          !!pool.draftId &&
+          !!poolData?.draftId &&
+          pool.draftId !== poolData?.draftId
+        )
           return pool;
 
         return { ...pool, applicationsCount: pool.applicationsCount + 1 };
       });
 
-    if (!poolId && !poolDraftId && newPoolDraftId)
+    if (!poolData?.id && !poolData?.draftId && newPoolDraftId)
       modifiedPoolsList.push({
         draftId: newPoolDraftId,
         status: "pending",
@@ -285,8 +303,8 @@ export default function Page() {
     dispatch(setInputStateCreateInstallDateReducer({ action: "reset" }));
     dispatch(setInputStateCreateCommentReducer({ action: "reset" }));
 
-    if (!!poolId || !poolDraftId) {
-      //  If have poolId, it's ok to push
+    if (!!poolData?.id || !poolData?.draftId) {
+      //  If have poolData?.id, it's ok to push
       //  If don't have default poolDraftId, will create new poolId, it's ok to push
 
       dispatch(postApplication({ id: draftId }));
@@ -314,8 +332,7 @@ export default function Page() {
     comment,
     applicationsList,
     pageParams,
-    poolId,
-    poolDraftId,
+    poolData,
     poolsList,
   ]);
 
@@ -323,29 +340,29 @@ export default function Page() {
     <Wrapper>
       <Header
         linkText={
-          poolId
-            ? `Пул #${poolId}`
-            : poolDraftId
-            ? `Пул #(${poolDraftId})`
+          poolData?.id
+            ? `Пул #${poolData?.id}`
+            : poolData?.draftId
+            ? `Пул #(${poolData?.draftId})`
             : `Пулы заявок`
         }
         to={
-          poolId
+          poolData?.id
             ? "AdminApplicationsPoolPage"
-            : poolDraftId
+            : poolData?.draftId
             ? "AdminApplicationsPoolPage"
             : "AdminApplicationsPoolsPage"
         }
         toParams={
-          poolId
+          poolData?.id
             ? {
-                id: poolId,
-                draftId: poolDraftId,
+                id: poolData?.id,
+                draftId: poolData?.draftId,
               }
-            : poolDraftId
+            : poolData?.draftId
             ? {
-                id: poolId,
-                draftId: poolDraftId,
+                id: poolData?.id,
+                draftId: poolData?.draftId,
               }
             : {}
         }
@@ -353,8 +370,11 @@ export default function Page() {
       />
       <Title>
         Добавление заявки{" "}
-        {poolId || poolDraftId ? (
-          <>в пул {poolId ? `#${poolId}` : `#(${poolDraftId})`}</>
+        {poolData?.id || poolData?.draftId ? (
+          <>
+            в пул{" "}
+            {poolData?.id ? `#${poolData?.id}` : `#(${poolData?.draftId})`}
+          </>
         ) : (
           <>и нового пула</>
         )}

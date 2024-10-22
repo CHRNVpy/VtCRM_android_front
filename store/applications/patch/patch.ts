@@ -112,6 +112,7 @@ export const patchApplication = createPatchAsyncThunkWithArguments({
         return {
           ...entity,
           draftId: application?.draftId,
+          poolDraftId: application?.poolDraftId,
           page: application?.page,
           ver: application?.ver,
         };

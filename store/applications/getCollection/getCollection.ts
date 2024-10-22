@@ -177,9 +177,11 @@ export const getApplicationsCollection =
           //  If it was modified remotely, replace local application with remote copy
           modifiedLocalApplications.splice(localApplicationIndexWithSameId, 1, {
             ...remoteApplication,
+            draftId: localApplications[localApplicationIndexWithSameId].draftId,
+            poolDraftId:
+              localApplications[localApplicationIndexWithSameId].poolDraftId,
             page,
             ver,
-            draftId: localApplications[localApplicationIndexWithSameId].draftId,
           });
 
           isChanged = true;
@@ -208,7 +210,7 @@ export const getApplicationsCollection =
 
           isChanged = true;
 
-          if (localApplication?.poolDraftId)
+          if (!localApplication?.poolId && localApplication?.poolDraftId)
             poolDraftIdtoPoolId[localApplication.poolDraftId] =
               remoteApplicationsList[remoteApplicationIndexWithSameHash].poolId;
 
@@ -217,6 +219,7 @@ export const getApplicationsCollection =
           return {
             ...remoteApplicationsList[remoteApplicationIndexWithSameHash],
             draftId: localApplication.draftId,
+            poolDraftId: localApplication.poolDraftId,
             page,
             ver,
           };
